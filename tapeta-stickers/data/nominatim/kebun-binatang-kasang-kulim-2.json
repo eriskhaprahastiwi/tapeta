@@ -1,0 +1,102 @@
+[
+ {
+  "place_id": 255671212,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1426142973,
+  "lat": "0.4207909",
+  "lon": "101.4069483",
+  "category": "leisure",
+  "type": "park",
+  "place_rank": 24,
+  "importance": 0.08003750133516438,
+  "addresstype": "park",
+  "name": "Taman Marga Satwa Kasang Kulim",
+  "display_name": "Taman Marga Satwa Kasang Kulim, Teratak Buluh, Siak Hulu, Kampar, Riau, Indonesia",
+  "address": {
+   "park": "Taman Marga Satwa Kasang Kulim",
+   "town": "Teratak Buluh",
+   "municipality": "Siak Hulu",
+   "county": "Kampar",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "tourism": "zoo"
+  },
+  "boundingbox": [
+   "0.4183924",
+   "0.4233986",
+   "101.4056452",
+   "101.4083223"
+  ]
+ },
+ {
+  "place_id": 255877439,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 306566220,
+  "lat": "0.4226244",
+  "lon": "101.4258379",
+  "category": "highway",
+  "type": "tertiary",
+  "place_rank": 26,
+  "importance": 0.053370834668497714,
+  "addresstype": "tertiary",
+  "name": "Jalan Kasang Kulim",
+  "display_name": "Jalan Kasang Kulim, Kubang Jaya, Siak Hulu, Kampar, Riau, 25258, Indonesia",
+  "address": {
+   "road": "Jalan Kasang Kulim",
+   "village": "Kubang Jaya",
+   "municipality": "Siak Hulu",
+   "county": "Kampar",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "25258",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.4216805",
+   "0.4237476",
+   "101.4232452",
+   "101.4284988"
+  ]
+ },
+ {
+  "place_id": 255557262,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 653837043,
+  "lat": "0.4239390",
+  "lon": "101.4226654",
+  "category": "highway",
+  "type": "tertiary",
+  "place_rank": 26,
+  "importance": 0.053370834668497714,
+  "addresstype": "tertiary",
+  "name": "Jalan Kasang Kulim",
+  "display_name": "Jalan Kasang Kulim, Teratak Buluh, Siak Hulu, Kampar, Riau, 25258, Indonesia",
+  "address": {
+   "road": "Jalan Kasang Kulim",
+   "town": "Teratak Buluh",
+   "municipality": "Siak Hulu",
+   "county": "Kampar",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "25258",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.4237476",
+   "0.4241304",
+   "101.4220856",
+   "101.4232452"
+  ]
+ }
+]

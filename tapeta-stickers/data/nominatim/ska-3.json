@@ -1,0 +1,330 @@
+[
+ {
+  "place_id": 255529285,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 280698814,
+  "lat": "0.4995899",
+  "lon": "101.4181003",
+  "category": "shop",
+  "type": "mall",
+  "place_rank": 30,
+  "importance": 0.3977269304249201,
+  "addresstype": "shop",
+  "name": "SKA Mall",
+  "display_name": "SKA Mall, Jalan Mall SKA Blok H, Sentral Komersial Arengka (SKA), Delima, Binawidya, Pekanbaru, Payung Sekaki, Riau, 28289, Indonesia",
+  "address": {
+   "shop": "SKA Mall",
+   "road": "Jalan Mall SKA Blok H",
+   "commercial": "Sentral Komersial Arengka (SKA)",
+   "suburb": "Delima",
+   "city_district": "Binawidya",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28289",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "building": "supermarket",
+   "wikidata": "Q12496275",
+   "opening_hours": "10:00-22:00"
+  },
+  "boundingbox": [
+   "0.4989979",
+   "0.5001686",
+   "101.4174409",
+   "101.4187485"
+  ]
+ },
+ {
+  "place_id": 427897668,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1560986941,
+  "lat": "0.4991699",
+  "lon": "101.4175107",
+  "category": "landuse",
+  "type": "commercial",
+  "place_rank": 24,
+  "importance": 0.08005583047226669,
+  "addresstype": "commercial",
+  "name": "Sentral Komersial Arengka (SKA)",
+  "display_name": "Sentral Komersial Arengka (SKA), Delima, Binawidya, Pekanbaru, Payung Sekaki, Riau, Indonesia",
+  "address": {
+   "commercial": "Sentral Komersial Arengka (SKA)",
+   "suburb": "Delima",
+   "city_district": "Binawidya",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "landuse": "commercial"
+  },
+  "boundingbox": [
+   "0.4984098",
+   "0.5004670",
+   "101.4158826",
+   "101.4191052"
+  ]
+ },
+ {
+  "place_id": 256869882,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 780156940,
+  "lat": "0.5002513",
+  "lon": "101.4183459",
+  "category": "highway",
+  "type": "service",
+  "place_rank": 27,
+  "importance": 0.04005583047226672,
+  "addresstype": "road",
+  "name": "Parkir Mall SKA",
+  "display_name": "Parkir Mall SKA, Sentral Komersial Arengka (SKA), Delima, Binawidya, Pekanbaru, Payung Sekaki, Riau, 28289, Indonesia",
+  "address": {
+   "road": "Parkir Mall SKA",
+   "commercial": "Sentral Komersial Arengka (SKA)",
+   "suburb": "Delima",
+   "city_district": "Binawidya",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28289",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "foot": "yes",
+   "horse": "no",
+   "truck": "destination",
+   "access": "no",
+   "oneway": "yes",
+   "bicycle": "destination",
+   "motorcar": "no",
+   "motorbike": "destination",
+   "motorcycle": "no",
+   "motor_vehicle": "destination"
+  },
+  "boundingbox": [
+   "0.4995534",
+   "0.5002671",
+   "101.4173142",
+   "101.4188582"
+  ]
+ },
+ {
+  "place_id": 255693536,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 280698821,
+  "lat": "0.4994780",
+  "lon": "101.4173953",
+  "category": "highway",
+  "type": "service",
+  "place_rank": 27,
+  "importance": 0.04005583047226672,
+  "addresstype": "road",
+  "name": "Jalan Mall SKA Blok H",
+  "display_name": "Jalan Mall SKA Blok H, Sentral Komersial Arengka (SKA), Delima, Binawidya, Pekanbaru, Payung Sekaki, Riau, 28289, Indonesia",
+  "address": {
+   "road": "Jalan Mall SKA Blok H",
+   "commercial": "Sentral Komersial Arengka (SKA)",
+   "suburb": "Delima",
+   "city_district": "Binawidya",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28289",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "access": "no",
+   "oneway": "yes",
+   "motorcar": "no",
+   "motorcycle": "no",
+   "motor_vehicle": "destination"
+  },
+  "boundingbox": [
+   "0.4988741",
+   "0.5000870",
+   "101.4173142",
+   "101.4174606"
+  ]
+ },
+ {
+  "place_id": 427897666,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1560986938,
+  "lat": "0.4989262",
+  "lon": "101.4162894",
+  "category": "highway",
+  "type": "service",
+  "place_rank": 27,
+  "importance": 0.04005583047226672,
+  "addresstype": "road",
+  "name": "Jalan Mall SKA Blok B",
+  "display_name": "Jalan Mall SKA Blok B, Sentral Komersial Arengka (SKA), Delima, Binawidya, Pekanbaru, Payung Sekaki, Riau, 28289, Indonesia",
+  "address": {
+   "road": "Jalan Mall SKA Blok B",
+   "commercial": "Sentral Komersial Arengka (SKA)",
+   "suburb": "Delima",
+   "city_district": "Binawidya",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28289",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "access": "no",
+   "oneway": "yes",
+   "service": "driveway",
+   "motorcar": "no",
+   "motorcycle": "no",
+   "motor_vehicle": "destination"
+  },
+  "boundingbox": [
+   "0.4987551",
+   "0.4992126",
+   "101.4162558",
+   "101.4164645"
+  ]
+ },
+ {
+  "place_id": 256873587,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 324768103,
+  "lat": "0.5000491",
+  "lon": "101.4170296",
+  "category": "highway",
+  "type": "service",
+  "place_rank": 27,
+  "importance": 0.04005583047226672,
+  "addresstype": "road",
+  "name": "Jalan Mall SKA Blok I",
+  "display_name": "Jalan Mall SKA Blok I, Sentral Komersial Arengka (SKA), Delima, Binawidya, Pekanbaru, Payung Sekaki, Riau, 28289, Indonesia",
+  "address": {
+   "road": "Jalan Mall SKA Blok I",
+   "commercial": "Sentral Komersial Arengka (SKA)",
+   "suburb": "Delima",
+   "city_district": "Binawidya",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28289",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "access": "no",
+   "oneway": "yes",
+   "motorcar": "no",
+   "motorcycle": "no",
+   "motor_vehicle": "destination"
+  },
+  "boundingbox": [
+   "0.4999276",
+   "0.5000870",
+   "101.4168057",
+   "101.4173142"
+  ]
+ },
+ {
+  "place_id": 256426817,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 324768101,
+  "lat": "0.4996909",
+  "lon": "101.4161982",
+  "category": "highway",
+  "type": "service",
+  "place_rank": 27,
+  "importance": 0.04005583047226672,
+  "addresstype": "road",
+  "name": "Jalan Mall SKA Blok A",
+  "display_name": "Jalan Mall SKA Blok A, Sentral Komersial Arengka (SKA), Delima, Binawidya, Pekanbaru, Payung Sekaki, Riau, 28289, Indonesia",
+  "address": {
+   "road": "Jalan Mall SKA Blok A",
+   "commercial": "Sentral Komersial Arengka (SKA)",
+   "suburb": "Delima",
+   "city_district": "Binawidya",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28289",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "access": "no",
+   "oneway": "yes",
+   "service": "driveway",
+   "motorcar": "no",
+   "motorcycle": "no",
+   "motor_vehicle": "destination"
+  },
+  "boundingbox": [
+   "0.4992126",
+   "0.5001682",
+   "101.4161772",
+   "101.4162558"
+  ]
+ },
+ {
+  "place_id": 256890546,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 280698825,
+  "lat": "0.4989260",
+  "lon": "101.4178548",
+  "category": "highway",
+  "type": "service",
+  "place_rank": 27,
+  "importance": 0.04005583047226672,
+  "addresstype": "road",
+  "name": "Jalan Mall SKA Blok E",
+  "display_name": "Jalan Mall SKA Blok E, Sentral Komersial Arengka (SKA), Delima, Binawidya, Pekanbaru, Payung Sekaki, Riau, 28289, Indonesia",
+  "address": {
+   "road": "Jalan Mall SKA Blok E",
+   "commercial": "Sentral Komersial Arengka (SKA)",
+   "suburb": "Delima",
+   "city_district": "Binawidya",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28289",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "access": "no",
+   "oneway": "yes",
+   "motorcar": "no",
+   "motorcycle": "no",
+   "motor_vehicle": "destination"
+  },
+  "boundingbox": [
+   "0.4988811",
+   "0.4989709",
+   "101.4174818",
+   "101.4182278"
+  ]
+ }
+]

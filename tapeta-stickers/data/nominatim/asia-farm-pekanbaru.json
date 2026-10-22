@@ -1,0 +1,73 @@
+[
+ {
+  "place_id": 256331045,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1375439988,
+  "lat": "0.5095272",
+  "lon": "101.5098366",
+  "category": "leisure",
+  "type": "park",
+  "place_rank": 24,
+  "importance": 0.08005583047226669,
+  "addresstype": "park",
+  "name": "Asia Farm",
+  "display_name": "Asia Farm, Bencah Lesung, Pekanbaru, Tenayan Raya, Riau, Indonesia",
+  "address": {
+   "park": "Asia Farm",
+   "suburb": "Bencah Lesung",
+   "city": "Pekanbaru",
+   "district": "Tenayan Raya",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "landuse": "recreation_ground",
+   "tourism": "theme_park"
+  },
+  "boundingbox": [
+   "0.5084651",
+   "0.5106295",
+   "101.5086615",
+   "101.5109789"
+  ]
+ },
+ {
+  "place_id": 255410147,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 6432223763,
+  "lat": "0.5081421",
+  "lon": "101.5101906",
+  "category": "tourism",
+  "type": "attraction",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "tourism",
+  "name": "Asia Farm",
+  "display_name": "Asia Farm, Jalan Badak, Bencah Lesung, Pekanbaru, Tenayan Raya, Riau, 28112, Indonesia",
+  "address": {
+   "tourism": "Asia Farm",
+   "road": "Jalan Badak",
+   "suburb": "Bencah Lesung",
+   "city": "Pekanbaru",
+   "district": "Tenayan Raya",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28112",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "entrance": "yes"
+  },
+  "boundingbox": [
+   "0.5080921",
+   "0.5081921",
+   "101.5101406",
+   "101.5102406"
+  ]
+ }
+]

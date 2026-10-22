@@ -1,0 +1,37 @@
+[
+ {
+  "place_id": 256175494,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 242815283,
+  "lat": "0.4930852",
+  "lon": "101.4998959",
+  "category": "leisure",
+  "type": "park",
+  "place_rank": 24,
+  "importance": 0.08005583047226669,
+  "addresstype": "park",
+  "name": "Alam Mayang",
+  "display_name": "Alam Mayang, Tangkerang Timur, Pekanbaru, Tenayan Raya, Riau, Indonesia",
+  "address": {
+   "park": "Alam Mayang",
+   "suburb": "Tangkerang Timur",
+   "city": "Pekanbaru",
+   "district": "Tenayan Raya",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "landuse": "recreation_ground",
+   "tourism": "theme_park"
+  },
+  "boundingbox": [
+   "0.4899754",
+   "0.4959580",
+   "101.4976830",
+   "101.5021194"
+  ]
+ }
+]

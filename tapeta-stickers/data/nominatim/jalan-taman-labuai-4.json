@@ -1,0 +1,36 @@
+[
+ {
+  "place_id": 255848597,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 305830186,
+  "lat": "0.4801581",
+  "lon": "101.4556420",
+  "category": "highway",
+  "type": "residential",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "residential",
+  "name": "Jalan Taman Labuai",
+  "display_name": "Jalan Taman Labuai, Simpang Tiga, Bukit Raya, Pekanbaru, Marpoyan Damai, Riau, 27000, Indonesia",
+  "address": {
+   "road": "Jalan Taman Labuai",
+   "suburb": "Simpang Tiga",
+   "city_district": "Bukit Raya",
+   "city": "Pekanbaru",
+   "district": "Marpoyan Damai",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "27000",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.4800938",
+   "0.4802224",
+   "101.4542425",
+   "101.4570415"
+  ]
+ }
+]

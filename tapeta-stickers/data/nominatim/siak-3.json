@@ -1,0 +1,65 @@
+[
+ {
+  "place_id": 255824054,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 564821656,
+  "lat": "0.4925680",
+  "lon": "101.2097132",
+  "category": "waterway",
+  "type": "stream",
+  "place_rank": 22,
+  "importance": 0.10670416800183105,
+  "addresstype": "stream",
+  "name": "Sungai Siak",
+  "display_name": "Sungai Siak, Deli Makmur, Kampa, Kampar, Riau, Indonesia",
+  "address": {
+   "stream": "Sungai Siak",
+   "village": "Deli Makmur",
+   "municipality": "Kampa",
+   "county": "Kampar",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.4875875",
+   "0.4967067",
+   "101.2006044",
+   "101.2194228"
+  ]
+ },
+ {
+  "place_id": 255740261,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "relation",
+  "osm_id": 6880755,
+  "lat": "0.7724587",
+  "lon": "101.7842431",
+  "category": "waterway",
+  "type": "river",
+  "place_rank": 18,
+  "importance": 0.39022041580958405,
+  "addresstype": "river",
+  "name": "Sungai Siak",
+  "display_name": "Sungai Siak, Riau, Indonesia",
+  "address": {
+   "river": "Sungai Siak",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "wikidata": "Q1573651"
+  },
+  "boundingbox": [
+   "0.5391063",
+   "1.2301489",
+   "101.3159233",
+   "102.1704161"
+  ]
+ }
+]

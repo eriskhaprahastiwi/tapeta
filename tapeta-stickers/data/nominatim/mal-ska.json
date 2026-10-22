@@ -1,0 +1,37 @@
+[
+ {
+  "place_id": 255797170,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 4556990710,
+  "lat": "0.4616788",
+  "lon": "101.3623820",
+  "category": "amenity",
+  "type": "atm",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "ATM Bank Pertama Mal Ska",
+  "display_name": "ATM Bank Pertama Mal Ska, Jalan Lintas Pekanbaru - Bangkinang, Tuah Madani, Pekanbaru, Tuah Madani, Riau, 23567, Indonesia",
+  "address": {
+   "amenity": "ATM Bank Pertama Mal Ska",
+   "road": "Jalan Lintas Pekanbaru - Bangkinang",
+   "suburb": "Tuah Madani",
+   "city_district": "Tuah Madani",
+   "city": "Pekanbaru",
+   "district": "Tuah Madani",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "23567",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.4616288",
+   "0.4617288",
+   "101.3623320",
+   "101.3624320"
+  ]
+ }
+]

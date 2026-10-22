@@ -1,0 +1,41 @@
+[
+ {
+  "place_id": 254094757,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 318103012,
+  "lat": "0.5155391",
+  "lon": "101.4464761",
+  "category": "amenity",
+  "type": "library",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "Pustaka Daerah Soeman Hs.",
+  "display_name": "Pustaka Daerah Soeman Hs., Jalan Jenderal Sudirman, Pasar Loket, Jadirejo, Pekanbaru, Sukajadi, Riau, 28126, Indonesia",
+  "address": {
+   "amenity": "Pustaka Daerah Soeman Hs.",
+   "road": "Jalan Jenderal Sudirman",
+   "quarter": "Pasar Loket",
+   "suburb": "Jadirejo",
+   "city": "Pekanbaru",
+   "district": "Sukajadi",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28126",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "building": "yes",
+   "operator": "Pemprop Riau",
+   "building:levels": "6"
+  },
+  "boundingbox": [
+   "0.5153347",
+   "0.5157436",
+   "101.4458600",
+   "101.4470922"
+  ]
+ }
+]

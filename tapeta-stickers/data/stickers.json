@@ -1,0 +1,242 @@
+[
+  {
+    "file": "asia-heritage.png",
+    "label": "Asia Heritage",
+    "row": 0,
+    "col": 0,
+    "w": 215,
+    "h": 168
+  },
+  {
+    "file": "asia-farm-pekanbaru.png",
+    "label": "Asia Farm Pekanbaru",
+    "row": 0,
+    "col": 1,
+    "w": 222,
+    "h": 172
+  },
+  {
+    "file": "taman-alam-mayang.png",
+    "label": "Taman Alam Mayang",
+    "row": 0,
+    "col": 2,
+    "w": 221,
+    "h": 166
+  },
+  {
+    "file": "danau-bandar-khayangan.png",
+    "label": "Danau Bandar Khayangan",
+    "row": 0,
+    "col": 3,
+    "w": 217,
+    "h": 171
+  },
+  {
+    "file": "taman-wisata-okura.png",
+    "label": "Taman Wisata Okura",
+    "row": 0,
+    "col": 4,
+    "w": 217,
+    "h": 174
+  },
+  {
+    "file": "museum-daerah-riau-sang-nila-utama.png",
+    "label": "Museum Daerah Riau Sang Nila Utama",
+    "row": 1,
+    "col": 0,
+    "w": 219,
+    "h": 173
+  },
+  {
+    "file": "masjid-raya-an-nur.png",
+    "label": "Masjid Raya An-Nur",
+    "row": 1,
+    "col": 1,
+    "w": 224,
+    "h": 181
+  },
+  {
+    "file": "perpustakaan-soeman-hs.png",
+    "label": "Perpustakaan Soeman H.S.",
+    "row": 1,
+    "col": 2,
+    "w": 219,
+    "h": 168
+  },
+  {
+    "file": "anjung-seni-idrus-tintin.png",
+    "label": "Anjung Seni Idrus Tintin",
+    "row": 1,
+    "col": 3,
+    "w": 220,
+    "h": 174
+  },
+  {
+    "file": "rumah-singgah-tuan-kadi.png",
+    "label": "Rumah Singgah Tuan Kadi",
+    "row": 1,
+    "col": 4,
+    "w": 220,
+    "h": 181
+  },
+  {
+    "file": "kampung-bandar.png",
+    "label": "Kampung Bandar",
+    "row": 2,
+    "col": 0,
+    "w": 218,
+    "h": 180
+  },
+  {
+    "file": "masjid-senapelan.png",
+    "label": "Masjid Senapelan",
+    "row": 2,
+    "col": 1,
+    "w": 221,
+    "h": 182
+  },
+  {
+    "file": "balai-adat-melayu-riau.png",
+    "label": "Balai Adat Melayu Riau",
+    "row": 2,
+    "col": 2,
+    "w": 221,
+    "h": 192
+  },
+  {
+    "file": "tugu-zapin.png",
+    "label": "Tugu Zapin",
+    "row": 2,
+    "col": 3,
+    "w": 178,
+    "h": 196
+  },
+  {
+    "file": "jembatan-siak-iv.png",
+    "label": "Jembatan Siak IV",
+    "row": 2,
+    "col": 4,
+    "w": 219,
+    "h": 190
+  },
+  {
+    "file": "jembatan-siak-i.png",
+    "label": "Jembatan Siak I",
+    "row": 3,
+    "col": 0,
+    "w": 219,
+    "h": 156
+  },
+  {
+    "file": "pasar-bawah.png",
+    "label": "Pasar Bawah",
+    "row": 3,
+    "col": 1,
+    "w": 222,
+    "h": 176
+  },
+  {
+    "file": "pasar-cik-puan.png",
+    "label": "Pasar Cik Puan",
+    "row": 3,
+    "col": 2,
+    "w": 220,
+    "h": 167
+  },
+  {
+    "file": "kawasan-sungai-siak.png",
+    "label": "Kawasan Sungai Siak",
+    "row": 3,
+    "col": 3,
+    "w": 221,
+    "h": 163
+  },
+  {
+    "file": "kantor-wali-kota-pekanbaru-tenayan-raya.png",
+    "label": "Kantor Wali Kota Pekanbaru Tenayan Raya",
+    "row": 3,
+    "col": 4,
+    "w": 219,
+    "h": 172
+  },
+  {
+    "file": "kebun-binatang-kasang-kulim.png",
+    "label": "Kebun Binatang Kasang Kulim",
+    "row": 4,
+    "col": 0,
+    "w": 220,
+    "h": 186
+  },
+  {
+    "file": "rainbow-hills.png",
+    "label": "Rainbow Hills",
+    "row": 4,
+    "col": 1,
+    "w": 220,
+    "h": 177
+  },
+  {
+    "file": "taman-kaca-mayang.png",
+    "label": "Taman Kaca Mayang",
+    "row": 4,
+    "col": 2,
+    "w": 221,
+    "h": 174
+  },
+  {
+    "file": "taman-labuai.png",
+    "label": "Taman Labuai",
+    "row": 4,
+    "col": 3,
+    "w": 216,
+    "h": 185
+  },
+  {
+    "file": "living-world-pekanbaru.png",
+    "label": "Living World Pekanbaru",
+    "row": 4,
+    "col": 4,
+    "w": 219,
+    "h": 163
+  },
+  {
+    "file": "mal-ska.png",
+    "label": "Mal SKA",
+    "row": 5,
+    "col": 0,
+    "w": 221,
+    "h": 178
+  },
+  {
+    "file": "mall-pekanbaru.png",
+    "label": "Mall Pekanbaru",
+    "row": 5,
+    "col": 1,
+    "w": 217,
+    "h": 180
+  },
+  {
+    "file": "transmart-pekanbaru.png",
+    "label": "Transmart Pekanbaru",
+    "row": 5,
+    "col": 2,
+    "w": 225,
+    "h": 166
+  },
+  {
+    "file": "ciputra-seraya-mall.png",
+    "label": "Ciputra Seraya Mall",
+    "row": 5,
+    "col": 3,
+    "w": 215,
+    "h": 176
+  },
+  {
+    "file": "plaza-senapan.png",
+    "label": "Plaza Senapan",
+    "row": 5,
+    "col": 4,
+    "w": 218,
+    "h": 171
+  }
+]

@@ -1,0 +1,73 @@
+[
+ {
+  "place_id": 256958887,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 4774207779,
+  "lat": "0.4272263",
+  "lon": "101.3801087",
+  "category": "shop",
+  "type": "supermarket",
+  "place_rank": 30,
+  "importance": 3.750133516437045e-05,
+  "addresstype": "shop",
+  "name": "Transmart",
+  "display_name": "Transmart, 08, Jalan Mahkota Riau, PERUMAHAN MAHKOTA RIAU, Pekanbaru, Tambang, Kampar, Riau, 23567, Indonesia",
+  "address": {
+   "shop": "Transmart",
+   "house_number": "08",
+   "road": "Jalan Mahkota Riau",
+   "residential": "PERUMAHAN MAHKOTA RIAU",
+   "city": "Pekanbaru",
+   "municipality": "Tambang",
+   "county": "Kampar",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "23567",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.4271763",
+   "0.4272763",
+   "101.3800587",
+   "101.3801587"
+  ]
+ },
+ {
+  "place_id": 256035173,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 4910168390,
+  "lat": "0.5032107",
+  "lon": "101.4199776",
+  "category": "shop",
+  "type": "mall",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "shop",
+  "name": "Transmart Carrefour Pekanbaru",
+  "display_name": "Transmart Carrefour Pekanbaru, Jalan Soekarno Hatta, Labuh Baru Timur, Payung Sekaki, Pekanbaru, Payung Sekaki, Riau, 28289, Indonesia",
+  "address": {
+   "shop": "Transmart Carrefour Pekanbaru",
+   "road": "Jalan Soekarno Hatta",
+   "suburb": "Labuh Baru Timur",
+   "city_district": "Payung Sekaki",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28289",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.5031607",
+   "0.5032607",
+   "101.4199276",
+   "101.4200276"
+  ]
+ }
+]

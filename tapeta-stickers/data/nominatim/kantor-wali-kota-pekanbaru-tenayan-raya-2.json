@@ -1,0 +1,44 @@
+[
+ {
+  "place_id": 255636436,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1384091797,
+  "lat": "0.5171827",
+  "lon": "101.5408592",
+  "category": "office",
+  "type": "government",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "office",
+  "name": "Kantor Wali Kota Pekanbaru",
+  "display_name": "Kantor Wali Kota Pekanbaru, Rute Ular, Tuah Negeri, Pekanbaru, Tenayan Raya, Riau, Indonesia",
+  "address": {
+   "office": "Kantor Wali Kota Pekanbaru",
+   "road": "Rute Ular",
+   "suburb": "Tuah Negeri",
+   "city": "Pekanbaru",
+   "district": "Tenayan Raya",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "amenity": "townhall",
+   "building": "office",
+   "operator": "Pemerintah Kota Pekanbaru",
+   "government": "administrative",
+   "wheelchair": "yes",
+   "building:levels": "7",
+   "internet_access": "wlan",
+   "air_conditioning": "yes"
+  },
+  "boundingbox": [
+   "0.5168166",
+   "0.5176075",
+   "101.5405579",
+   "101.5412069"
+  ]
+ }
+]

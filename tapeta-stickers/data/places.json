@@ -1,0 +1,734 @@
+{
+ "projection": {
+  "origin": {
+   "lat": 0.5,
+   "lon": 101.4204
+  },
+  "xPerDegLon": 3569,
+  "yPerDegLat": 3641,
+  "xAtOrigin": 344,
+  "yAtOrigin": 543
+ },
+ "places": [
+  {
+   "slug": "asia-heritage",
+   "name": "Asia Heritage",
+   "category": "rekreasi",
+   "area": "Rumbai",
+   "lat": 0.6099672,
+   "lon": 101.433003,
+   "osm": [
+    "way",
+    547464400
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 14,
+    "x": 328.0,
+    "y": 97.0,
+    "width": 120,
+    "height": 94,
+    "anchor": [
+     389,
+     143
+    ]
+   }
+  },
+  {
+   "slug": "asia-farm-pekanbaru",
+   "name": "Asia Farm Pekanbaru",
+   "category": "rekreasi",
+   "area": "Tenayan Raya",
+   "lat": 0.5095272,
+   "lon": 101.5098366,
+   "osm": [
+    "way",
+    1375439988
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 16,
+    "x": 630.0,
+    "y": 456.0,
+    "width": 87,
+    "height": 69,
+    "anchor": [
+     663,
+     508
+    ]
+   }
+  },
+  {
+   "slug": "taman-alam-mayang",
+   "name": "Taman Alam Mayang",
+   "category": "rekreasi",
+   "area": "Tenayan Raya",
+   "lat": 0.49309,
+   "lon": 101.4999,
+   "osm": [
+    "way",
+    242815283
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 17,
+    "x": 566.0,
+    "y": 526.0,
+    "width": 124,
+    "height": 94,
+    "anchor": [
+     628,
+     568
+    ]
+   }
+  },
+  {
+   "slug": "danau-bandar-khayangan",
+   "name": "Danau Bandar Khayangan",
+   "category": "alam",
+   "area": "Rumbai Timur",
+   "lat": 0.5903486,
+   "lon": 101.4768325,
+   "osm": [
+    "way",
+    38796214
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 10,
+    "x": 485.5,
+    "y": 119.0,
+    "width": 119,
+    "height": 94,
+    "anchor": [
+     545,
+     214
+    ]
+   }
+  },
+  {
+   "slug": "taman-wisata-okura",
+   "name": "Taman Wisata Okura",
+   "category": "alam",
+   "area": "Rumbai Timur",
+   "lat": 0.57778,
+   "lon": 101.53206,
+   "osm": [
+    "way",
+    1375439987
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 12,
+    "x": 684.5,
+    "y": 212.5,
+    "width": 117,
+    "height": 95,
+    "anchor": [
+     743,
+     260
+    ]
+   }
+  },
+  {
+   "slug": "museum-daerah-riau-sang-nila-utama",
+   "name": "Museum Daerah Riau Sang Nila Utama",
+   "category": "budaya",
+   "area": "Marpoyan Damai",
+   "lat": 0.4942367,
+   "lon": 101.4543119,
+   "osm": [
+    "way",
+    1082088975
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 8,
+    "x": 474.0,
+    "y": 599.0,
+    "width": 86,
+    "height": 69,
+    "anchor": [
+     465,
+     564
+    ]
+   }
+  },
+  {
+   "slug": "masjid-raya-an-nur",
+   "name": "Masjid Raya An-Nur",
+   "category": "budaya",
+   "area": "Pekanbaru Kota",
+   "lat": 0.5265806,
+   "lon": 101.4508072,
+   "osm": [
+    "relation",
+    17228553
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 4,
+    "x": 524.0,
+    "y": 356.0,
+    "width": 84,
+    "height": 69,
+    "anchor": [
+     453,
+     446
+    ]
+   }
+  },
+  {
+   "slug": "perpustakaan-soeman-hs",
+   "name": "Perpustakaan Soeman H.S.",
+   "category": "budaya",
+   "area": "Sukajadi",
+   "lat": 0.51554,
+   "lon": 101.44648,
+   "osm": [
+    "way",
+    318103012
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 6,
+    "x": 445.0,
+    "y": 384.0,
+    "width": 87,
+    "height": 67,
+    "anchor": [
+     437,
+     486
+    ]
+   }
+  },
+  {
+   "slug": "anjung-seni-idrus-tintin",
+   "name": "Anjung Seni Idrus Tintin",
+   "category": "budaya",
+   "area": "Bukit Raya",
+   "lat": 0.4779159,
+   "lon": 101.4558379,
+   "osm": [
+    "way",
+    290157956
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 9,
+    "x": 462.0,
+    "y": 678.0,
+    "width": 84,
+    "height": 67,
+    "anchor": [
+     470,
+     623
+    ]
+   }
+  },
+  {
+   "slug": "rumah-singgah-tuan-kadi",
+   "name": "Rumah Singgah Tuan Kadi",
+   "category": "budaya",
+   "area": "Senapelan",
+   "lat": 0.5404543,
+   "lon": 101.4397448,
+   "osm": [
+    "node",
+    6960082548
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 1,
+    "x": 322.0,
+    "y": 279.0,
+    "width": 82,
+    "height": 69,
+    "anchor": [
+     413,
+     396
+    ]
+   }
+  },
+  {
+   "slug": "kampung-bandar",
+   "name": "Kampung Bandar",
+   "category": "budaya",
+   "area": "Senapelan",
+   "lat": 0.53822,
+   "lon": 101.4390796,
+   "osm": [
+    "relation",
+    18724760
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 2,
+    "x": 293.0,
+    "y": 437.0,
+    "width": 82,
+    "height": 68,
+    "anchor": [
+     411,
+     404
+    ]
+   }
+  },
+  {
+   "slug": "masjid-senapelan",
+   "name": "Masjid Senapelan",
+   "category": "budaya",
+   "area": "Senapelan",
+   "lat": 0.5379112,
+   "lon": 101.4421423,
+   "osm": [
+    "way",
+    1293729477
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 3,
+    "x": 400.0,
+    "y": 253.0,
+    "width": 81,
+    "height": 67,
+    "anchor": [
+     422,
+     405
+    ]
+   }
+  },
+  {
+   "slug": "balai-adat-melayu-riau",
+   "name": "Balai Adat Melayu Riau",
+   "category": "budaya",
+   "area": "Sail",
+   "lat": 0.5149616,
+   "lon": 101.4529878,
+   "osm": [
+    "way",
+    1294872408
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 7,
+    "x": 496.0,
+    "y": 516.0,
+    "width": 78,
+    "height": 69,
+    "anchor": [
+     460,
+     489
+    ]
+   }
+  },
+  {
+   "slug": "tugu-zapin",
+   "name": "Tugu Zapin",
+   "category": "budaya",
+   "area": "Pekanbaru Kota",
+   "lat": 0.5176644,
+   "lon": 101.4474419,
+   "osm": [
+    "node",
+    3221127383
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 5,
+    "x": 348.0,
+    "y": 573.0,
+    "width": 62,
+    "height": 68,
+    "anchor": [
+     441,
+     479
+    ]
+   }
+  },
+  {
+   "slug": "jembatan-siak-iv",
+   "name": "Jembatan Siak IV",
+   "category": "lainnya",
+   "area": "Senapelan",
+   "lat": 0.5395082,
+   "lon": 101.4476633,
+   "osm": [
+    "way",
+    313965178
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 23,
+    "x": 509.0,
+    "y": 439.0,
+    "width": 78,
+    "height": 69,
+    "anchor": [
+     441,
+     399
+    ]
+   }
+  },
+  {
+   "slug": "jembatan-siak-i",
+   "name": "Jembatan Siak I",
+   "category": "lainnya",
+   "area": "Rumbai",
+   "lat": 0.5409695,
+   "lon": 101.4371176,
+   "osm": [
+    "way",
+    71286129
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 22,
+    "x": 241.0,
+    "y": 304.0,
+    "width": 95,
+    "height": 68,
+    "anchor": [
+     404,
+     394
+    ]
+   }
+  },
+  {
+   "slug": "pasar-bawah",
+   "name": "Pasar Bawah",
+   "category": "kuliner",
+   "area": "Senapelan",
+   "lat": 0.5379176,
+   "lon": 101.443692,
+   "osm": [
+    "way",
+    1253091010
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 20,
+    "x": 462.0,
+    "y": 305.0,
+    "width": 84,
+    "height": 67,
+    "anchor": [
+     427,
+     405
+    ]
+   }
+  },
+  {
+   "slug": "pasar-cik-puan",
+   "name": "Pasar Cik Puan",
+   "category": "kuliner",
+   "area": "Sukajadi",
+   "lat": 0.50908,
+   "lon": 101.44419,
+   "osm": [
+    "node",
+    4561298922
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 21,
+    "x": 413.0,
+    "y": 546.0,
+    "width": 88,
+    "height": 68,
+    "anchor": [
+     429,
+     510
+    ]
+   }
+  },
+  {
+   "slug": "kawasan-sungai-siak",
+   "name": "Kawasan Sungai Siak",
+   "category": "alam",
+   "area": "Senapelan",
+   "lat": 0.5385,
+   "lon": 101.444,
+   "osm": [
+    "relation",
+    6880755
+   ],
+   "precision": "approximate",
+   "atlas": {
+    "number": 13,
+    "x": 228.0,
+    "y": 384.0,
+    "width": 91,
+    "height": 68,
+    "anchor": [
+     428,
+     403
+    ]
+   }
+  },
+  {
+   "slug": "kantor-wali-kota-pekanbaru-tenayan-raya",
+   "name": "Kantor Wali Kota Pekanbaru Tenayan Raya",
+   "category": "lainnya",
+   "area": "Tenayan Raya",
+   "lat": 0.51718,
+   "lon": 101.54086,
+   "osm": [
+    "way",
+    1384091797
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 27,
+    "x": 714.0,
+    "y": 434.0,
+    "width": 119,
+    "height": 95,
+    "anchor": [
+     774,
+     480
+    ]
+   }
+  },
+  {
+   "slug": "kebun-binatang-kasang-kulim",
+   "name": "Kebun Binatang Kasang Kulim",
+   "category": "rekreasi",
+   "area": "Kampar",
+   "lat": 0.42079,
+   "lon": 101.40695,
+   "osm": [
+    "way",
+    1426142973
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 19,
+    "x": 242.0,
+    "y": 724.0,
+    "width": 112,
+    "height": 96,
+    "anchor": [
+     296,
+     831
+    ]
+   }
+  },
+  {
+   "slug": "rainbow-hills",
+   "name": "Rainbow Hills",
+   "category": "alam",
+   "area": "Rumbai",
+   "lat": 0.5858,
+   "lon": 101.4725,
+   "osm": [
+    "way",
+    188417184
+   ],
+   "precision": "approximate",
+   "atlas": {
+    "number": 11,
+    "x": 481.5,
+    "y": 214.0,
+    "width": 117,
+    "height": 96,
+    "anchor": [
+     530,
+     231
+    ]
+   }
+  },
+  {
+   "slug": "taman-kaca-mayang",
+   "name": "Taman Kaca Mayang",
+   "category": "rekreasi",
+   "area": "Pekanbaru Kota",
+   "lat": 0.5135209,
+   "lon": 101.4482316,
+   "osm": [
+    "node",
+    6504119709
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 15,
+    "x": 368.0,
+    "y": 409.0,
+    "width": 86,
+    "height": 69,
+    "anchor": [
+     443,
+     494
+    ]
+   }
+  },
+  {
+   "slug": "taman-labuai",
+   "name": "Taman Labuai",
+   "category": "rekreasi",
+   "area": "Bukit Raya",
+   "lat": 0.48016,
+   "lon": 101.45564,
+   "osm": [
+    "way",
+    305830186
+   ],
+   "precision": "approximate",
+   "atlas": {
+    "number": 18,
+    "x": 401.0,
+    "y": 626.0,
+    "width": 79,
+    "height": 68,
+    "anchor": [
+     470,
+     615
+    ]
+   }
+  },
+  {
+   "slug": "living-world-pekanbaru",
+   "name": "Living World Pekanbaru",
+   "category": "lainnya",
+   "area": "Binawidya",
+   "lat": 0.4999893,
+   "lon": 101.4203745,
+   "osm": [
+    "way",
+    327710042
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 29,
+    "x": 350.0,
+    "y": 492.0,
+    "width": 90,
+    "height": 68,
+    "anchor": [
+     344,
+     543
+    ]
+   }
+  },
+  {
+   "slug": "mal-ska",
+   "name": "Mal SKA",
+   "category": "lainnya",
+   "area": "Binawidya",
+   "lat": 0.49959,
+   "lon": 101.4181,
+   "osm": [
+    "way",
+    280698814
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 30,
+    "x": 277.0,
+    "y": 517.0,
+    "width": 84,
+    "height": 69,
+    "anchor": [
+     336,
+     544
+    ]
+   }
+  },
+  {
+   "slug": "mall-pekanbaru",
+   "name": "Mall Pekanbaru",
+   "category": "lainnya",
+   "area": "Pekanbaru Kota",
+   "lat": 0.5317476,
+   "lon": 101.4482064,
+   "osm": [
+    "way",
+    465740381
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 26,
+    "x": 386.0,
+    "y": 329.0,
+    "width": 82,
+    "height": 69,
+    "anchor": [
+     443,
+     427
+    ]
+   }
+  },
+  {
+   "slug": "transmart-pekanbaru",
+   "name": "Transmart Pekanbaru",
+   "category": "lainnya",
+   "area": "Payung Sekaki",
+   "lat": 0.50321,
+   "lon": 101.41998,
+   "osm": [
+    "node",
+    4910168390
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 28,
+    "x": 212.0,
+    "y": 464.0,
+    "width": 91,
+    "height": 68,
+    "anchor": [
+     343,
+     531
+    ]
+   }
+  },
+  {
+   "slug": "ciputra-seraya-mall",
+   "name": "Ciputra Seraya Mall",
+   "category": "lainnya",
+   "area": "Senapelan",
+   "lat": 0.5358352,
+   "lon": 101.4303462,
+   "osm": [
+    "way",
+    327709577
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 24,
+    "x": 309.0,
+    "y": 358.0,
+    "width": 82,
+    "height": 67,
+    "anchor": [
+     379,
+     413
+    ]
+   }
+  },
+  {
+   "slug": "plaza-senapan",
+   "name": "Plaza Senapelan",
+   "category": "lainnya",
+   "area": "Lima Puluh",
+   "lat": 0.53269,
+   "lon": 101.44811,
+   "osm": [
+    "relation",
+    6878708
+   ],
+   "precision": "exact",
+   "atlas": {
+    "number": 25,
+    "x": 429.0,
+    "y": 466.0,
+    "width": 85,
+    "height": 67,
+    "anchor": [
+     443,
+     424
+    ]
+   }
+  }
+ ]
+}

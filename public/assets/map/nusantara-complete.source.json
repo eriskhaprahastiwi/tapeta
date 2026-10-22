@@ -1,0 +1,14 @@
+{
+  "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson",
+  "retrievedAt": "2026-10-22T00:18:24.148Z",
+  "license": "Natural Earth public domain",
+  "scale": "1:50m",
+  "includes": [
+    "IDN",
+    "PNG",
+    "MYS",
+    "BRN",
+    "TLS"
+  ],
+  "note": "Whole-island editorial composition. Not a navigation map; original watercolor retained."
+}

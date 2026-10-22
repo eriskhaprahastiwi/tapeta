@@ -1,0 +1,284 @@
+[
+ {
+  "place_id": 256019367,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "relation",
+  "osm_id": 8269822,
+  "lat": "0.6143458",
+  "lon": "101.5410251",
+  "category": "boundary",
+  "type": "administrative",
+  "place_rank": 16,
+  "importance": 0.1507975276546128,
+  "addresstype": "suburb",
+  "name": "Tebing Tinggi Okura",
+  "display_name": "Tebing Tinggi Okura, Pekanbaru, Rumbai Timur, Riau, Indonesia",
+  "address": {
+   "suburb": "Tebing Tinggi Okura",
+   "city": "Pekanbaru",
+   "district": "Rumbai Timur",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "wikidata": "Q12520243",
+   "ref:ID:BPS": "BPS, prov=14, kota=71, kec=081, kel=006, kode2010=1471081006",
+   "linked_place": "suburb",
+   "admin_level": "7"
+  },
+  "boundingbox": [
+   "0.5599603",
+   "0.6403725",
+   "101.4807343",
+   "101.5925489"
+  ]
+ },
+ {
+  "place_id": 255268810,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1375439987,
+  "lat": "0.5777780",
+  "lon": "101.5320647",
+  "category": "leisure",
+  "type": "garden",
+  "place_rank": 25,
+  "importance": 0.06672249713893338,
+  "addresstype": "garden",
+  "name": "Taman Bunga Impian Okura",
+  "display_name": "Taman Bunga Impian Okura, Rasau Sati, Tebing Tinggi Okura, Pekanbaru, Rumbai Timur, Riau, Indonesia",
+  "address": {
+   "garden": "Taman Bunga Impian Okura",
+   "quarter": "Rasau Sati",
+   "suburb": "Tebing Tinggi Okura",
+   "city": "Pekanbaru",
+   "district": "Rumbai Timur",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "tourism": "picnic_site"
+  },
+  "boundingbox": [
+   "0.5768102",
+   "0.5787787",
+   "101.5309266",
+   "101.5331206"
+  ]
+ },
+ {
+  "place_id": 255652726,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 314058312,
+  "lat": "0.5765346",
+  "lon": "101.5338695",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jalan Okura",
+  "display_name": "Jalan Okura, Setukul, Tebing Tinggi Okura, Pekanbaru, Rumbai Timur, Riau, Indonesia",
+  "address": {
+   "road": "Jalan Okura",
+   "quarter": "Setukul",
+   "suburb": "Tebing Tinggi Okura",
+   "city": "Pekanbaru",
+   "district": "Rumbai Timur",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "access": "yes",
+   "surface": "asphalt"
+  },
+  "boundingbox": [
+   "0.5708464",
+   "0.5923675",
+   "101.5301685",
+   "101.5478754"
+  ]
+ },
+ {
+  "place_id": 255271631,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 913511700,
+  "lat": "0.5886688",
+  "lon": "101.4899468",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jalan Raja Panjang Okura",
+  "display_name": "Jalan Raja Panjang Okura, Tebing Tinggi Okura, Pekanbaru, Rumbai Timur, Riau, 26286, Indonesia",
+  "address": {
+   "road": "Jalan Raja Panjang Okura",
+   "suburb": "Tebing Tinggi Okura",
+   "city": "Pekanbaru",
+   "district": "Rumbai Timur",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "26286",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "surface": "asphalt"
+  },
+  "boundingbox": [
+   "0.5845264",
+   "0.5919959",
+   "101.4889553",
+   "101.4926320"
+  ]
+ },
+ {
+  "place_id": 255908015,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 314058313,
+  "lat": "0.5920688",
+  "lon": "101.5207642",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jalan Raja Panjang Okura",
+  "display_name": "Jalan Raja Panjang Okura, Setukul, Tebing Tinggi Okura, Pekanbaru, Rumbai Timur, Riau, Indonesia",
+  "address": {
+   "road": "Jalan Raja Panjang Okura",
+   "quarter": "Setukul",
+   "suburb": "Tebing Tinggi Okura",
+   "city": "Pekanbaru",
+   "district": "Rumbai Timur",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "access": "yes",
+   "surface": "asphalt"
+  },
+  "boundingbox": [
+   "0.5919104",
+   "0.5923675",
+   "101.5113563",
+   "101.5301685"
+  ]
+ },
+ {
+  "place_id": 256067326,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 251872870,
+  "lat": "0.5793063",
+  "lon": "101.4823768",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jalan Raja Panjang Okura",
+  "display_name": "Jalan Raja Panjang Okura, Lembah Sari, Pekanbaru, Rumbai Timur, Riau, 26286, Indonesia",
+  "address": {
+   "road": "Jalan Raja Panjang Okura",
+   "suburb": "Lembah Sari",
+   "city": "Pekanbaru",
+   "district": "Rumbai Timur",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "26286",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "surface": "asphalt"
+  },
+  "boundingbox": [
+   "0.5784191",
+   "0.5800163",
+   "101.4816165",
+   "101.4833516"
+  ]
+ },
+ {
+  "place_id": 252742966,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 819724183,
+  "lat": "0.5747860",
+  "lon": "101.5480588",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jalan Okura",
+  "display_name": "Jalan Okura, Rasau Sati, Tebing Tinggi Okura, Pekanbaru, Rumbai Timur, Riau, Indonesia",
+  "address": {
+   "road": "Jalan Okura",
+   "quarter": "Rasau Sati",
+   "suburb": "Tebing Tinggi Okura",
+   "city": "Pekanbaru",
+   "district": "Rumbai Timur",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "layer": "1",
+   "bridge": "yes",
+   "surface": "dirt"
+  },
+  "boundingbox": [
+   "0.5746228",
+   "0.5749493",
+   "101.5478754",
+   "101.5482422"
+  ]
+ },
+ {
+  "place_id": 252789996,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 528920447,
+  "lat": "0.6767544",
+  "lon": "101.5228110",
+  "category": "highway",
+  "type": "unclassified",
+  "place_rank": 26,
+  "importance": 0.053383334859235486,
+  "addresstype": "unclassified",
+  "name": "Jalan Okura Geringging",
+  "display_name": "Jalan Okura Geringging, Sungai Ukai, Pekanbaru, Rumbai Timur, Riau, Indonesia",
+  "address": {
+   "road": "Jalan Okura Geringging",
+   "suburb": "Sungai Ukai",
+   "city": "Pekanbaru",
+   "district": "Rumbai Timur",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.6744098",
+   "0.6828630",
+   "101.5088154",
+   "101.5397895"
+  ]
+ }
+]

@@ -1,0 +1,37 @@
+[
+ {
+  "place_id": 254135575,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 4781223486,
+  "lat": "0.4744738",
+  "lon": "101.4544070",
+  "category": "amenity",
+  "type": "restaurant",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "Cik Puan Oleh Oleh Khas Riau",
+  "display_name": "Cik Puan Oleh Oleh Khas Riau, Jalan Jenderal Sudirman, Simpang Tiga, Bukit Raya, Pekanbaru, Marpoyan Damai, Riau, 27000, Indonesia",
+  "address": {
+   "amenity": "Cik Puan Oleh Oleh Khas Riau",
+   "road": "Jalan Jenderal Sudirman",
+   "suburb": "Simpang Tiga",
+   "city_district": "Bukit Raya",
+   "city": "Pekanbaru",
+   "district": "Marpoyan Damai",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "27000",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.4744238",
+   "0.4745238",
+   "101.4543570",
+   "101.4544570"
+  ]
+ }
+]

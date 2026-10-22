@@ -1,0 +1,39 @@
+[
+ {
+  "place_id": 255837544,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 290157956,
+  "lat": "0.4779159",
+  "lon": "101.4558379",
+  "category": "amenity",
+  "type": "arts_centre",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "Gedung Anjung Seni Idrus Tintin",
+  "display_name": "Gedung Anjung Seni Idrus Tintin, Jalan Datuk Wan Abdul Jamal, Simpang Tiga, Bukit Raya, Pekanbaru, Marpoyan Damai, Riau, 27000, Indonesia",
+  "address": {
+   "amenity": "Gedung Anjung Seni Idrus Tintin",
+   "road": "Jalan Datuk Wan Abdul Jamal",
+   "suburb": "Simpang Tiga",
+   "city_district": "Bukit Raya",
+   "city": "Pekanbaru",
+   "district": "Marpoyan Damai",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "27000",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "building": "yes"
+  },
+  "boundingbox": [
+   "0.4777222",
+   "0.4781129",
+   "101.4554622",
+   "101.4562136"
+  ]
+ }
+]

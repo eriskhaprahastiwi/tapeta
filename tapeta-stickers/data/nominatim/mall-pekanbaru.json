@@ -1,0 +1,73 @@
+[
+ {
+  "place_id": 255633447,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 465740381,
+  "lat": "0.5317476",
+  "lon": "101.4482064",
+  "category": "shop",
+  "type": "mall",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "shop",
+  "name": "Mall Pekanbaru",
+  "display_name": "Mall Pekanbaru, Jalan Jenderal Sudirman, Kota Tinggi, Pekanbaru, Pekanbaru Kota, Riau, 28144, Indonesia",
+  "address": {
+   "shop": "Mall Pekanbaru",
+   "road": "Jalan Jenderal Sudirman",
+   "suburb": "Kota Tinggi",
+   "city": "Pekanbaru",
+   "district": "Pekanbaru Kota",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28144",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "building": "supermarket",
+   "building:levels": "5"
+  },
+  "boundingbox": [
+   "0.5314763",
+   "0.5320406",
+   "101.4478355",
+   "101.4485773"
+  ]
+ },
+ {
+  "place_id": 255669529,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 3732508980,
+  "lat": "0.5316257",
+  "lon": "101.4483058",
+  "category": "shop",
+  "type": "clothes",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "shop",
+  "name": "Muslim Center",
+  "display_name": "Muslim Center, Jalan Pasar Mambo, Kota Tinggi, Pekanbaru, Pekanbaru Kota, Riau, 28144, Indonesia",
+  "address": {
+   "shop": "Muslim Center",
+   "road": "Jalan Pasar Mambo",
+   "suburb": "Kota Tinggi",
+   "city": "Pekanbaru",
+   "district": "Pekanbaru Kota",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28144",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.5315757",
+   "0.5316757",
+   "101.4482558",
+   "101.4483558"
+  ]
+ }
+]

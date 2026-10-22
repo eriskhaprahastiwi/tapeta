@@ -1,0 +1,20 @@
+.t-community .t-board { color: var(--t-paper); padding: 24px; line-height: 1.6; }
+.t-community .t-board h2 { color: var(--t-paper); margin-top: 0; font-size: 22px; }
+.t-community .t-board ol { padding-left: 20px; }
+.t-community .t-board li + li { margin-top: 12px; }
+.t-community .t-btn { min-height: 44px; padding: 12px 20px; border-radius: 10px; }
+.t-contrib__field { min-width: 0; flex: 1; }
+.t-contrib__field input { width: 100%; min-width: 0; min-height: 44px; padding: 8px; border: 1px solid var(--t-stone); border-radius: 8px; background: var(--t-raised); color: var(--t-ink); font: inherit; }
+.t-kota__search { color: var(--t-paper); cursor: pointer; min-height: 44px; text-align: left; }
+.t-kota__ptitle { background: transparent; color: var(--t-paper); font-weight: 700; }
+.t-kota__map { min-width: 0; background: var(--t-paper); }
+.map-legend summary { cursor: pointer; min-height: 28px; line-height: 28px; }
+.map-legend:not([open]) { padding-block: 4px; }
+@media (max-width: 860px) {
+  .t-kota { flex-direction: column; overflow: auto; }
+  .t-kota__panel { width: 100%; flex: 0 0 auto; }
+  .t-kota__map { width: 100%; min-height: 420px; flex: 0 0 420px; }
+  .map-legend summary { min-height: 44px; line-height: 44px; }
+  .t-community .t-doc__grid { display: flex; flex-direction: column; gap: 24px; }
+  .t-community .t-board { width: 100%; }
+}

@@ -1,0 +1,196 @@
+[
+ {
+  "place_id": 254096261,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 778234449,
+  "lat": "0.5053939",
+  "lon": "101.4343965",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jalan Tuanku Tambusai",
+  "display_name": "Jalan Tuanku Tambusai, RT. 04, Kampung Melayu, Payung Sekaki, Pekanbaru, Sukajadi, Riau, 28123, Indonesia",
+  "address": {
+   "road": "Jalan Tuanku Tambusai",
+   "residential": "RT. 04",
+   "suburb": "Kampung Melayu",
+   "city_district": "Payung Sekaki",
+   "city": "Pekanbaru",
+   "district": "Sukajadi",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28123",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "lanes": "3",
+   "oneway": "yes",
+   "name:etymology:wikidata": "Q7850644",
+   "name:etymology:wikipedia": "id:Tuanku Tambusai"
+  },
+  "boundingbox": [
+   "0.5007930",
+   "0.5104246",
+   "101.4195114",
+   "101.4491461"
+  ]
+ },
+ {
+  "place_id": 254570532,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 906005111,
+  "lat": "0.5041248",
+  "lon": "101.4307557",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jalan Tuanku Tambusai",
+  "display_name": "Jalan Tuanku Tambusai, Tangkerang Barat, Pekanbaru, Marpoyan Damai, Riau, 28123, Indonesia",
+  "address": {
+   "road": "Jalan Tuanku Tambusai",
+   "suburb": "Tangkerang Barat",
+   "city": "Pekanbaru",
+   "district": "Marpoyan Damai",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28123",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "lanes": "3",
+   "oneway": "yes",
+   "name:etymology:wikidata": "Q7850644",
+   "name:etymology:wikipedia": "id:Tuanku Tambusai"
+  },
+  "boundingbox": [
+   "0.5006302",
+   "0.5077949",
+   "101.4195119",
+   "101.4419501"
+  ]
+ },
+ {
+  "place_id": 254123212,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 785056308,
+  "lat": "0.4998049",
+  "lon": "101.4120522",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jalan Tuanku Tambusai",
+  "display_name": "Jalan Tuanku Tambusai, Labuh Baru Barat, Payung Sekaki, Pekanbaru, Payung Sekaki, Riau, 28289, Indonesia",
+  "address": {
+   "road": "Jalan Tuanku Tambusai",
+   "suburb": "Labuh Baru Barat",
+   "city_district": "Payung Sekaki",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28289",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "lanes": "3",
+   "oneway": "yes",
+   "name:etymology:wikidata": "Q7850644",
+   "name:etymology:wikipedia": "id:Tuanku Tambusai"
+  },
+  "boundingbox": [
+   "0.4988551",
+   "0.5007255",
+   "101.4049255",
+   "101.4191821"
+  ]
+ },
+ {
+  "place_id": 254109239,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 67256440,
+  "lat": "0.4992381",
+  "lon": "101.3912878",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jalan Tuanku Tambusai",
+  "display_name": "Jalan Tuanku Tambusai, Bandar Raya, Payung Sekaki, Pekanbaru, Payung Sekaki, Riau, 28291, Indonesia",
+  "address": {
+   "road": "Jalan Tuanku Tambusai",
+   "suburb": "Bandar Raya",
+   "city_district": "Payung Sekaki",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28291",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "lanes": "2",
+   "oneway": "yes",
+   "name:etymology:wikidata": "Q7850644",
+   "name:etymology:wikipedia": "id:Tuanku Tambusai"
+  },
+  "boundingbox": [
+   "0.4975866",
+   "0.5009042",
+   "101.3883068",
+   "101.3942769"
+  ]
+ },
+ {
+  "place_id": 254085325,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 778234448,
+  "lat": "0.5090288",
+  "lon": "101.4455782",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jalan Tuanku Tambusai",
+  "display_name": "Jalan Tuanku Tambusai, Wonorejo, Pekanbaru, Marpoyan Damai, Riau, 45678, Indonesia",
+  "address": {
+   "road": "Jalan Tuanku Tambusai",
+   "suburb": "Wonorejo",
+   "city": "Pekanbaru",
+   "district": "Marpoyan Damai",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "45678",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "lanes": "3",
+   "oneway": "yes",
+   "name:etymology:wikidata": "Q7850644",
+   "name:etymology:wikipedia": "id:Tuanku Tambusai"
+  },
+  "boundingbox": [
+   "0.5077949",
+   "0.5103194",
+   "101.4419501",
+   "101.4491865"
+  ]
+ }
+]

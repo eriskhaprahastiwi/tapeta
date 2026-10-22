@@ -1,0 +1,88 @@
+[
+ {
+  "place_id": 256686329,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 71286129,
+  "lat": "0.5409695",
+  "lon": "101.4371176",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jembatan Siak I",
+  "display_name": "Jembatan Siak I, Kampung Baru, Rumbai, Pekanbaru, Senapelan, Riau, 28154, Indonesia",
+  "address": {
+   "road": "Jembatan Siak I",
+   "suburb": "Kampung Baru",
+   "district": "Rumbai",
+   "city": "Pekanbaru",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28154",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "bus": "no",
+   "lanes": "2",
+   "layer": "1",
+   "truck": "no",
+   "access": "yes",
+   "bridge": "yes",
+   "oneway": "yes",
+   "surface": "asphalt",
+   "website": "https://www.leightonasia.com/en/Pages/default.aspx",
+   "bridge:structure": "beam"
+  },
+  "boundingbox": [
+   "0.5391840",
+   "0.5427655",
+   "101.4367877",
+   "101.4373818"
+  ]
+ },
+ {
+  "place_id": 256754232,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 827326052,
+  "lat": "0.5391802",
+  "lon": "101.4367873",
+  "category": "highway",
+  "type": "primary",
+  "place_rank": 26,
+  "importance": 0.05338916380560003,
+  "addresstype": "primary",
+  "name": "Jembatan Siak I",
+  "display_name": "Jembatan Siak I, Kampung Baru, Pekanbaru, Senapelan, Riau, 28154, Indonesia",
+  "address": {
+   "road": "Jembatan Siak I",
+   "suburb": "Kampung Baru",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28154",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "bus": "no",
+   "lanes": "2",
+   "truck": "no",
+   "access": "yes",
+   "oneway": "yes",
+   "surface": "asphalt",
+   "website": "https://www.leightonasia.com/en/Pages/default.aspx",
+   "bridge:structure": "beam"
+  },
+  "boundingbox": [
+   "0.5391764",
+   "0.5391840",
+   "101.4367868",
+   "101.4367877"
+  ]
+ }
+]

@@ -1,0 +1,226 @@
+[
+ {
+  "place_id": 254089306,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1293729477,
+  "lat": "0.5379112",
+  "lon": "101.4421423",
+  "category": "amenity",
+  "type": "place_of_worship",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "Masjid Raya Senapelan Kota Pekanbaru",
+  "display_name": "Masjid Raya Senapelan Kota Pekanbaru, Jalan Senapelan, Boom Baru, Kampung Bandar, Pekanbaru, Senapelan, Riau, 28155, Indonesia",
+  "address": {
+   "amenity": "Masjid Raya Senapelan Kota Pekanbaru",
+   "road": "Jalan Senapelan",
+   "quarter": "Boom Baru",
+   "suburb": "Kampung Bandar",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28155",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "layer": "1",
+   "building": "mosque",
+   "religion": "muslim",
+   "denomination": "sunni"
+  },
+  "boundingbox": [
+   "0.5377192",
+   "0.5381057",
+   "101.4419308",
+   "101.4423502"
+  ]
+ },
+ {
+  "place_id": 254095986,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 593807594,
+  "lat": "0.5307345",
+  "lon": "101.4397314",
+  "category": "amenity",
+  "type": "place_of_worship",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "Masjid Al Khasyiin",
+  "display_name": "Masjid Al Khasyiin, Gang Bunga Tangung, Padang Bulan, Pekanbaru, Senapelan, Riau, 28155, Indonesia",
+  "address": {
+   "amenity": "Masjid Al Khasyiin",
+   "road": "Gang Bunga Tangung",
+   "suburb": "Padang Bulan",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28155",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "building": "yes",
+   "religion": "muslim"
+  },
+  "boundingbox": [
+   "0.5306567",
+   "0.5308123",
+   "101.4396214",
+   "101.4398414"
+  ]
+ },
+ {
+  "place_id": 254098913,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 741636759,
+  "lat": "0.5295783",
+  "lon": "101.4413092",
+  "category": "amenity",
+  "type": "place_of_worship",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "Masjid Istiqomah",
+  "display_name": "Masjid Istiqomah, Jalan Teratai, Padang Bulan, Pekanbaru, Senapelan, Riau, 28127, Indonesia",
+  "address": {
+   "amenity": "Masjid Istiqomah",
+   "road": "Jalan Teratai",
+   "suburb": "Padang Bulan",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28127",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "building": "yes",
+   "religion": "muslim",
+   "denomination": "sunni"
+  },
+  "boundingbox": [
+   "0.5295284",
+   "0.5296283",
+   "101.4412168",
+   "101.4414017"
+  ]
+ },
+ {
+  "place_id": 257446338,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1081661502,
+  "lat": "0.5326559",
+  "lon": "101.4438999",
+  "category": "amenity",
+  "type": "place_of_worship",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "Masjid Tafakkur",
+  "display_name": "Masjid Tafakkur, Jalan Bangka, Sago, Pekanbaru, Senapelan, Riau, 28144, Indonesia",
+  "address": {
+   "amenity": "Masjid Tafakkur",
+   "road": "Jalan Bangka",
+   "suburb": "Sago",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28144",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "building": "yes",
+   "religion": "muslim"
+  },
+  "boundingbox": [
+   "0.5325992",
+   "0.5327126",
+   "101.4438506",
+   "101.4439492"
+  ]
+ },
+ {
+  "place_id": 254098205,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 9853180418,
+  "lat": "0.5327002",
+  "lon": "101.4386022",
+  "category": "amenity",
+  "type": "place_of_worship",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "Masjid Al-Azhar Padang Terubuk",
+  "display_name": "Masjid Al-Azhar Padang Terubuk, Jalan Mawar, Padang Terubuk, Pekanbaru, Senapelan, Riau, 28155, Indonesia",
+  "address": {
+   "amenity": "Masjid Al-Azhar Padang Terubuk",
+   "road": "Jalan Mawar",
+   "suburb": "Padang Terubuk",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28155",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "religion": "muslim"
+  },
+  "boundingbox": [
+   "0.5326502",
+   "0.5327502",
+   "101.4385522",
+   "101.4386522"
+  ]
+ },
+ {
+  "place_id": 254095000,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 6041142118,
+  "lat": "0.5388509",
+  "lon": "101.4331966",
+  "category": "amenity",
+  "type": "place_of_worship",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "MASJID AL GHUFRON",
+  "display_name": "MASJID AL GHUFRON, Jalan Singkawang, Kampung Baru, Pekanbaru, Senapelan, Riau, 28154, Indonesia",
+  "address": {
+   "amenity": "MASJID AL GHUFRON",
+   "road": "Jalan Singkawang",
+   "suburb": "Kampung Baru",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28154",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "religion": "muslim"
+  },
+  "boundingbox": [
+   "0.5388009",
+   "0.5389009",
+   "101.4331466",
+   "101.4332466"
+  ]
+ }
+]

@@ -1,0 +1,35 @@
+[
+ {
+  "place_id": 255755111,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 6504119709,
+  "lat": "0.5135209",
+  "lon": "101.4482316",
+  "category": "leisure",
+  "type": "park",
+  "place_rank": 24,
+  "importance": 0.08005583047226669,
+  "addresstype": "park",
+  "name": "TAMAN KACA MAYANG",
+  "display_name": "TAMAN KACA MAYANG, Simpang Empat, Pekanbaru, Pekanbaru Kota, Riau, 28126, Indonesia",
+  "address": {
+   "park": "TAMAN KACA MAYANG",
+   "suburb": "Simpang Empat",
+   "city": "Pekanbaru",
+   "district": "Pekanbaru Kota",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28126",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.5134709",
+   "0.5135709",
+   "101.4481816",
+   "101.4482816"
+  ]
+ }
+]

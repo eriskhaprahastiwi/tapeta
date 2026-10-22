@@ -1,0 +1,39 @@
+[
+ {
+  "place_id": 256676580,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 6960082548,
+  "lat": "0.5404543",
+  "lon": "101.4397448",
+  "category": "historic",
+  "type": "castle",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "historic",
+  "name": "Rumah Singgah Tuan Kadi",
+  "display_name": "Rumah Singgah Tuan Kadi, Jalan Perdagangan, Boom Baru, Kampung Bandar, Pekanbaru, Senapelan, Riau, 28155, Indonesia",
+  "address": {
+   "historic": "Rumah Singgah Tuan Kadi",
+   "road": "Jalan Perdagangan",
+   "quarter": "Boom Baru",
+   "suburb": "Kampung Bandar",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28155",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "start_date": "1928"
+  },
+  "boundingbox": [
+   "0.5404043",
+   "0.5405043",
+   "101.4396948",
+   "101.4397948"
+  ]
+ }
+]

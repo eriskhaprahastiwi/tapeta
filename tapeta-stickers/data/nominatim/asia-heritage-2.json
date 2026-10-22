@@ -1,0 +1,39 @@
+[
+ {
+  "place_id": 254085305,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 547464400,
+  "lat": "0.6099672",
+  "lon": "101.4330030",
+  "category": "tourism",
+  "type": "theme_park",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "tourism",
+  "name": "Asia Heritage",
+  "display_name": "Asia Heritage, Jalan Tol Rengat\u2013Pekanbaru, Muara Fajar Timur, Rumbai Barat, Pekanbaru, Payung Sekaki, Riau, 28271, Indonesia",
+  "address": {
+   "tourism": "Asia Heritage",
+   "road": "Jalan Tol Rengat\u2013Pekanbaru",
+   "suburb": "Muara Fajar Timur",
+   "city_district": "Rumbai Barat",
+   "city": "Pekanbaru",
+   "district": "Payung Sekaki",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28271",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "landuse": "recreation_ground"
+  },
+  "boundingbox": [
+   "0.6075515",
+   "0.6125955",
+   "101.4307921",
+   "101.4357510"
+  ]
+ }
+]

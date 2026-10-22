@@ -1,0 +1,36 @@
+[
+ {
+  "place_id": 254094933,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1294872408,
+  "lat": "0.5149616",
+  "lon": "101.4529878",
+  "category": "amenity",
+  "type": "community_centre",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "amenity",
+  "name": "Balai Adat Melayu Riau",
+  "display_name": "Balai Adat Melayu Riau, Jalan Diponegoro, Suka Mulia, Pekanbaru, Sail, Riau, 28116, Indonesia",
+  "address": {
+   "amenity": "Balai Adat Melayu Riau",
+   "road": "Jalan Diponegoro",
+   "suburb": "Suka Mulia",
+   "city": "Pekanbaru",
+   "district": "Sail",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28116",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.5144904",
+   "0.5151797",
+   "101.4523526",
+   "101.4536214"
+  ]
+ }
+]

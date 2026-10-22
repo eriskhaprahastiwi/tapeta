@@ -1,0 +1,39 @@
+[
+ {
+  "place_id": 256181508,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 327709577,
+  "lat": "0.5358352",
+  "lon": "101.4303462",
+  "category": "shop",
+  "type": "mall",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "shop",
+  "name": "Mal Ciputra Seraya",
+  "display_name": "Mal Ciputra Seraya, Parkir MCS, Kampung Baru, Pekanbaru, Senapelan, Riau, 28772, Indonesia",
+  "address": {
+   "shop": "Mal Ciputra Seraya",
+   "road": "Parkir MCS",
+   "suburb": "Kampung Baru",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28772",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "building": "yes",
+   "wikidata": "Q12496262"
+  },
+  "boundingbox": [
+   "0.5353799",
+   "0.5362663",
+   "101.4299078",
+   "101.4307869"
+  ]
+ }
+]

@@ -1,0 +1,199 @@
+[
+ {
+  "place_id": 255944289,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "relation",
+  "osm_id": 17864497,
+  "lat": "0.6820343",
+  "lon": "101.5349885",
+  "category": "waterway",
+  "type": "river",
+  "place_rank": 18,
+  "importance": 0.16005000152590218,
+  "addresstype": "river",
+  "name": "Sungai Lukut",
+  "display_name": "Sungai Lukut, Pekanbaru, Minas, Rumbai Timur, Riau, Indonesia",
+  "address": {
+   "river": "Sungai Lukut",
+   "city": "Pekanbaru",
+   "municipality": "Minas",
+   "district": "Rumbai Timur",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "destination": "Sungai Siak"
+  },
+  "boundingbox": [
+   "0.6073653",
+   "0.7497812",
+   "101.4630014",
+   "101.5925489"
+  ]
+ },
+ {
+  "place_id": 253924302,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "relation",
+  "osm_id": 17865321,
+  "lat": "0.7024619",
+  "lon": "101.4026129",
+  "category": "waterway",
+  "type": "river",
+  "place_rank": 18,
+  "importance": 0.16005000152590218,
+  "addresstype": "river",
+  "name": "Sungai Takuana Buluh",
+  "display_name": "Sungai Takuana Buluh, Minas, Siak, Riau, Indonesia",
+  "address": {
+   "river": "Sungai Takuana Buluh",
+   "town": "Minas",
+   "municipality": "Minas",
+   "county": "Siak",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.6460447",
+   "0.7500000",
+   "101.3763016",
+   "101.4465682"
+  ]
+ },
+ {
+  "place_id": 252839491,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1303591148,
+  "lat": "0.5625584",
+  "lon": "101.5955022",
+  "category": "waterway",
+  "type": "stream",
+  "place_rank": 22,
+  "importance": 0.10671666819256884,
+  "addresstype": "stream",
+  "name": "Sungai Minyak",
+  "display_name": "Sungai Minyak, Melebung, Pekanbaru, Tualang, Siak, Riau, Indonesia",
+  "address": {
+   "stream": "Sungai Minyak",
+   "suburb": "Melebung",
+   "city": "Pekanbaru",
+   "municipality": "Tualang",
+   "county": "Siak",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.5574717",
+   "0.5675757",
+   "101.5941757",
+   "101.5955612"
+  ]
+ },
+ {
+  "place_id": 256132187,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1303567049,
+  "lat": "0.6387027",
+  "lon": "101.4676345",
+  "category": "waterway",
+  "type": "stream",
+  "place_rank": 22,
+  "importance": 0.10672249713893336,
+  "addresstype": "stream",
+  "name": "Sungai Ukai",
+  "display_name": "Sungai Ukai, Pekanbaru, Minas, Rumbai Timur, Riau, Indonesia",
+  "address": {
+   "stream": "Sungai Ukai",
+   "city": "Pekanbaru",
+   "municipality": "Minas",
+   "district": "Rumbai Timur",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.6379546",
+   "0.6531273",
+   "101.4556182",
+   "101.4848597"
+  ]
+ },
+ {
+  "place_id": 252732216,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1295837185,
+  "lat": "0.6953064",
+  "lon": "101.4624055",
+  "category": "waterway",
+  "type": "stream",
+  "place_rank": 22,
+  "importance": 0.10671666819256884,
+  "addresstype": "stream",
+  "name": "Sungai Ukai",
+  "display_name": "Sungai Ukai, Rumbai Barat, Minas, Siak, Riau, Indonesia",
+  "address": {
+   "stream": "Sungai Ukai",
+   "city_district": "Rumbai Barat",
+   "town": "Minas",
+   "municipality": "Minas",
+   "county": "Siak",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.6526457",
+   "0.7353601",
+   "101.4520702",
+   "101.4755677"
+  ]
+ },
+ {
+  "place_id": 256212542,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 1303591239,
+  "lat": "0.5874963",
+  "lon": "101.5838373",
+  "category": "waterway",
+  "type": "stream",
+  "place_rank": 22,
+  "importance": 0.10671666819256884,
+  "addresstype": "stream",
+  "name": "Sungai Pendanau",
+  "display_name": "Sungai Pendanau, Melebung, Pekanbaru, Tualang, Tenayan Raya, Riau, Indonesia",
+  "address": {
+   "stream": "Sungai Pendanau",
+   "suburb": "Melebung",
+   "city": "Pekanbaru",
+   "municipality": "Tualang",
+   "district": "Tenayan Raya",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.5741704",
+   "0.5971747",
+   "101.5820273",
+   "101.5867543"
+  ]
+ }
+]

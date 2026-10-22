@@ -1,0 +1,38 @@
+[
+ {
+  "place_id": 255956560,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "relation",
+  "osm_id": 18724760,
+  "lat": "0.5382200",
+  "lon": "101.4390796",
+  "category": "boundary",
+  "type": "administrative",
+  "place_rank": 16,
+  "importance": 0.1679799034751623,
+  "addresstype": "suburb",
+  "name": "Kampung Bandar",
+  "display_name": "Kampung Bandar, Pekanbaru, Senapelan, Riau, Indonesia",
+  "address": {
+   "suburb": "Kampung Bandar",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "wikidata": "Q12488918",
+   "ref:ID:BPS": "BPS, prov=14, kota=71, kec=070, kel=005, kode2010=1471070005",
+   "linked_place": "suburb",
+   "admin_level": "7"
+  },
+  "boundingbox": [
+   "0.5352619",
+   "0.5413331",
+   "101.4361908",
+   "101.4429876"
+  ]
+ }
+]

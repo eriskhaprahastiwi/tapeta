@@ -1,0 +1,72 @@
+[
+ {
+  "place_id": 265614449,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 365621164,
+  "lat": "0.5304956",
+  "lon": "101.4423993",
+  "category": "highway",
+  "type": "service",
+  "place_rank": 27,
+  "importance": 0.04005583047226672,
+  "addresstype": "road",
+  "name": "The Cental Plaza",
+  "display_name": "The Cental Plaza, Padang Bulan, Pekanbaru, Senapelan, Riau, 28127, Indonesia",
+  "address": {
+   "road": "The Cental Plaza",
+   "suburb": "Padang Bulan",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28127",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "oneway": "yes",
+   "service": "parking_aisle"
+  },
+  "boundingbox": [
+   "0.5304804",
+   "0.5305043",
+   "101.4421483",
+   "101.4426501"
+  ]
+ },
+ {
+  "place_id": 254095894,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 365620990,
+  "lat": "0.5306993",
+  "lon": "101.4419202",
+  "category": "shop",
+  "type": "supermarket",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "shop",
+  "name": "The Central Plaza",
+  "display_name": "The Central Plaza, Jalan Ahmad Yani, Padang Bulan, Pekanbaru, Senapelan, Riau, 28127, Indonesia",
+  "address": {
+   "shop": "The Central Plaza",
+   "road": "Jalan Ahmad Yani",
+   "suburb": "Padang Bulan",
+   "city": "Pekanbaru",
+   "district": "Senapelan",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28127",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": null,
+  "boundingbox": [
+   "0.5304614",
+   "0.5310080",
+   "101.4415321",
+   "101.4423080"
+  ]
+ }
+]

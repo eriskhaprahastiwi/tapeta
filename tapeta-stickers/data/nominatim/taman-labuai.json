@@ -1,0 +1,75 @@
+[
+ {
+  "place_id": 254136590,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 314093286,
+  "lat": "0.4864740",
+  "lon": "101.4709271",
+  "category": "landuse",
+  "type": "farmland",
+  "place_rank": 24,
+  "importance": 0.08005583047226669,
+  "addresstype": "farmland",
+  "name": "Taman Pancing Ricky",
+  "display_name": "Taman Pancing Ricky, Tangkerang Labuai, Bukit Raya, Pekanbaru, Marpoyan Damai, Riau, Indonesia",
+  "address": {
+   "farmland": "Taman Pancing Ricky",
+   "suburb": "Tangkerang Labuai",
+   "city_district": "Bukit Raya",
+   "city": "Pekanbaru",
+   "district": "Marpoyan Damai",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "crop": "fish"
+  },
+  "boundingbox": [
+   "0.4853797",
+   "0.4875898",
+   "101.4698261",
+   "101.4715588"
+  ]
+ },
+ {
+  "place_id": 255728462,
+  "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+  "osm_type": "node",
+  "osm_id": 3101633712,
+  "lat": "0.4871502",
+  "lon": "101.4701387",
+  "category": "shop",
+  "type": "seafood",
+  "place_rank": 30,
+  "importance": 5.5830472266682195e-05,
+  "addresstype": "shop",
+  "name": "Taman Pancing Ricky",
+  "display_name": "Taman Pancing Ricky, Jalan Rawa Mangun, Tangkerang Labuai, Bukit Raya, Pekanbaru, Marpoyan Damai, Riau, 28288, Indonesia",
+  "address": {
+   "shop": "Taman Pancing Ricky",
+   "road": "Jalan Rawa Mangun",
+   "suburb": "Tangkerang Labuai",
+   "city_district": "Bukit Raya",
+   "city": "Pekanbaru",
+   "district": "Marpoyan Damai",
+   "state": "Riau",
+   "ISO3166-2-lvl4": "ID-RI",
+   "postcode": "28288",
+   "country": "Indonesia",
+   "country_code": "id"
+  },
+  "extratags": {
+   "opening_hours:signed": "no",
+   "check_date:opening_hours": "2023-12-13"
+  },
+  "boundingbox": [
+   "0.4871002",
+   "0.4872002",
+   "101.4700887",
+   "101.4701887"
+  ]
+ }
+]
