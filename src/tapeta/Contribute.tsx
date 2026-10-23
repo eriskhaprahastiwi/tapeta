@@ -6,6 +6,9 @@ import { MapView } from "../components/MapView";
 import { addSubmission } from "../lib/submissions";
 import { readSession } from "../lib/session";
 import { isBackendConfigured } from "../lib/supabase";
+import { findRegionForPoint } from "../lib/geo";
+import { useChrome } from "./ChromeContext";
+import type { OsmLocation } from "../types";
 
 type Step = 1 | 2 | 3;
 
@@ -20,6 +23,7 @@ export interface ContributeProps {
   onClose: () => void;
   onOpenCityPicker: () => void;
   onSubmitted: (submissionId: string) => void;
+  initialPlace?: OsmLocation | null;
 }
 
 interface Draft {
@@ -46,51 +50,67 @@ const EMPTY_DRAFT: Draft = {
   agreed: false,
 };
 
-function findRegionForPoint(regions: RegionFeature[], lat: number, lon: number) {
-  const inside = (ring: number[][]) => {
-    let hit = false;
-    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-      const [xi, yi] = ring[i];
-      const [xj, yj] = ring[j];
-      if (yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) hit = !hit;
-    }
-    return hit;
-  };
-  for (const region of regions) {
-    const geometry = region.geometry;
-    const polygons =
-      geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates;
-    for (const polygon of polygons) {
-      if (polygon.length === 0) continue;
-      if (!inside(polygon[0] as number[][])) continue;
-      const inHole = polygon.slice(1).some((ring) => inside(ring as number[][]));
-      if (!inHole) return region;
-    }
-  }
-  return null;
-}
-
 export function Contribute(props: ContributeProps) {
   const [step, setStep] = useState<Step>(1);
-  const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
-  const [located, setLocated] = useState(false);
+  const [draft, setDraft] = useState<Draft>(() => props.initialPlace ? {
+    ...EMPTY_DRAFT, name: props.initialPlace.name, address: props.initialPlace.address,
+    lat: props.initialPlace.lat, lon: props.initialPlace.lon, source: props.initialPlace.sourceUrl,
+  } : EMPTY_DRAFT);
+  const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
+  const [gpsConfirmed, setGpsConfirmed] = useState(false);
+  const [manualCoordinateEdits, setManualCoordinateEdits] = useState({ lat: false, lon: false });
+  const { account } = useChrome();
   const session = readSession();
   const [notice, setNotice] = useState<{ title: string; body: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const validCoordinates = draft.lat !== null && draft.lon !== null && Number.isFinite(draft.lat) && Number.isFinite(draft.lon)
     && draft.lat >= -90 && draft.lat <= 90 && draft.lon >= -180 && draft.lon <= 180;
-  const canSubmit =
-    draft.agreed &&
-    draft.name.trim().length >= 2 &&
-    draft.address.trim().length >= 4 &&
-    draft.source.trim().length >= 4 &&
-    validCoordinates;
+  const hasCoordinates = draft.lat !== null && draft.lon !== null;
+  const detected = hasCoordinates
+    ? findRegionForPoint(props.regions, draft.lon!, draft.lat!)
+    : null;
+  const gpsNeedsManualConfirmation = gpsAccuracy !== null && gpsAccuracy > 100 && !gpsConfirmed;
+  const gpsAccuracyLabel = gpsAccuracy === null
+    ? null
+    : new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(Math.round(gpsAccuracy));
+  const validLocation = validCoordinates && detected !== null && !gpsNeedsManualConfirmation;
+  const missingRequirements = [
+    ...(draft.name.trim().length < 2 ? ["Isi nama tempat minimal 2 karakter."] : []),
+    ...(draft.address.trim().length < 4 ? ["Isi alamat minimal 4 karakter."] : []),
+    ...(draft.source.trim().length < 4 ? ["Isi sumber informasi minimal 4 karakter, misalnya akun Instagram resmi atau pengamatan langsung."] : []),
+    ...(!draft.agreed ? ["Centang pernyataan bahwa informasi benar dan sumbernya dapat diperiksa."] : []),
+    ...(!validLocation ? [gpsNeedsManualConfirmation ? "Kembali ke lokasi dan konfirmasi titik GPS dengan mengetuk peta." : `Kembali ke lokasi dan pilih titik di dalam batas ${props.cityName}.`] : []),
+  ];
+  const canSubmit = missingRequirements.length === 0;
+
+  const locationStatus = props.regions.length === 0
+    ? "Batas wilayah kota belum tersedia"
+    : gpsNeedsManualConfirmation
+      ? "Akurasi GPS perlu dikonfirmasi"
+      : !hasCoordinates
+        ? "Kecamatan belum terdeteksi"
+        : !validCoordinates
+          ? "Koordinat tidak valid"
+          : detected
+            ? `Kecamatan terdeteksi · ${detected.properties.name}`
+            : `Titik di luar batas ${props.cityName}`;
+  const locationHelp = props.regions.length === 0
+    ? "Batas wilayah belum termuat, jadi lokasi belum bisa dilanjutkan."
+    : gpsNeedsManualConfirmation
+      ? `Akurasi GPS ±${gpsAccuracyLabel} m. Ketuk peta atau isi ulang lintang dan bujur untuk memastikan titik.`
+      : gpsAccuracyLabel
+        ? `Akurasi GPS ±${gpsAccuracyLabel} m. Ketuk peta jika titik perlu dikoreksi.`
+        : hasCoordinates && validCoordinates && !detected
+          ? `Pilih titik di dalam batas ${props.cityName} atau ubah koordinat.`
+          : hasCoordinates && !validCoordinates
+            ? "Periksa kembali rentang lintang dan bujur."
+            : "Ketuk titik lain di peta atau ubah koordinat sebelum lanjut.";
 
   const submit = async () => {
     if (!canSubmit || draft.lat === null || draft.lon === null) return;
-    if (!session) { setNotice({ title: "Masuk diperlukan", body: "Masuk atau buat akun TAPETA sebelum mengirim usulan." }); return; }
     if (!isBackendConfigured) { setNotice({ title: "Backend belum dikonfigurasi", body: "Usulan belum bisa disimpan. Hubungkan Supabase melalui file .env terlebih dahulu." }); return; }
+    if (!session) { account.onOpenAuth(); return; }
     setSubmitting(true);
     try {
     const saved = await addSubmission({
@@ -111,24 +131,35 @@ export function Contribute(props: ContributeProps) {
     } finally { setSubmitting(false); }
   };
 
-  const detected = draft.lat !== null && draft.lon !== null
-    ? findRegionForPoint(props.regions, draft.lat, draft.lon)
-    : null;
-
   const handlePick = (lat: number, lon: number) => {
+    setGpsAccuracy(null);
+    setGpsConfirmed(false);
+    setManualCoordinateEdits({ lat: false, lon: false });
     setDraft((current) => ({ ...current, lat, lon }));
-    setLocated(true);
+  };
+
+  const updateCoordinate = (axis: "lat" | "lon", value: string) => {
+    const nextEdits = { ...manualCoordinateEdits, [axis]: true };
+    setManualCoordinateEdits(nextEdits);
+    if (gpsAccuracy !== null && gpsAccuracy <= 100) {
+      setGpsAccuracy(null);
+      setGpsConfirmed(false);
+    } else if (gpsNeedsManualConfirmation && nextEdits.lat && nextEdits.lon) {
+      setGpsAccuracy(null);
+      setGpsConfirmed(true);
+    }
+    setDraft((current) => ({ ...current, [axis]: value === "" ? null : Number(value) }));
   };
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") props.onClose();
+      if (event.key === "Escape" && !document.querySelector("dialog[open]")) props.onClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [props]);
 
-  const canContinue = validCoordinates;
+  const canContinue = validLocation;
 
   return (
     <div className="t-app t-app--contribute">
@@ -165,18 +196,22 @@ export function Contribute(props: ContributeProps) {
                 draft.lat !== null && draft.lon !== null ? { lat: draft.lat, lon: draft.lon } : null
               }
             />
-            {!located && (
-              <span className="t-contrib__hint" role="status">
-                <span className="t-contrib__hinticon" aria-hidden="true">⌖</span>
-                Ketuk peta untuk menandai lokasi
-              </span>
-            )}
+            <span className="t-contrib__hint" role="status">
+              <span className="t-contrib__hinticon" aria-hidden="true">⌖</span>
+              {gpsNeedsManualConfirmation
+                ? `GPS ±${gpsAccuracyLabel} m. Pilih titik di peta untuk konfirmasi.`
+                : validLocation
+                ? "Titik terpilih. Ketuk peta untuk memilih ulang."
+                : validCoordinates
+                  ? `Titik di luar ${props.cityName}. Pilih titik lain di peta.`
+                  : "Pilih titik di peta, tidak harus berada di sana."}
+            </span>
           </div>
         </main>
 
         <aside className={`t-contrib${step === 2 ? " t-contrib--light" : ""}`} aria-label="Usulkan tempat">
           <div className="t-contrib__head">
-            <span className="t-contrib__title">Usulkan tempat</span>
+            <h1 className="t-contrib__title">Usulkan tempat</h1>
             <button type="button" className="t-contrib__close" onClick={props.onClose} aria-label="Tutup">
               ✕
             </button>
@@ -201,18 +236,18 @@ export function Contribute(props: ContributeProps) {
                   <div className="t-contrib__field">
                     <span className="t-contrib__label">LINTANG</span>
                     <input aria-label="Lintang" type="number" min={-90} max={90} step="any" value={draft.lat ?? ""}
-                      onChange={(event) => setDraft((current) => ({ ...current, lat: event.target.value === "" ? null : Number(event.target.value) }))} />
+                      onChange={(event) => updateCoordinate("lat", event.target.value)} />
                   </div>
                   <div className="t-contrib__field">
                     <span className="t-contrib__label">BUJUR</span>
                     <input aria-label="Bujur" type="number" min={-180} max={180} step="any" value={draft.lon ?? ""}
-                      onChange={(event) => setDraft((current) => ({ ...current, lon: event.target.value === "" ? null : Number(event.target.value) }))} />
+                      onChange={(event) => updateCoordinate("lon", event.target.value)} />
                   </div>
                 </div>
-                <span className="t-contrib__detected">
-                  {detected ? `Kecamatan terdeteksi · ${detected.properties.name}` : "Kecamatan belum terdeteksi"}
+                <span className={`t-contrib__detected${gpsNeedsManualConfirmation || (hasCoordinates && validCoordinates && !detected) ? " t-contrib__detected--error" : ""}`} role="status">
+                  {locationStatus}
                 </span>
-                <span className="t-contrib__note">Titik bisa digeser sebelum lanjut.</span>
+                <span className="t-contrib__note" role="status">{locationHelp}</span>
               </div>
               <button
                 type="button"
@@ -224,7 +259,10 @@ export function Contribute(props: ContributeProps) {
                   }
                   navigator.geolocation.getCurrentPosition(
                     (position) => {
-                      handlePick(position.coords.latitude, position.coords.longitude);
+                      setGpsAccuracy(position.coords.accuracy);
+                      setGpsConfirmed(position.coords.accuracy <= 100);
+                      setManualCoordinateEdits({ lat: false, lon: false });
+                      setDraft((current) => ({ ...current, lat: position.coords.latitude, lon: position.coords.longitude }));
                     },
                     () => {
                       setNotice({ title: "Izin lokasi ditolak", body: "Aktifkan izin lokasi, atau pilih titik secara manual di peta." });
@@ -352,24 +390,31 @@ export function Contribute(props: ContributeProps) {
                   <span>
                     {session
                       ? `Dikirim sebagai ${session.name}`
-                      : "Masuk diperlukan sebelum mengirim usulan"}
+                      : "Masuk diperlukan sebelum mengirim. Draf tetap tersimpan saat masuk."}
                   </span>
                   <span className="t-contrib__signinnote">
                   Usulan tersimpan sebagai menunggu tinjauan dan tidak tampil di peta sebelum diverifikasi.
                   </span>
                 </div>
+                {missingRequirements.length > 0 && (
+                  <div className="t-contrib__validation" id="t-contrib-validation" role="status" aria-live="polite">
+                    <p>Sebelum usulan bisa dikirim:</p>
+                    <ul>{missingRequirements.map((requirement) => <li key={requirement}>{requirement}</li>)}</ul>
+                  </div>
+                )}
                 <button
                   type="button"
                   className="t-contrib__submit"
                   onClick={submit}
-                  disabled={!canSubmit || submitting || !session || !isBackendConfigured}
+                  disabled={!canSubmit || submitting}
+                  aria-describedby={missingRequirements.length > 0 ? "t-contrib-validation" : undefined}
                   title={
                     canSubmit
                       ? "Kirim usulan untuk ditinjau"
                       : "Lengkapi nama, alamat, sumber, koordinat, dan pernyataan"
                   }
                 >
-                  {submitting ? "Mengirim…" : "Kirim usulan ke antrean moderasi"}
+                  {submitting ? "Mengirim…" : session ? "Kirim usulan ke antrean moderasi" : "Masuk untuk mengirim usulan"}
                 </button>
                 <button type="button" className="t-contrib__back" onClick={() => setStep(1)}>
                   ‹ Kembali ke lokasi

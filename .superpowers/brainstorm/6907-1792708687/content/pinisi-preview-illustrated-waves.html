@@ -1,0 +1,39 @@
+<style>
+  .sea {position:relative;min-height:420px;overflow:hidden;border-radius:18px;background:linear-gradient(#b9e5e6 0%,#9bd4d2 30%,#258899 68%,#075b70 100%);isolation:isolate;color:#123d46}
+  .sun {position:absolute;right:19%;top:12%;width:76px;height:76px;border-radius:50%;background:#f8d68f;box-shadow:0 0 0 14px #f8d68f33,0 0 55px #fff0bc99}
+  .island {position:absolute;z-index:1;right:-15px;bottom:34%;width:190px;height:94px;border-radius:60% 0 0 0;background:linear-gradient(160deg,#7b9c6d,#466c59);transform:rotate(-4deg)}
+  .island:before {content:"";position:absolute;width:90px;height:76px;right:45px;top:-27px;border-radius:100% 0 60% 0;background:#547b61}
+  .label {position:absolute;z-index:5;top:20px;left:24px;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:#15515a}
+  .route {position:absolute;z-index:2;width:64%;height:135px;border-top:1px dashed #fff9;border-radius:50%;transform:rotate(-10deg)}.route.a{left:8%;top:43%}.route.b{left:29%;top:53%;transform:rotate(9deg);width:55%}
+  .ship {position:absolute;z-index:4;width:98px;height:98px;filter:drop-shadow(0 8px 5px #0b364044)}.ship.a{left:18%;top:28%;animation:sailA 19s ease-in-out infinite alternate}.ship.b{left:65%;top:47%;animation:sailB 22s ease-in-out infinite alternate}
+  .waves {position:absolute;z-index:3;left:-3%;bottom:-2%;width:106%;height:62%;overflow:visible;pointer-events:none}
+  .foam {fill:none;stroke:#e8f9ee;stroke-width:8;stroke-linecap:round;stroke-dasharray:2 13;animation:foam 9s linear infinite}
+  .foam.f2 {stroke:#b4e7dd;stroke-width:5;stroke-dasharray:20 16;animation-duration:13s;animation-direction:reverse}
+  .curl {transform-origin:center;animation:roll 7s ease-in-out infinite alternate}
+  .curl.c2 {animation-delay:-3s;animation-duration:9s}
+  @keyframes sailA{0%{translate:0 4px;rotate:-7deg}50%{translate:150px -11px;rotate:1deg}100%{translate:270px 8px;rotate:-5deg}}
+  @keyframes sailB{0%{translate:0 4px;rotate:5deg}50%{translate:-80px -8px;rotate:-2deg}100%{translate:-180px 7px;rotate:4deg}}
+  @keyframes foam{to{stroke-dashoffset:-160;transform:translateX(30px)}}
+  @keyframes roll{to{transform:translateY(-7px) rotate(1deg)}}
+  .caption{position:absolute;z-index:5;bottom:18px;left:24px;color:#e7f4ef;font-size:13px;text-shadow:0 1px 4px #075b70}
+  @media(max-width:600px){.sea{min-height:340px}.ship{width:72px;height:72px}.waves{height:58%}.island{width:125px;height:70px}@keyframes sailA{0%{translate:0 4px;rotate:-7deg}50%{translate:55px -8px;rotate:1deg}100%{translate:105px 7px;rotate:-5deg}}@keyframes sailB{0%{translate:0 4px;rotate:5deg}50%{translate:-35px -7px;rotate:-2deg}100%{translate:-75px 6px;rotate:4deg}}}
+</style>
+<h2>Ombak ilustratif, lebih ekspresif</h2>
+<p class="subtitle">Gelombang besar berlapis, lengkung ombak, dan buih bergerak di depan-belakang kapal untuk memberi kesan laut yang lebih hidup.</p>
+<div class="sea">
+ <div class="sun"></div><div class="label">Laut Indonesia · dua pinisi</div><div class="island"></div>
+ <div class="route a"></div><div class="route b"></div>
+ <svg class="waves" viewBox="0 0 1000 420" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 185 Q105 112 222 183 T440 178 Q536 146 633 185 T820 165 Q926 124 1000 180 V420 H0Z" fill="#168092" opacity=".78"/>
+  <path d="M0 248 Q92 177 181 242 Q239 283 301 236 Q367 183 437 245 Q498 305 566 236 Q638 169 716 240 Q780 296 845 232 Q921 163 1000 229 V420 H0Z" fill="#087083"/>
+  <path d="M0 315 Q115 247 223 309 T442 305 Q548 248 650 311 T858 299 Q948 245 1000 284 V420 H0Z" fill="#07596d"/>
+  <g class="curl"><path d="M103 226 C59 213 45 176 68 151 C89 128 131 137 140 163 C148 186 126 203 108 192 C95 184 102 164 116 165" fill="none" stroke="#c9eee3" stroke-width="9" stroke-linecap="round"/><path d="M69 151 Q83 145 92 153" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
+  <g class="curl c2"><path d="M746 278 C703 264 691 229 713 207 C736 184 774 194 783 218 C791 239 770 255 752 245 C740 238 745 219 760 220" fill="none" stroke="#c9eee3" stroke-width="8" stroke-linecap="round"/><path d="M714 207 Q729 199 737 209" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
+  <path class="foam" d="M-30 187 Q70 133 164 185 T360 185 T554 184 T750 180 T1040 165"/>
+  <path class="foam f2" d="M-30 254 Q70 208 165 251 T360 250 T554 254 T750 247 T1040 231"/>
+  <path class="foam" d="M-30 320 Q70 271 165 316 T360 315 T554 319 T750 311 T1040 296"/>
+ </svg>
+ <svg class="ship a" viewBox="0 0 120 110" aria-label="Pinisi pertama" role="img"><path d="M18 73h85L88 93H36z" fill="#704734"/><path d="M26 75l13-24 17 24z" fill="#fff4d9"/><path d="M61 75l18-37 17 37z" fill="#f3dfb8"/><path d="M53 28v49M84 19v58" stroke="#543c2d" stroke-width="3"/><path d="M35 96q29 8 58 0" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/></svg>
+ <svg class="ship b" viewBox="0 0 120 110" aria-label="Pinisi kedua" role="img"><path d="M18 73h85L88 93H36z" fill="#674330"/><path d="M26 75l13-24 17 24z" fill="#fff0d0"/><path d="M61 75l18-37 17 37z" fill="#e7d2a7"/><path d="M53 28v49M84 19v58" stroke="#543c2d" stroke-width="3"/><path d="M35 96q29 8 58 0" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/></svg>
+ <div class="caption">Gelombang berlapis · buih bergerak · dua jalur pinisi</div>
+</div>

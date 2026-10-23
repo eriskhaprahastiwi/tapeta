@@ -1,0 +1,45 @@
+<style>
+ .ukiyo{position:relative;min-height:430px;overflow:hidden;border-radius:16px;background:#efe4c9;color:#183d53;isolation:isolate;border:1px solid #dfcfad}
+ .sun{position:absolute;width:116px;height:116px;border-radius:50%;background:#d88759;right:17%;top:9%;opacity:.84}
+ .paper-grain{position:absolute;inset:0;z-index:1;pointer-events:none;background-image:radial-gradient(#7b63411c .7px,transparent .7px);background-size:6px 6px;mix-blend-mode:multiply;opacity:.45}
+ .islands{position:absolute;z-index:1;right:3%;top:42%;width:30%;height:90px;fill:#75856b;stroke:#344f52;stroke-width:2}
+ .wave-art{position:absolute;z-index:2;left:-3%;bottom:-6%;width:106%;height:62%;overflow:visible}
+ .ink-line{fill:none;stroke:#173e68;stroke-width:3;stroke-linecap:round;stroke-dasharray:9 11;animation:inkflow 16s linear infinite}
+ .foamline{fill:none;stroke:#fff3dc;stroke-width:6;stroke-linecap:round;stroke-dasharray:2 9;animation:foamflow 8s linear infinite}
+ .sea-shimmer{fill:none;stroke:#78a8ad;stroke-width:2;stroke-linecap:round;stroke-dasharray:20 15;animation:inkflow 13s linear infinite reverse}
+ .boat{position:absolute;z-index:4;width:118px;height:113px;filter:drop-shadow(2px 4px 1px #4a382833)}
+ .boat.a{left:19%;top:30%;animation:boatA 18s ease-in-out infinite alternate}.boat.b{left:66%;top:38%;width:100px;height:96px;animation:boatB 21s ease-in-out infinite alternate}
+ .path{position:absolute;z-index:3;border-top:2px dotted #48657899;border-radius:50%;height:95px;transform:rotate(-8deg)}.path.a{left:7%;top:50%;width:52%}.path.b{right:5%;top:51%;width:45%;transform:rotate(12deg)}
+ .caption{position:absolute;z-index:5;left:22px;bottom:16px;font:13px Georgia,serif;letter-spacing:.04em;color:#f7edd7;text-shadow:0 1px 3px #173e68}
+ .tag{position:absolute;z-index:5;top:18px;left:22px;font:11px Georgia,serif;text-transform:uppercase;letter-spacing:.18em;color:#38576a}
+ @keyframes inkflow{to{stroke-dashoffset:-170;transform:translateX(12px)}}@keyframes foamflow{to{stroke-dashoffset:-100;transform:translateX(16px)}}
+ @keyframes boatA{to{translate:210px -7px;rotate:3deg}}@keyframes boatB{to{translate:-130px 7px;rotate:-3deg}}
+ @media(max-width:600px){.ukiyo{min-height:350px}.boat{width:88px;height:84px}.boat.b{width:76px;height:73px}.sun{width:82px;height:82px}@keyframes boatA{to{translate:95px -5px;rotate:3deg}}@keyframes boatB{to{translate:-55px 5px;rotate:-3deg}}}
+</style>
+<h2>Pinisi melintasi ombak bergaya ukiyo-e</h2>
+<p class="subtitle">Mengikuti referensimu: palet biru nila dan krem, ombak besar dengan buih putih berukir, serta dua pinisi ilustratif yang bergerak di jalur masing-masing.</p>
+<div class="ukiyo">
+ <div class="sun"></div><div class="tag">Laut Nusantara · ilustrasi bergerak</div>
+ <svg class="islands" viewBox="0 0 300 100" aria-hidden="true"><path d="M0 83 Q35 56 62 68 Q84 40 112 59 Q139 28 168 61 Q204 45 230 67 Q269 43 300 64 V100 H0Z"/><path d="M40 72l20-19 18 18m35-11 20-24 21 28m38 0 23-17 17 18" fill="none" stroke="#efe4c9" stroke-width="3"/></svg>
+ <div class="path a"></div><div class="path b"></div>
+ <svg class="wave-art" viewBox="0 0 1000 430" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 157 Q76 118 140 151 Q204 187 256 139 Q303 92 363 124 Q404 145 423 183 Q443 221 407 224 Q382 224 389 203 Q394 188 411 195 Q399 173 378 183 Q351 195 366 225 Q382 257 429 254 Q476 251 491 211 Q512 155 554 145 Q588 137 617 160 Q655 188 626 220 Q606 242 588 224 Q576 212 589 202 Q600 194 609 204 Q605 184 586 190 Q557 200 568 230 Q580 264 624 261 Q682 257 688 200 Q695 141 746 129 Q792 118 821 151 Q851 185 820 211 Q796 231 779 212 Q768 198 782 190 Q795 183 803 196 Q800 174 778 179 Q749 187 758 220 Q769 253 812 253 Q873 253 885 198 Q899 135 950 128 Q979 125 1000 144 V430 H0Z" fill="#174b70"/>
+  <path d="M0 228 Q74 188 131 221 T247 212 Q292 183 335 202 Q369 217 362 247 Q356 272 328 268 Q308 265 312 246 Q316 232 333 239 Q328 222 311 230 Q287 244 301 273 Q319 306 359 292 Q398 279 405 239 Q418 178 470 172 Q508 168 532 196 Q555 222 534 246 Q518 265 501 249 Q490 238 503 228 Q516 220 523 235 Q518 214 499 219 Q471 227 483 255 Q497 289 535 284 Q587 276 593 219 Q599 164 645 158 Q683 153 705 181 Q726 208 706 231 Q689 250 673 234 Q662 223 674 212 Q686 204 694 217 Q690 197 671 202 Q645 210 656 239 Q669 271 705 266 Q754 259 760 207 Q768 157 812 152 Q846 149 865 174 Q883 197 865 219 Q850 237 835 224 Q824 214 835 204 Q847 196 853 208 Q850 190 832 194 Q808 202 817 228 Q828 256 862 251 Q916 244 922 195 Q930 152 970 151 Q988 150 1000 160 V430 H0Z" fill="#477f96"/>
+  <path d="M0 302 Q100 255 194 297 Q270 332 356 285 Q433 246 503 286 Q585 334 666 287 Q757 236 843 286 Q921 331 1000 275 V430 H0Z" fill="#143d62"/>
+  <path d="M0 344 Q105 302 209 339 T419 337 Q521 292 629 342 T835 332 Q925 297 1000 323 V430 H0Z" fill="#0e3558"/>
+  <path class="foamline" d="M0 157 Q76 118 140 151 Q204 187 256 139 Q303 92 363 124 Q404 145 423 183 Q443 221 407 224 Q382 224 389 203 Q394 188 411 195 M554 145 Q588 137 617 160 Q655 188 626 220 Q606 242 588 224 M746 129 Q792 118 821 151 Q851 185 820 211 Q796 231 779 212 M950 128 Q979 125 1000 144"/>
+  <path class="ink-line" d="M10 183 Q95 145 163 176 T278 166 Q325 119 366 151 M441 230 Q469 201 492 218 M635 197 Q670 164 694 190 M843 190 Q877 153 903 185"/>
+  <path class="sea-shimmer" d="M0 302 Q100 255 194 297 T356 285 M503 286 Q585 334 666 287 T843 286 M0 365 Q100 330 190 363 T400 360 M603 362 Q708 326 812 360 T1000 347"/>
+ </svg>
+ <svg class="boat a" viewBox="0 0 140 130" aria-label="Pinisi pertama bergaya ilustrasi" role="img">
+  <path d="M15 83 Q68 94 127 79 L108 107 Q65 119 34 103Z" fill="#8d5738" stroke="#3f382d" stroke-width="3"/><path d="M33 91l12 13m12-10 11 14m13-14 10 11m10-16 10 10" stroke="#d1a474" stroke-width="3"/>
+  <path d="M69 25v65M105 15v69" stroke="#433a30" stroke-width="4"/>
+  <path d="M65 33 Q47 48 43 83 L65 83Z" fill="#f5e6c5" stroke="#4b493e" stroke-width="2"/><path d="M100 24 Q78 45 76 83 L100 83Z" fill="#e6d4ae" stroke="#4b493e" stroke-width="2"/><path d="M109 30l10 50h-12Z" fill="#f7edd8" stroke="#4b493e" stroke-width="2"/>
+  <path d="M69 29l-20 45m57-53L84 71" stroke="#b48b5a" stroke-width="1.5"/><path d="M22 113q18 8 36 6m42-2q18-4 29-13" fill="none" stroke="#fff2db" stroke-width="3"/>
+ </svg>
+ <svg class="boat b" viewBox="0 0 140 130" aria-label="Pinisi kedua bergaya ilustrasi" role="img">
+  <path d="M15 83 Q68 94 127 79 L108 107 Q65 119 34 103Z" fill="#8d5738" stroke="#3f382d" stroke-width="3"/><path d="M33 91l12 13m12-10 11 14m13-14 10 11m10-16 10 10" stroke="#d1a474" stroke-width="3"/>
+  <path d="M69 25v65M105 15v69" stroke="#433a30" stroke-width="4"/><path d="M65 33 Q47 48 43 83 L65 83Z" fill="#f5e6c5" stroke="#4b493e" stroke-width="2"/><path d="M100 24 Q78 45 76 83 L100 83Z" fill="#e6d4ae" stroke="#4b493e" stroke-width="2"/><path d="M109 30l10 50h-12Z" fill="#f7edd8" stroke="#4b493e" stroke-width="2"/><path d="M69 29l-20 45m57-53L84 71" stroke="#b48b5a" stroke-width="1.5"/><path d="M22 113q18 8 36 6m42-2q18-4 29-13" fill="none" stroke="#fff2db" stroke-width="3"/>
+ </svg>
+ <div class="paper-grain"></div><div class="caption">Dua pinisi di antara gelombang Nusantara</div>
+</div>

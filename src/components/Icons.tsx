@@ -203,3 +203,93 @@ export function MapIcon(props: IconProps) {
     </Svg>
   );
 }
+
+export function FlagIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M6 21V4" />
+      <path d="M6 5c3.5-2 7.5 2 12 0v9c-4.5 2-8.5-2-12 0" />
+    </Svg>
+  );
+}
+
+export function FileTextIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M7 3h7l4 4v14H7V3Z" />
+      <path d="M14 3v5h5" />
+      <path d="M10 13h6M10 17h6" />
+    </Svg>
+  );
+}
+
+export function HomeIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m4 10.5 8-6.5 8 6.5" />
+      <path d="M6 9.5V20h12V9.5" />
+      <path d="M10 20v-6h4v6" />
+    </Svg>
+  );
+}
+
+export function BookmarkIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M6 4h12v16l-6-4-6 4V4Z" />
+    </Svg>
+  );
+}
+
+export function CheckCircleIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="8" />
+      <path d="m8.5 12 2.3 2.3 4.7-4.6" />
+    </Svg>
+  );
+}
+
+export function PenIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m4 20 4.5-1 9.6-9.6a2.1 2.1 0 0 0-3-3L5.5 16 4 20Z" />
+      <path d="m13.8 6.6 3 3" />
+    </Svg>
+  );
+}
+
+export function BadgeCheckIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m12 3 2.1 1.6 2.6-.2 1 2.4 2.2 1.4-.7 2.5.7 2.5-2.2 1.4-1 2.4-2.6-.2L12 21l-2.1-1.6-2.6.2-1-2.4L4.1 15l.7-2.5-.7-2.5 2.2-1.4 1-2.4 2.6.2L12 3Z" />
+      <path d="m9.2 11.8 2 2 3.6-3.6" />
+    </Svg>
+  );
+}
+
+export function SendIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m21 3-9 18-2.6-7.4L2 11l19-8Z" />
+      <path d="M21 3 9.4 13.6" />
+    </Svg>
+  );
+}
+
+export function StarIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m12 4 2.5 5.1 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9 5.5-.8L12 4Z" />
+    </Svg>
+  );
+}
+
+export function UserIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="8" r="3.4" />
+      <path d="M5 20c.7-3.3 3.5-5.2 7-5.2s6.3 1.9 7 5.2" />
+    </Svg>
+  );
+}

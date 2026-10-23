@@ -4,6 +4,8 @@ import type {
   CityMeta,
   CitySearchResult,
   Destination,
+  Bounds,
+  OsmLocation,
   RegionFeature,
 } from "../types";
 import { isBackendConfigured, supabase } from "./supabase";
@@ -123,32 +125,65 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
 }
 
 let lastNominatimRequest = 0;
+let nominatimQueue: Promise<void> = Promise.resolve();
 
 async function fetchNominatim<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const wait = Math.max(
-    0,
-    NOMINATIM_INTERVAL_MS - (Date.now() - lastNominatimRequest),
-  );
-  if (wait > 0) await sleep(wait, signal);
-
-  lastNominatimRequest = Date.now();
-  const response = await fetch(url, {
-    signal,
-    headers: {
-      Accept: "application/json",
-      "Accept-Language": "id",
-    },
-  });
-
-  if (!response.ok) {
-    throw new DataError(
-      response.status === 429
-        ? "Pencarian kota sedang dibatasi. Tunggu sebentar lalu coba lagi."
-        : `Layanan pencarian kota gagal menjawab (HTTP ${response.status}).`,
+  const previous = nominatimQueue;
+  let release!: () => void;
+  nominatimQueue = new Promise<void>((resolve) => { release = resolve; });
+  await previous;
+  try {
+    if (signal?.aborted) throw abortError();
+    const wait = Math.max(
+      0,
+      NOMINATIM_INTERVAL_MS - (Date.now() - lastNominatimRequest),
     );
-  }
+    if (wait > 0) await sleep(wait, signal);
 
-  return (await response.json()) as T;
+    lastNominatimRequest = Date.now();
+    const response = await fetch(url, {
+      signal,
+      headers: {
+        Accept: "application/json",
+        "Accept-Language": "id",
+      },
+    });
+
+    if (!response.ok) {
+      throw new DataError(
+        response.status === 429
+          ? "Pencarian OSM sedang dibatasi. Tunggu sebentar lalu coba lagi."
+          : `Layanan pencarian OSM gagal menjawab (HTTP ${response.status}).`,
+      );
+    }
+
+    return (await response.json()) as T;
+  } finally { release(); }
+}
+
+const placeSearchCache = new Map<string, OsmLocation[]>();
+
+export async function searchOsmLocations(query: string, bounds: Bounds, signal?: AbortSignal): Promise<OsmLocation[]> {
+  const trimmed = query.trim();
+  if (trimmed.length < 3) return [];
+  const url = new URL("/search", NOMINATIM_URL);
+  url.search = new URLSearchParams({
+    q: trimmed, format: "jsonv2", addressdetails: "1", limit: "10", countrycodes: "id",
+    bounded: "1", viewbox: `${bounds.west},${bounds.north},${bounds.east},${bounds.south}`,
+  }).toString();
+  const key = url.toString();
+  const cached = placeSearchCache.get(key);
+  if (cached) return cached;
+  const rows = await fetchNominatim<Array<NominatimPlace & { lat: string; lon: string }>>(key, signalWithTimeout(signal, 15000));
+  const results = rows.flatMap((place): OsmLocation[] => {
+    const lat = Number(place.lat), lon = Number(place.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) || lat < bounds.south || lat > bounds.north || lon < bounds.west || lon > bounds.east) return [];
+    if (!["node", "way", "relation"].includes(place.osm_type) || !Number.isSafeInteger(place.osm_id) || place.osm_id <= 0) return [];
+    return [{ id: `${place.osm_type}:${place.osm_id}`, name: place.name || place.display_name.split(",")[0], address: place.display_name, lat, lon, sourceUrl: `https://www.openstreetmap.org/${place.osm_type}/${place.osm_id}` }];
+  });
+  if (placeSearchCache.size >= 50) placeSearchCache.delete(placeSearchCache.keys().next().value!);
+  placeSearchCache.set(key, results);
+  return results;
 }
 
 function placeName(place: NominatimPlace): string | null {

@@ -1,66 +1,26 @@
 .t-landing {
-  min-height: 100dvh;
-  overflow: auto;
-  background: var(--t-paper);
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 620px;
+  overflow: hidden;
+  background: linear-gradient(118deg, #f7f0e4 12%, #e5f0eb 53%, #bfe4e2 100%);
   color: var(--t-ink);
-}
-
-.t-landing__header {
-  min-height: 76px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  padding: 14px 4vw;
-}
-
-.t-landing__header nav {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.t-landing__header nav button {
-  min-height: 44px;
-  padding: 8px 16px;
-  border: 0;
-  background: transparent;
-  color: var(--t-ink);
-  font: inherit;
-  cursor: pointer;
 }
 
 .t-landing__hero {
   position: relative;
-  height: min(82dvh, calc(100vw / 1.777));
-  min-height: 500px;
+  width: 100%;
+  height: 100%;
+  min-height: 620px;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--t-paper) 0%, #f3eee3 35%, #d9eeeb 78%, var(--t-paper) 100%);
 }
 
-.t-landing__copy {
-  position: relative;
-  z-index: 1;
-  max-width: 560px;
-  margin: clamp(32px, 6vh, 72px) 0 0 4vw;
-}
-
-.t-landing__copy h1 {
-  margin: 12px 0 16px;
-  font-size: clamp(48px, 6vw, 84px);
-  font-weight: 500;
-  line-height: 1.04;
-}
-
-.t-landing__copy p:not(.t-kicker) {
-  margin: 0 0 24px;
-  font-size: clamp(16px, 1.5vw, 21px);
-  line-height: 1.5;
-}
-
-.t-landing__copy button {
-  min-width: 168px;
-  min-height: 48px;
+.t-landing__mapstage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(115deg, #f7f0e4 0%, #edf1e8 44%, #c5e8e3 100%);
 }
 
 .t-landing__map {
@@ -69,70 +29,314 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  -webkit-mask-image: radial-gradient(ellipse 96% 92% at 50% 50%, #000 0%, #000 55%, rgb(0 0 0 / 0.92) 68%, rgb(0 0 0 / 0.56) 82%, transparent 100%);
-  mask-image: radial-gradient(ellipse 96% 92% at 50% 50%, #000 0%, #000 55%, rgb(0 0 0 / 0.92) 68%, rgb(0 0 0 / 0.56) 82%, transparent 100%);
+  object-fit: fill;
+  object-position: center;
+  -webkit-mask-image: radial-gradient(ellipse 105% 100% at 50% 50%, #000 0%, #000 72%, rgb(0 0 0 / 0.88) 87%, rgb(0 0 0 / 0.45) 96%, transparent 100%);
+  mask-image: radial-gradient(ellipse 105% 100% at 50% 50%, #000 0%, #000 72%, rgb(0 0 0 / 0.88) 87%, rgb(0 0 0 / 0.45) 96%, transparent 100%);
 }
 
-.t-landing__footer {
+.t-landing__boats {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.t-landing__boat {
+  opacity: 0.96;
+  filter: drop-shadow(0 1px 1px rgba(247, 240, 228, 0.7));
+}
+.t-landing__boat-art,
+.t-landing__boat-static { display: inline; }
+.t-landing__boat-static { display: none; }
+.t-landing__boat-route {
+  fill: none;
+  stroke: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-landing__boat-motion { display: none; }
+  .t-landing__boat-static { display: inline; }
+}
+
+.t-landing__header {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 108px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: baseline;
-  gap: 20px;
-  padding: 14px 4vw 20px;
-  background: var(--t-paper);
+  gap: 24px;
+  padding: 20px 3.4vw;
 }
 
-.t-landing__footer p { margin: 0; }
-.t-landing__footer small { color: var(--t-stone); }
+.t-landing__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: #1b2c35;
+}
+.t-landing__brand .tapeta-logo { flex: 0 0 auto; }
+.t-landing__brandcopy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.t-landing__brandcopy strong {
+  font-family: var(--t-font-display);
+  font-size: 21px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.t-landing__brandcopy small {
+  font-family: var(--t-font-body);
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: 1.7px;
+  color: #55635f;
+}
+.t-landing__entry {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #445b5d;
+}
+.t-landing__skip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0 17px;
+  border: 0;
+  border-radius: 999px;
+  background: #1b2430;
+  font-family: var(--t-font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: #f3ead8;
+  cursor: pointer;
+}
+.t-landing__skip:hover { background: #2b3742; }
+
+
+.t-landing__copy {
+  position: absolute;
+  z-index: 2;
+  top: 11.5%;
+  left: 5.35%;
+  width: min(42vw, 560px);
+  margin: 0;
+}
+.t-landing__copy .t-kicker {
+  margin: 0 0 14px 9px;
+  font-family: var(--t-font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #bd6249;
+}
+.t-landing__copy h1 {
+  max-width: 10ch;
+  margin: 0 0 2px;
+  font-family: var(--t-font-display);
+  font-size: clamp(58px, 5vw, 80px);
+  line-height: 0.99;
+  font-weight: 600;
+  letter-spacing: -1.6px;
+  color: #1b2c35;
+  text-wrap: balance;
+}
+.t-landing__copy p:not(.t-kicker) {
+  margin: 0 0 24px 5px;
+  font-size: clamp(15px, 1.35vw, 20px);
+  line-height: 1.45;
+  color: #30454c;
+}
+.t-landing__copy button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 240px;
+  min-height: 48px;
+  margin-left: 4px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.t-landing__maplabels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.t-landing__label {
+  position: absolute;
+  font-family: var(--t-font-body);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2.4px;
+  line-height: 1;
+  white-space: nowrap;
+  color: #647b78;
+  opacity: 0.78;
+  text-shadow: 0 1px 3px rgba(247, 240, 228, 0.9);
+}
+.t-landing__label--sumatra { left: 13.7%; top: 53.1%; }
+.t-landing__label--kalimantan { left: 37.4%; top: 55.2%; }
+.t-landing__label--jawa { left: 32.6%; top: 74%; }
+.t-landing__label--sulawesi { left: 55.7%; top: 60.3%; }
+.t-landing__label--maluku { left: 72.1%; top: 65%; }
+.t-landing__label--papua { right: 4.5%; top: 66.2%; }
+.t-landing__label--nusa { left: 53.3%; top: 76%; }
+.t-landing__label--sea-south { left: 22.7%; top: 37.7%; font-size: 8px; letter-spacing: 2.7px; }
+.t-landing__label--sea-pacific { right: 3%; top: 41.5%; font-size: 8px; letter-spacing: 2.7px; }
+.t-landing__label--sea-banda { left: 64%; top: 68.8%; font-size: 8px; letter-spacing: 2.7px; }
+.t-landing__footer {
+  position: absolute;
+  z-index: 3;
+  left: 3.4vw;
+  right: 3.4vw;
+  bottom: 5.4vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0;
+  background: transparent;
+}
+.t-landing__footer-note {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+.t-landing__compass {
+  width: 56px;
+  height: 56px;
+  overflow: visible;
+}
+.t-landing__compass text {
+  fill: #68746d;
+  font-family: var(--t-font-body);
+  font-size: 5px;
+  font-weight: 600;
+  opacity: 0.72;
+}
+.t-landing__footer-note small {
+  margin-bottom: 3px;
+  font-size: 9.5px;
+  color: #52615c;
+}
+.t-landing__map-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(216, 200, 178, 0.8);
+  border-radius: 999px;
+  background: rgba(255, 252, 246, 0.94);
+  font-family: var(--t-font-body);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #44514c;
+  cursor: pointer;
+}
+.t-landing__map-cta svg { color: #b63a2e; flex: 0 0 auto; }
+.t-landing__map-cta:hover { background: #fffcf6; }
 
 @media (max-width: 860px) {
-  .t-landing__header {
-    min-height: 64px;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px 16px 0;
+  .t-landing {
+    height: auto;
+    min-height: 100dvh;
+    overflow: auto;
   }
-
-  .t-landing__header nav {
-    width: 100%;
-    justify-content: space-between;
-    gap: 0;
-    border-bottom: 1px solid var(--t-line);
-  }
-
-  .t-landing__header nav button { padding-inline: 8px; }
-
   .t-landing__hero {
+    height: max(640px, 100dvh);
     min-height: 0;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    padding: 0;
-    background: linear-gradient(180deg, var(--t-paper) 0%, #eef3e9 42%, #bfe4e2 78%, var(--t-paper) 100%);
   }
-
-  .t-landing__copy { width: 100%; margin: 0; padding: 24px 20px 0; }
-  .t-landing__copy h1 { font-size: clamp(38px, 10vw, 44px); }
-  .t-landing__copy p:not(.t-kicker) { max-width: 300px; font-size: 16px; }
-
+  .t-landing__header {
+    top: 0;
+    left: 0;
+    right: 0;
+    min-height: 68px;
+    padding: 13px 16px 0;
+    gap: 8px;
+  }
+  .t-landing__brand { gap: 7px; }
+  .t-landing__brand .tapeta-logo .tapeta-mark { width: 40px; height: 40px; }
+  .t-landing__brandcopy strong { font-size: 18px; }
+  .t-landing__brandcopy small { max-width: 150px; font-size: 7.5px; letter-spacing: 1.1px; }
+  .t-landing__entry { gap: 0; }
+  .t-landing__entry > span { display: none; }
+  .t-landing__skip { min-height: 44px; padding: 0 12px; font-size: 11px; }
+  .t-landing__copy {
+    top: 116px;
+    left: 20px;
+    width: calc(100% - 40px);
+    max-width: 420px;
+  }
+  .t-landing__copy .t-kicker { margin: 0 0 12px 2px; font-size: 10px; letter-spacing: 2.6px; }
+  .t-landing__copy h1 { max-width: 11ch; margin-bottom: 2px; font-size: clamp(40px, 10vw, 52px); letter-spacing: -1px; }
+  .t-landing__copy p:not(.t-kicker) { margin: 0 0 17px 2px; max-width: 29ch; font-size: 15px; }
+  .t-landing__copy button { min-width: 168px; min-height: 48px; margin-left: 0; font-size: 13px; }
+  .t-landing__mapstage {
+    top: 294px;
+    bottom: 82px;
+    left: 0;
+    right: 0;
+  }
   .t-landing__map {
-    position: relative;
-    inset: auto;
+    object-fit: contain;
+    object-position: center top;
+    -webkit-mask-image: radial-gradient(ellipse 104% 96% at 50% 50%, #000 0%, #000 72%, rgb(0 0 0 / 0.86) 88%, transparent 100%);
+    mask-image: radial-gradient(ellipse 104% 96% at 50% 50%, #000 0%, #000 72%, rgb(0 0 0 / 0.86) 88%, transparent 100%);
+  }
+  .t-landing__boats {
+    inset: 0 auto auto 0;
     width: 100%;
     height: auto;
-    margin-top: 8px;
-    -webkit-mask-image: radial-gradient(ellipse 108% 94% at 50% 50%, #000 0%, #000 58%, rgb(0 0 0 / 0.92) 72%, rgb(0 0 0 / 0.56) 86%, transparent 100%);
-    mask-image: radial-gradient(ellipse 108% 94% at 50% 50%, #000 0%, #000 58%, rgb(0 0 0 / 0.92) 72%, rgb(0 0 0 / 0.56) 86%, transparent 100%);
+    aspect-ratio: 1672 / 941;
   }
-
+  .t-landing__maplabels {
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1672 / 941;
+    transform: none;
+  }
+  .t-landing__label { font-size: 6.5px; letter-spacing: 1px; }
+  .t-landing__label--sea-south,
+  .t-landing__label--sea-pacific,
+  .t-landing__label--sea-banda { display: none; }
   .t-landing__footer {
-    display: block;
-    padding: 20px;
-    line-height: 1.5;
+    left: 16px;
+    right: 16px;
+    bottom: 14px;
+    align-items: flex-end;
+    gap: 8px;
   }
+  .t-landing__footer-note { gap: 7px; }
+  .t-landing__compass { width: 34px; height: 34px; }
+  .t-landing__footer-note small { max-width: 110px; font-size: 8px; line-height: 1.3; }
+  .t-landing__map-cta { min-height: 44px; gap: 6px; padding: 0 10px; font-size: 9.5px; }
+  .t-landing__map-cta svg { width: 14px; height: 14px; }
+}
 
-  .t-landing__footer p { margin-bottom: 8px; }
+@media (max-width: 380px) {
+  .t-landing__brandcopy small { display: none; }
+  .t-landing__mapstage { top: 304px; }
+  .t-landing__footer-note small { max-width: 84px; }
+  .t-landing__map-cta { padding-inline: 8px; font-size: 9px; }
 }

@@ -19,7 +19,7 @@ export function SubmissionResult({ submissionId, onBackToMap, onOpenQueue }: Sub
       />
       <div className="t-doc t-doc--narrow">
         <div className="t-doc__head">
-          <span className="t-doc__eyebrow">USULAN TERSIMPAN · {submission?.id ?? "—"}</span>
+          <span className="t-doc__eyebrow">USULAN TERSIMPAN · {submission?.id ?? "Belum tersedia"}</span>
           <h1 className="t-doc__title t-doc__title--xl">Usulan masuk antrean moderasi</h1>
           <p className="t-doc__lead">
             Terima kasih. Usulanmu tersimpan di server dan belum tampil di peta.

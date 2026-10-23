@@ -64,12 +64,12 @@ export function AuthDialog({ open, onClose, onSignedIn, recovery = false }: Auth
       if (recovery) {
         const { error } = await supabase.auth.updateUser({ password });
         if (error) throw error;
-        setPassword(""); setSuccess("Kata sandi diperbarui. Kamu dapat menutup formulir ini."); return;
+        setPassword(""); setSuccess("Kata sandi diperbarui. Tutup formulir ini untuk melanjutkan ke TAPETA."); return;
       }
       if (mode === "reset") {
         const { error } = await supabase.auth.resetPasswordForEmail(trimmedEmail, { redirectTo: window.location.origin + window.location.pathname });
         if (error) throw error;
-        setSuccess("Jika email terdaftar, tautan pemulihan akan dikirim. Periksa kotak masuk."); return;
+        setSuccess("Jika email terdaftar, tautan pemulihan dikirim ke " + trimmedEmail + ". Periksa Kotak Masuk dan Spam. Buka tautannya untuk membuat kata sandi baru di TAPETA."); return;
       }
       const result = mode === "register"
         ? await supabase.auth.signUp({ email: trimmedEmail, password, options: { emailRedirectTo: window.location.origin + window.location.pathname, data: { display_name: trimmedName } } })
@@ -77,7 +77,8 @@ export function AuthDialog({ open, onClose, onSignedIn, recovery = false }: Auth
       if (result.error) throw result.error;
       if (!result.data.user) throw new Error("Akun berhasil diproses, tetapi sesi belum tersedia.");
       if (!result.data.session && mode === "register") {
-        setSuccess("Pendaftaran diterima. Periksa email untuk verifikasi, lalu masuk.");
+        setPassword("");
+        setSuccess("Jika email ini belum terdaftar, periksa Kotak Masuk dan Spam untuk verifikasi. Jika sudah punya akun, pilih Masuk atau Lupa kata sandi. Mendaftar ulang tidak mengirim email verifikasi baru.");
         return;
       }
       onSignedIn(await appSessionForUser(result.data.user));
@@ -107,7 +108,7 @@ export function AuthDialog({ open, onClose, onSignedIn, recovery = false }: Auth
           {recovery ? "Kata sandi baru" : mode === "reset" ? "Pulihkan kata sandi" : mode === "login" ? "Masuk ke TAPETA" : "Buat akun TAPETA"}
         </h2>
         <p className="t-auth__note">
-          {BACKEND_NOT_CONFIGURED}
+          {recovery ? "Buat kata sandi baru minimal 8 karakter untuk akunmu." : mode === "reset" ? "Masukkan email akunmu. Tautan pemulihan akan kembali ke TAPETA untuk mengganti kata sandi." : BACKEND_NOT_CONFIGURED}
         </p>
         {mode === "register" && <label className="t-auth__field"><span>Nama tampilan</span><input type="text" value={name} onChange={(event) => setName(event.target.value)} placeholder="Nama kamu" autoComplete="name" disabled={!isBackendConfigured} /></label>}
         {!recovery && <label className="t-auth__field">
@@ -132,8 +133,9 @@ export function AuthDialog({ open, onClose, onSignedIn, recovery = false }: Auth
           {busy ? "Memproses…" : recovery ? "Simpan kata sandi" : mode === "reset" ? "Kirim tautan pemulihan" : mode === "login" ? "Masuk" : "Daftar"}
         </button>
         <div className="t-auth__foot">
-          {!recovery && <button type="button" className="t-auth__link" onClick={() => { setMode("reset"); setError(null); setSuccess(null); }}>Lupa kata sandi?</button>}
-          {!recovery && mode !== "reset" && <button type="button" className="t-auth__link" onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(null); }}>
+          {!recovery && mode !== "reset" && <button type="button" className="t-auth__link" onClick={() => { setMode("reset"); setPassword(""); setError(null); setSuccess(null); }}>Lupa kata sandi?</button>}
+          {!recovery && mode === "reset" && <button type="button" className="t-auth__link" onClick={() => { setMode("login"); setError(null); setSuccess(null); }}>Kembali ke masuk</button>}
+          {!recovery && mode !== "reset" && <button type="button" className="t-auth__link" onClick={() => { setMode(mode === "login" ? "register" : "login"); setPassword(""); setError(null); setSuccess(null); }}>
             {mode === "login" ? "Belum punya akun? Daftar" : "Sudah punya akun? Masuk"}
           </button>}
           <button type="button" className="t-auth__link" onClick={onClose}>

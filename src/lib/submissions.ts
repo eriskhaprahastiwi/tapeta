@@ -68,5 +68,5 @@ export async function decideSubmission(id: string, status: SubmissionStatus, not
 export const STATUS_LABEL: Record<SubmissionStatus, string> = { menunggu: "Menunggu", perbaikan: "Perlu perbaikan", terbit: "Terbit", ditolak: "Ditolak" };
 export function formatSubmitted(iso: string) {
   const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(date);
+  return Number.isNaN(date.getTime()) ? "Belum tersedia" : new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(date);
 }
