@@ -20,7 +20,6 @@ import { PersonalPlaces, type PersonalSection } from "../components/PersonalPlac
 import { EVENT_LABELS, loadTimeline, refreshPersonal, usePersonalPlaces, type PersonalEvent, type PersonalPlace } from "../lib/personal";
 import { VisitStories } from "../components/VisitStories";
 import { BadgeCheckIcon, BookmarkIcon, CheckCircleIcon, ClockIcon, FileTextIcon, FlagIcon, HomeIcon, ListIcon, MapIcon, PenIcon, SendIcon, StarIcon, UserIcon } from "../components/Icons";
-import { VisitedArt, WishlistArt } from "../components/MyTapetaArt";
 
 const SECTION_META: Record<"wishlist" | "visited" | "timeline" | "kontribusi" | "disetujui", { title: string; description: string }> = {
   wishlist: { title: "Ingin dikunjungi", description: "Tempat yang ingin kamu kunjungi. Simpan dari Explore, pencarian OSM, atau Komunitas." },
@@ -269,13 +268,13 @@ export function MyTapeta({
                 <div className="t-mygrid">
                   <MyCard tone="wishlist" title="Ingin dikunjungi" icon={<MapIcon size={18} />} onSeeAll={() => go("wishlist")}>
                     {!session ? (
-                      <DashEmpty art={<WishlistArt />} title="Masuk untuk menyimpan" body="Simpan tempat dari Explore, pencarian OSM, atau Komunitas agar tersedia di perangkat mana pun." cta="Masuk" onClick={onOpenAuth} />
+                      <DashEmpty icon={<MapIcon size={22} />} title="Masuk untuk menyimpan" body="Simpan tempat dari Explore, pencarian OSM, atau Komunitas agar tersedia di perangkat mana pun." cta="Masuk" onClick={onOpenAuth} />
                     ) : personal.loading ? (
                       <p className="t-mycard__note" role="status">Memuat wishlist…</p>
                     ) : personal.error ? (
                       <p className="t-mycard__note" role="alert">{personal.error} <button type="button" className="t-mycard__retry" onClick={refreshPersonal}>Coba lagi</button></p>
                     ) : wishlist.length === 0 ? (
-                      <DashEmpty art={<WishlistArt />} title="Wishlist masih kosong" body="Simpan tempat dari Explore, pencarian OSM, atau Komunitas untuk mulai merencanakan kunjungan." cta="Simpan tempat" href="#explore" plus />
+                      <DashEmpty icon={<MapIcon size={22} />} title="Wishlist masih kosong" body="Simpan tempat dari Explore, pencarian OSM, atau Komunitas untuk mulai merencanakan kunjungan." cta="Simpan tempat" href="#explore" plus />
                     ) : (
                       <ul className="t-mycard__preview">
                         {wishlist.slice(0, 3).map((place) => (
@@ -287,13 +286,13 @@ export function MyTapeta({
 
                   <MyCard tone="visited" title="Sudah dikunjungi" icon={<FlagIcon size={18} />} onSeeAll={() => go("visited")}>
                     {!session ? (
-                      <DashEmpty art={<VisitedArt />} title="Masuk untuk mencatat kunjungan" body="Catat tempat yang sudah kamu kunjungi agar tersimpan sebagai riwayat pribadi." cta="Masuk" onClick={onOpenAuth} />
+                      <DashEmpty icon={<FlagIcon size={22} />} title="Masuk untuk mencatat kunjungan" body="Catat tempat yang sudah kamu kunjungi agar tersimpan sebagai riwayat pribadi." cta="Masuk" onClick={onOpenAuth} />
                     ) : personal.loading ? (
                       <p className="t-mycard__note" role="status">Memuat kunjungan…</p>
                     ) : personal.error ? (
                       <p className="t-mycard__note" role="alert">{personal.error} <button type="button" className="t-mycard__retry" onClick={refreshPersonal}>Coba lagi</button></p>
                     ) : visited.length === 0 ? (
-                      <DashEmpty art={<VisitedArt />} title="Belum ada kunjungan yang dicatat" body="Tandai tempat yang sudah kamu kunjungi untuk menyusun linimasa." cta={wishlist.length ? "Tandai kunjungan" : "Jelajahi tempat"} onClick={wishlist.length ? () => go("wishlist") : undefined} href={wishlist.length ? undefined : "#explore"} plus />
+                      <DashEmpty icon={<FlagIcon size={22} />} title="Belum ada kunjungan yang dicatat" body="Tandai tempat yang sudah kamu kunjungi untuk menyusun linimasa." cta={wishlist.length ? "Tandai kunjungan" : "Jelajahi tempat"} onClick={wishlist.length ? () => go("wishlist") : undefined} href={wishlist.length ? undefined : "#explore"} plus />
                     ) : (
                       <ul className="t-mycard__preview">
                         {visited.slice(0, 3).map((place) => (
@@ -305,13 +304,13 @@ export function MyTapeta({
 
                   <MyCard tone="timeline" title="Linimasa" icon={<ListIcon size={18} />} onSeeAll={() => go("timeline")}>
                     {!session ? (
-                      <DashEmpty title="Masuk untuk melihat linimasa" body="Riwayat simpanan dan kunjunganmu hanya terlihat olehmu setelah masuk." cta="Masuk" onClick={onOpenAuth} />
+                      <DashEmpty icon={<ListIcon size={22} />} title="Masuk untuk melihat linimasa" body="Riwayat simpanan dan kunjunganmu hanya terlihat olehmu setelah masuk." cta="Masuk" onClick={onOpenAuth} />
                     ) : eventsLoading ? (
                       <p className="t-mycard__note" role="status">Memuat linimasa…</p>
                     ) : eventsError ? (
                       <p className="t-mycard__note" role="alert">{eventsError} <button type="button" className="t-mycard__retry" onClick={refreshPersonal}>Coba lagi</button></p>
                     ) : events.length === 0 ? (
-                      <DashEmpty title="Belum ada aktivitas" body="Setelah kamu menyimpan tempat atau mencatat kunjungan, aktivitasmu akan muncul di sini." />
+                      <DashEmpty icon={<ListIcon size={22} />} title="Belum ada aktivitas" body="Setelah kamu menyimpan tempat atau mencatat kunjungan, aktivitasmu akan muncul di sini." />
                     ) : (
                       <ul className="t-mycard__preview">
                         {events.slice(0, 2).map((event) => (
@@ -458,7 +457,6 @@ function MyCard({
 }
 
 function DashEmpty({
-  art,
   icon,
   title,
   body,
@@ -467,7 +465,6 @@ function DashEmpty({
   href,
   plus,
 }: {
-  art?: ReactNode;
   icon?: ReactNode;
   title: string;
   body: string;
@@ -478,7 +475,7 @@ function DashEmpty({
 }) {
   return (
     <div className="t-myempty">
-      {art ? <span className="t-myempty__art" aria-hidden="true">{art}</span> : icon ? <span className="t-myempty__mark" aria-hidden="true">{icon}</span> : null}
+      {icon ? <span className="t-myempty__mark" aria-hidden="true">{icon}</span> : null}
       <strong className="t-myempty__title">{title}</strong>
       <p className="t-myempty__body">{body}</p>
       {cta ? href ? (

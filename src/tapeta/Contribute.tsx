@@ -9,6 +9,7 @@ import { isBackendConfigured } from "../lib/supabase";
 import { findRegionForPoint } from "../lib/geo";
 import { useChrome } from "./ChromeContext";
 import type { OsmLocation } from "../types";
+import { OsmPlaceSearch } from "../components/OsmPlaceSearch";
 
 type Step = 1 | 2 | 3;
 
@@ -63,6 +64,9 @@ export function Contribute(props: ContributeProps) {
   const session = readSession();
   const [notice, setNotice] = useState<{ title: string; body: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [osmQuery, setOsmQuery] = useState("");
+  const [osmLocation, setOsmLocation] = useState<OsmLocation | null>(null);
+  const cityMeta = { relationId: Number(props.cityId.replace("osm:relation:", "")), name: props.cityName, province: props.provinceName, type: "city" as const };
 
   const validCoordinates = draft.lat !== null && draft.lon !== null && Number.isFinite(draft.lat) && Number.isFinite(draft.lon)
     && draft.lat >= -90 && draft.lat <= 90 && draft.lon >= -180 && draft.lon <= 180;
@@ -136,6 +140,14 @@ export function Contribute(props: ContributeProps) {
     setGpsConfirmed(false);
     setManualCoordinateEdits({ lat: false, lon: false });
     setDraft((current) => ({ ...current, lat, lon }));
+  };
+
+  const chooseOsmLocation = (place: OsmLocation) => {
+    setOsmLocation(place);
+    setGpsAccuracy(null);
+    setGpsConfirmed(false);
+    setManualCoordinateEdits({ lat: false, lon: false });
+    setDraft((current) => ({ ...current, name: place.name, address: place.address, source: place.sourceUrl, lat: place.lat, lon: place.lon }));
   };
 
   const updateCoordinate = (axis: "lat" | "lon", value: string) => {
@@ -231,6 +243,11 @@ export function Contribute(props: ContributeProps) {
                 Geser peta dan ketuk titik yang tepat. Koordinat ini dipakai admin untuk memeriksa
                 usulan.
               </p>
+              <label className="t-contrib__osm-query">
+                <span>Cari lokasi yang sudah ada di OpenStreetMap</span>
+                <input type="search" value={osmQuery} onChange={(event) => setOsmQuery(event.target.value)} placeholder="Nama tempat atau alamat" aria-label="Cari lokasi OSM untuk usulan" />
+              </label>
+              {osmQuery.trim().length >= 3 && <OsmPlaceSearch city={cityMeta} query={osmQuery} cityName={props.cityName} regions={props.regions} selected={osmLocation} onSelect={chooseOsmLocation} onSuggest={chooseOsmLocation} />}
               <div className="t-contrib__coord">
                 <div className="t-contrib__coordrow">
                   <div className="t-contrib__field">
