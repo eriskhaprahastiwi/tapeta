@@ -25,6 +25,7 @@ try {
             contentType: "application/json",
             body: JSON.stringify(national ? [
               { profile_key: "public-visitor", display_label: "Rani Penjelajah", public_profile: true, visited_count: national ? 12 : 10, latest_visited_at: "2026-10-20" },
+              { profile_key: "public-visitor-two", display_label: "Sari Pemandu", public_profile: true, visited_count: 8, latest_visited_at: "2026-10-18" },
               { profile_key: null, display_label: "Kontributor", public_profile: false, visited_count: 3, latest_visited_at: "2026-10-19" },
             ] : []),
           });
@@ -195,7 +196,12 @@ try {
         const communityCityPicker = page.getByRole("button", { name: /Pilih kota:/ });
         await communityCityPicker.waitFor();
         assert.equal(await communityCityPicker.evaluate((button) => button.closest(".t-community__note") !== null), true, "Community city picker should sit above the city-change note");
-        assert.ok(await page.getByRole("heading", { name: "Cerita dari tempat nyata", exact: true }).isVisible());
+        assert.ok(await page.getByRole("heading", { name: "Cerita dari warga lokal", exact: true }).isVisible());
+        assert.equal(await page.locator(".t-community__layout").count(), 1, "Community tabs and content use the editorial sidebar layout");
+        assert.equal(await page.locator(".t-community__hero-art").getAttribute("src"), "/assets/Cat’s Riverside Travel Sketch.png");
+        assert.equal(await page.locator(".t-community__tabs").evaluate((tabs) => getComputedStyle(tabs).flexDirection), width <= 860 ? "row" : "column");
+        await page.locator(".t-community__hero-art").evaluate((image) => image.decode());
+        await page.screenshot({ path: `.qa/community-layout-${width}.png`, fullPage: true, style: "dialog[open]{display:none!important}dialog::backdrop{background:transparent!important}" });
         await page.getByRole("button", { name: "Cerita warga", exact: true }).waitFor();
         await page.getByRole("button", { name: "Kontributor", exact: true }).waitFor();
         await page.locator(".t-community__story").first().waitFor();
@@ -207,10 +213,10 @@ try {
         await page.reload({ waitUntil: "domcontentloaded" });
         await page.waitForTimeout(300);
         assert.equal(await page.locator("dialog[open]").count(), 0, "dismissed guide stays dismissed after reload");
-        await page.getByRole("button", { name: "Panduan", exact: true }).click();
+        await page.getByRole("button", { name: "Panduan komunitas", exact: true }).click();
         await page.locator("dialog[open]").waitFor();
         await page.keyboard.press("Escape");
-        assert.equal(await page.locator("dialog[open]").count(), 0, "guide reopens from Panduan and closes with Escape");
+        assert.equal(await page.locator("dialog[open]").count(), 0, "guide reopens from Panduan komunitas and closes with Escape");
         await page.getByRole("button", { name: "Tambah kontribusi", exact: true }).click();
         await page.locator("dialog.t-auth[open]").waitFor();
         assert.equal(await page.locator("dialog.t-community-guide[open]").count(), 0, "dismissed once-only guide does not intercept the contribution action");
@@ -225,6 +231,9 @@ try {
         assert.ok(await page.locator(".t-community__story, .t-community__empty, .t-community__state--error").count() > 0);
         await page.getByRole("button", { name: "Kontributor", exact: true }).click();
         assert.ok(await page.getByRole("heading", { name: /Kontributor/ }).isVisible());
+        assert.equal(await page.locator(".t-community__hero").evaluate((hero) => hero.classList.contains("t-community__hero--contributors")), true);
+        await page.locator(".t-community__hero-art").evaluate((image) => image.decode());
+        if (width === 1440) await page.screenshot({ path: ".qa/community-contributors-1440.png", fullPage: true });
         await page.waitForFunction(() => Boolean(
           document.querySelector(".t-community__leader") ||
           document.querySelector(".t-community__empty") ||
@@ -232,11 +241,17 @@ try {
         ));
         assert.ok(await page.locator(".t-community__leader, .t-community__empty, .t-community__state--error").count() > 0);
         await page.getByRole("button", { name: "Leaderboard", exact: true }).click();
+        assert.equal(await page.locator(".t-community__hero").evaluate((hero) => hero.classList.contains("t-community__hero--leaderboard")), true);
+        await page.locator(".t-community__hero-art").evaluate((image) => image.decode());
         await page.getByRole("button", { name: "Lokal: Pekanbaru", exact: true }).waitFor();
         await page.getByText("Belum ada kunjungan yang dibagikan", { exact: true }).waitFor();
         assert.equal(await page.locator(".t-community__badge-gallery .t-community__badge-medal").count(), 4, "empty leaderboard previews all visit badges");
         await page.getByRole("button", { name: "Seluruh Indonesia", exact: true }).click();
         await page.getByRole("button", { name: /Rani Penjelajah/ }).waitFor();
+        assert.equal(await page.locator(".t-community__podium-rank-1").count(), 1);
+        assert.equal(await page.locator(".t-community__podium-rank-2").count(), 1);
+        assert.equal(await page.locator(".t-community__podium-rank-3").count(), 1);
+        if (width === 1440) await page.screenshot({ path: ".qa/community-leaderboard-1440.png", fullPage: true });
         await page.getByRole("button", { name: /Rani Penjelajah/ }).click();
         await page.getByRole("heading", { name: "Rani Penjelajah", exact: true }).waitFor();
         assert.equal(await page.getByText("Tempat yang dikunjungi", { exact: true }).isVisible(), true);

@@ -272,53 +272,50 @@ export function Community({
           />
         ) : (
           <>
-            <header className="t-community__hero">
-              <div className="t-community__hero-copy">
-                <p className="t-community__eyebrow">Komunitas TAPETA</p>
-                <h1 className="t-community__title">Cerita dari<br />tempat nyata</h1>
-                <p className="t-community__lead">
-                  Tempat yang diterbitkan warga, beserta catatan untuk membantu orang lain menemukannya.
-                </p>
-                <div className="t-community__actions">
-                  <button type="button" className="t-btn t-btn--brick" onClick={() => account.signedIn ? onOpenContribute() : onOpenAuth()}>
-                    Tambah kontribusi
-                  </button>
-                  <button type="button" className="t-community__guide-link" ref={guideButtonRef} onClick={openGuide}>
-                    Panduan
-                  </button>
-                </div>
-              </div>
-              <img className="t-community__hero-art" src="/assets/Cat’s Riverside Travel Sketch.png" alt="Ilustrasi cat air Sungai Siak, jembatan, dan perlengkapan perjalanan" />
-              <aside className="t-community__note" aria-label="Tentang komunitas">
-                <span className="t-community__note-mark" aria-hidden="true">T</span>
-                <div className="t-community__note-body">
-                  <button type="button" className="t-community__citypicker" onClick={onOpenCityPicker} aria-label={`Pilih kota: ${cityName}, ${provinceName}`}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg>
-                    <span><strong>{cityName}</strong><small>{provinceName}</small></span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-                  </button>
-                  <p>Ganti kota untuk membaca cerita warga setempat. Tempat hanya muncul setelah ditinjau admin.</p>
-                </div>
-              </aside>
-            </header>
-
-            <div className="t-community__tabs" role="group" aria-label="Konten komunitas">
+            <div className="t-community__layout">
+              <nav className="t-community__tabs" role="group" aria-label="Konten komunitas">
               <button type="button" aria-label="Cerita warga" aria-pressed={tab === "stories"} className={tab === "stories" ? "is-active" : ""} onClick={() => setTab("stories")}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 5.5v16M8 7h8M8 11h7"/></svg>
                 Cerita warga <span aria-hidden="true">{visibleStories.length}</span>
               </button>
               <button type="button" aria-label="Kontributor" aria-pressed={tab === "contributors"} className={tab === "contributors" ? "is-active" : ""} onClick={() => setTab("contributors")}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 20v-1.5A5.5 5.5 0 0 1 9 13h1M16 11a3 3 0 1 0 0-6M14 14h2a5 5 0 0 1 5 5v1"/></svg>
                 Kontributor <span aria-hidden="true">{contributors.length}</span>
               </button>
-              <button type="button" aria-label="Leaderboard" aria-pressed={tab === "leaderboard"} className={tab === "leaderboard" ? "is-active" : ""} onClick={() => setTab("leaderboard")}>Leaderboard</button>
-            </div>
+              <button type="button" aria-label="Leaderboard" aria-pressed={tab === "leaderboard"} className={tab === "leaderboard" ? "is-active" : ""} onClick={() => setTab("leaderboard")}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4m8-5h4v1a4 4 0 0 1-4 4M12 12v5m-4 3h8m-7-3h6"/></svg>
+                Leaderboard
+              </button>
+              </nav>
+              <div className="t-community__body">
+                <header className={`t-community__hero t-community__hero--${tab}`}>
+                  <div className="t-community__hero-copy">
+                    <h1 className="t-community__title">{tab === "stories" ? <>Cerita dari<br />warga lokal</> : tab === "contributors" ? "Kontributor TAPETA" : "Leaderboard"}</h1>
+                    <p className="t-community__lead">
+                      {tab === "stories" ? "Tempat yang diterbitkan warga, pengalaman nyata, dan catatan perjalanan untuk membantu orang lain menemukan tempat istimewa." : tab === "contributors" ? "Warga yang membagikan cerita, ulasan, dan usulan tempat untuk membantu orang lain menjelajah." : `Kontributor paling aktif yang membagikan cerita, ulasan, dan usulan tempat di ${cityName}.`}
+                    </p>
+                    <div className="t-community__actions">
+                      <button type="button" className="t-btn t-btn--brick" onClick={() => account.signedIn ? onOpenContribute() : onOpenAuth()}>Tambah kontribusi</button>
+                      <button type="button" className="t-community__guide-link" ref={guideButtonRef} onClick={openGuide}>Panduan komunitas</button>
+                    </div>
+                  </div>
+                  <img className="t-community__hero-art" src="/assets/Cat’s Riverside Travel Sketch.png" alt={tab === "contributors" ? "Ilustrasi kucing, ransel, dan peta perjalanan di tepi Sungai Siak" : "Ilustrasi cat air tepi Sungai Siak dan Jembatan Siak"} />
+                  <aside className="t-community__note" aria-label="Kota komunitas">
+                    <button type="button" className="t-community__citypicker" onClick={onOpenCityPicker} aria-label={`Pilih kota: ${cityName}, ${provinceName}`}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                      <span><strong>{cityName}</strong><small>{provinceName}</small></span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+                    </button>
+                  </aside>
+                </header>
 
             {tab === "stories" ? (
               <section className="t-community__stories" aria-labelledby="t-community-stories-title">
                 <VisitStories key={cityId} scope="public" cityId={cityId} onOpenPlace={onOpenPersonalPlace} />
                 <div className="t-community__sectionhead">
                   <div>
-                    <h2 id="t-community-stories-title">Tempat dari warga {cityName}</h2>
-                    <p>Tempat yang sudah ditinjau dan diterbitkan.</p>
+                    <h2 id="t-community-stories-title">Tempat terbit dari warga</h2>
+                    <p>Tempat yang sudah ditinjau dan diterbitkan di {cityName}.</p>
                   </div>
                 </div>
                 {visibleStoriesLoading ? (
@@ -374,7 +371,7 @@ export function Community({
               <section className="t-community__contributors" aria-labelledby="t-community-contributors-title">
                 <div className="t-community__sectionhead">
                   <div>
-                    <h2 id="t-community-contributors-title">Kontributor</h2>
+                    <h2 id="t-community-contributors-title">Warga yang berkontribusi</h2>
                     <p>Papan ini mencakup semua akun yang pernah mengirim usulan. Nama mengikuti pilihan privasi masing-masing.</p>
                   </div>
                   <span className="t-community__leaderboard-label">Tempat terbit</span>
@@ -394,7 +391,7 @@ export function Community({
                     </button>
                   </div>
                 ) : (
-                  <ol className="t-community__leaderboard">
+                  <ol className="t-community__leaderboard t-community__directory">
                     {contributors.map((person, index) => {
                       const row = (
                         <>
@@ -431,15 +428,17 @@ export function Community({
                 )}
               </section>
             ) : (
-              <section className="t-community__contributors" aria-labelledby="t-community-leaderboard-title">
+              <section className="t-community__contributors t-community__leaderboard-view" aria-labelledby="t-community-leaderboard-title">
                 <div className="t-community__sectionhead"><div><h2 id="t-community-leaderboard-title">Leaderboard kunjungan</h2><p>Diurutkan dari tempat TAPETA yang sudah dikunjungi.</p></div></div>
                 <div className="t-community__scope" role="group" aria-label="Cakupan leaderboard">
                   <button type="button" className={leaderboardScope === "local" ? "is-active" : ""} aria-pressed={leaderboardScope === "local"} onClick={() => { setVisitLeadersLoading(true); setLeaderboardScope("local"); }}>Lokal: {cityName}</button>
                   <button type="button" className={leaderboardScope === "national" ? "is-active" : ""} aria-pressed={leaderboardScope === "national"} onClick={() => { setVisitLeadersLoading(true); setLeaderboardScope("national"); }}>Seluruh Indonesia</button>
                 </div>
-                {visibleVisitLeadersLoading ? <p className="t-community__state" role="status">Memuat leaderboard…</p> : visitLeadersError ? <p className="t-community__state t-community__state--error" role="alert">{visitLeadersError} {supabase && <button type="button" onClick={retryVisitLeaders}>Coba lagi</button>}</p> : visibleVisitLeaders.length === 0 ? <div className="t-community__empty"><h3>Belum ada kunjungan yang dibagikan</h3><p>Tempat TAPETA yang ditandai sudah dikunjungi akan membentuk leaderboard di sini.</p><BadgeGallery /></div> : <ol className="t-community__leaderboard">{visibleVisitLeaders.map((person, index) => <li key={person.profileKey ?? `private-visit-${index}`}>{person.profileKey ? <button type="button" className="t-community__leader t-community__leader--visits" onClick={() => setProfileKey(person.profileKey)}><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">{person.displayLabel}</span><span className="t-community__person-sub">Profil publik</span></span>{person.badge && <span className="t-community__leader-badge"><BadgeMedal badge={person.badge} /></span>}<span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></button> : <div className="t-community__leader t-community__leader--visits is-private"><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">Kontributor</span><span className="t-community__person-sub">Profil privat</span></span><span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></div>}</li>)}</ol>}
+                {visibleVisitLeadersLoading ? <p className="t-community__state" role="status">Memuat leaderboard…</p> : visitLeadersError ? <p className="t-community__state t-community__state--error" role="alert">{visitLeadersError} {supabase && <button type="button" onClick={retryVisitLeaders}>Coba lagi</button>}</p> : visibleVisitLeaders.length === 0 ? <div className="t-community__empty"><h3>Belum ada kunjungan yang dibagikan</h3><p>Tempat TAPETA yang ditandai sudah dikunjungi akan membentuk leaderboard di sini.</p><BadgeGallery /></div> : <ol className="t-community__leaderboard t-community__leaderboard--podium">{visibleVisitLeaders.map((person, index) => <li key={person.profileKey ?? `private-visit-${index}`} className={index < 3 ? `t-community__podium-rank-${index + 1}` : undefined}>{person.profileKey ? <button type="button" className="t-community__leader t-community__leader--visits" onClick={() => setProfileKey(person.profileKey)}><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">{person.displayLabel}</span><span className="t-community__person-sub">Profil publik</span></span>{person.badge && <span className="t-community__leader-badge"><BadgeMedal badge={person.badge} /></span>}<span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></button> : <div className="t-community__leader t-community__leader--visits is-private"><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">Kontributor</span><span className="t-community__person-sub">Profil privat</span></span><span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></div>}</li>)}</ol>}
               </section>
             )}
+              </div>
+            </div>
           </>
         )}
       </main>
