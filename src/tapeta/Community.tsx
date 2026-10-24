@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { Category, Destination } from "../types";
 import { supabase } from "../lib/supabase";
 import { CATEGORY_COLORS } from "../data/categories";
 import { MARKER_GLYPHS } from "../lib/markerIcon";
 import {
-  badgeForPublishedCount,
   badgeForVisitedCount,
   communityStoryText,
   loadCommunityProfile,
@@ -73,9 +72,37 @@ function badgeClass(key: string) {
   return `t-community__badge t-community__badge--${key}`;
 }
 
-function BadgeMark({ badge }: { badge: NonNullable<ReturnType<typeof badgeForVisitedCount>> }) {
-  const glyph = badge.key === "perintis" ? "⌁" : badge.key === "penjelajah" ? "◉" : badge.key === "pemandu" ? "↗" : "⚑";
-  return <span className={`t-community__badge-mark t-community__badge-mark--${badge.key}`} aria-label={`Lencana ${badge.label}`}><span aria-hidden="true">{glyph}</span><small>{badge.label}</small></span>;
+const BADGE_LEVELS = [
+  { key: "perintis", label: "Perintis", metal: "Perunggu", range: "1–4", first: 1 },
+  { key: "penjelajah", label: "Penjelajah", metal: "Silver", range: "5–9", first: 5 },
+  { key: "pemandu", label: "Pemandu", metal: "Gold", range: "10–14", first: 10 },
+  { key: "pelopor", label: "Pelopor", metal: "Diamond", range: "15+", first: 15 },
+] as const;
+
+function BadgeMedal({ badge, large = false }: { badge: NonNullable<ReturnType<typeof badgeForVisitedCount>>; large?: boolean }) {
+  const id = useId().replace(/:/g, "");
+  const material = badge.key === "perintis" ? "bronze" : badge.key === "penjelajah" ? "silver" : badge.key === "pemandu" ? "gold" : "diamond";
+  return (
+    <span className={`t-community__badge-medal t-community__badge-medal--${material}${large ? " is-large" : ""}`} role="img" aria-label={`Lencana ${badge.label}, ${material}`}>
+      <svg viewBox="0 0 112 112" aria-hidden="true">
+        <defs>
+          <linearGradient id={`${id}-metal`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="var(--badge-light)" /><stop offset=".52" stopColor="var(--badge-main)" /><stop offset="1" stopColor="var(--badge-dark)" /></linearGradient>
+          <linearGradient id={`${id}-field`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="var(--badge-field)" /><stop offset="1" stopColor="var(--badge-main)" /></linearGradient>
+        </defs>
+        <path d="M21 75 12 96l19-5 9 16 13-21m18 0 13 21 9-16 19 5-9-21" fill={`url(#${id}-metal)`} stroke="var(--badge-outline)" strokeWidth="2.5" strokeLinejoin="round" />
+        <path d="M56 5 91 20l16 31-12 39-39 16-39-16L5 51l16-31Z" fill={`url(#${id}-metal)`} stroke="var(--badge-outline)" strokeWidth="3" strokeLinejoin="round" />
+        <path d="M56 13 85 26l13 26-10 31-32 14-32-14-10-31 13-26Z" fill={`url(#${id}-field)`} stroke="rgba(255,250,235,.9)" strokeWidth="2" />
+        <path d="M25 67q15-13 31-5 16-8 31 5v14L56 93 25 81Z" fill="var(--badge-leaf)" opacity=".9" />
+        <path d="M31 69q-10-2-11-13 10 0 15 8m46 5q10-2 11-13-10 0-15 8" fill="none" stroke="var(--badge-leaf)" strokeWidth="4" strokeLinecap="round" />
+        {badge.key === "perintis" && <g><path d="M56 67V39m0 8Q40 47 38 31q16 0 18 14m0 2q15 0 18-16-16 0-18 14" fill="none" stroke="var(--badge-ink)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/><path d="M38 69q18-9 36 0" fill="none" stroke="#f0d59a" strokeWidth="2" strokeLinecap="round"/></g>}
+        {badge.key === "penjelajah" && <g><path d="m22 59 17-20 12 13 12-18 28 25" fill="var(--badge-peak)" stroke="var(--badge-ink)" strokeWidth="2.5" strokeLinejoin="round"/><path d="m34 46 5-7 5 6m14-3 5-8 6 8" fill="none" stroke="#fff8e8" strokeWidth="2"/><path d="M37 59h38m-31-1v13m24-13v13" stroke="var(--badge-ink)" strokeWidth="4"/><circle cx="44" cy="72" r="8" fill="none" stroke="var(--badge-ink)" strokeWidth="4"/><circle cx="68" cy="72" r="8" fill="none" stroke="var(--badge-ink)" strokeWidth="4"/><path d="M51 70h10" stroke="var(--badge-ink)" strokeWidth="4"/></g>}
+        {badge.key === "pemandu" && <g><path d="M56 73V34" stroke="var(--badge-ink)" strokeWidth="5" strokeLinecap="round"/><path d="M57 38h30L78 48h9L74 59H57Z" fill="var(--badge-board)" stroke="var(--badge-ink)" strokeWidth="2.5" strokeLinejoin="round"/><path d="M56 54H27l9 9h-9l13 10h16Z" fill="var(--badge-board)" stroke="var(--badge-ink)" strokeWidth="2.5" strokeLinejoin="round"/><path d="M63 44h14M37 62h12" stroke="#fff5dd" strokeWidth="2" strokeLinecap="round"/></g>}
+        {badge.key === "pelopor" && <g><path d="m25 69 16-18 10 11 13-25 25 32" fill="var(--badge-peak)" stroke="var(--badge-ink)" strokeWidth="3" strokeLinejoin="round"/><path d="m49 61 9-15 7 9-6-2-4 8" fill="#fff9eb"/><path d="M70 48V27" stroke="var(--badge-ink)" strokeWidth="3"/><path d="M71 28h19L80 37H71Z" fill="var(--badge-flag)" stroke="var(--badge-ink)" strokeWidth="2" strokeLinejoin="round"/><path d="M23 74h66" stroke="#fff4d9" strokeWidth="3" strokeLinecap="round"/></g>}
+        <path d="m56 83 2.7 5.4 6 .9-4.4 4.2 1 6-5.3-2.9-5.3 2.9 1-6-4.4-4.2 6-.9Z" fill="#fff1c8" stroke="var(--badge-outline)" strokeWidth="1.5" strokeLinejoin="round" />
+      </svg>
+      <span className="t-community__badge-medal-label">{badge.label}</span>
+    </span>
+  );
 }
 
 function StoryArtwork({ story, categoryName }: { story: CommunityStory; categoryName: string }) {
@@ -395,7 +422,7 @@ export function Community({
                   <button type="button" className={leaderboardScope === "local" ? "is-active" : ""} aria-pressed={leaderboardScope === "local"} onClick={() => { setVisitLeadersLoading(true); setLeaderboardScope("local"); }}>Lokal: {cityName}</button>
                   <button type="button" className={leaderboardScope === "national" ? "is-active" : ""} aria-pressed={leaderboardScope === "national"} onClick={() => { setVisitLeadersLoading(true); setLeaderboardScope("national"); }}>Seluruh Indonesia</button>
                 </div>
-                {visibleVisitLeadersLoading ? <p className="t-community__state" role="status">Memuat leaderboard…</p> : visitLeadersError ? <p className="t-community__state t-community__state--error" role="alert">{visitLeadersError} {supabase && <button type="button" onClick={retryVisitLeaders}>Coba lagi</button>}</p> : visibleVisitLeaders.length === 0 ? <div className="t-community__empty"><h3>Belum ada kunjungan yang dibagikan</h3><p>Tempat TAPETA yang ditandai sudah dikunjungi akan membentuk leaderboard di sini.</p></div> : <ol className="t-community__leaderboard">{visibleVisitLeaders.map((person, index) => <li key={person.profileKey ?? `private-visit-${index}`}>{person.profileKey ? <button type="button" className="t-community__leader" onClick={() => setProfileKey(person.profileKey)}><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">{person.displayLabel}</span><span className="t-community__person-sub">Profil publik</span></span>{person.badge && <BadgeMark badge={person.badge} />}<span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></button> : <div className="t-community__leader is-private"><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">Kontributor</span><span className="t-community__person-sub">Profil privat</span></span><span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></div>}</li>)}</ol>}
+                {visibleVisitLeadersLoading ? <p className="t-community__state" role="status">Memuat leaderboard…</p> : visitLeadersError ? <p className="t-community__state t-community__state--error" role="alert">{visitLeadersError} {supabase && <button type="button" onClick={retryVisitLeaders}>Coba lagi</button>}</p> : visibleVisitLeaders.length === 0 ? <div className="t-community__empty"><h3>Belum ada kunjungan yang dibagikan</h3><p>Tempat TAPETA yang ditandai sudah dikunjungi akan membentuk leaderboard di sini.</p></div> : <ol className="t-community__leaderboard">{visibleVisitLeaders.map((person, index) => <li key={person.profileKey ?? `private-visit-${index}`}>{person.profileKey ? <button type="button" className="t-community__leader t-community__leader--visits" onClick={() => setProfileKey(person.profileKey)}><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">{person.displayLabel}</span><span className="t-community__person-sub">Profil publik</span></span>{person.badge && <span className="t-community__leader-badge"><BadgeMedal badge={person.badge} /></span>}<span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></button> : <div className="t-community__leader t-community__leader--visits is-private"><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">Kontributor</span><span className="t-community__person-sub">Profil privat</span></span><span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></div>}</li>)}</ol>}
               </section>
             )}
           </>
@@ -447,7 +474,7 @@ function ContributorProfileView({
   if (error) return <section className="t-community__profile"><button type="button" className="t-community__back" onClick={onBack}>Kembali ke komunitas</button><p role="alert">{error} <button type="button" onClick={onRetry}>Coba lagi</button></p></section>;
   if (!profile) return <section className="t-community__profile"><button type="button" className="t-community__back" onClick={onBack}>Kembali ke komunitas</button><p role="status">Profil ini tidak tersedia untuk publik.</p></section>;
 
-  const badge = badgeForPublishedCount(profile.publishedCount);
+  const badge = badgeForVisitedCount(profile.visitedCount);
   return (
     <section className="t-community__profile" aria-labelledby="t-community-profile-title">
       <button type="button" className="t-community__back" onClick={onBack}>‹ Kembali ke komunitas</button>
@@ -455,10 +482,43 @@ function ContributorProfileView({
         <span className="t-community__profile-avatar" aria-hidden="true">{initials(profile.displayName)}</span>
         <div>
           <h1 id="t-community-profile-title">{profile.displayName}</h1>
-          <p>{profile.publishedCount} tempat diterbitkan</p>
+          <p>{profile.visitedCount} tempat dikunjungi · {profile.publishedCount} kontribusi terbit</p>
         </div>
-        {badge && <span className={badgeClass(badge.key)}>{badge.label}</span>}
+        {badge && <BadgeMedal badge={badge} large />}
       </header>
+      <section className="t-community__badge-section" aria-labelledby="t-community-badge-title">
+        <div className="t-community__sectionhead"><div><h2 id="t-community-badge-title">Perjalanan lencana</h2><p>Level lencana bertambah saat kamu mengunjungi destinasi TAPETA.</p></div></div>
+        <div className="t-community__badge-progression">
+          {BADGE_LEVELS.map((level) => {
+            const levelBadge = badgeForVisitedCount(level.first)!;
+            const earned = profile.visitedCount >= level.first;
+            return <article key={level.key} className={`t-community__badge-level${badge?.key === level.key ? " is-current" : ""}${earned ? " is-earned" : ""}`}>
+              <BadgeMedal badge={levelBadge} large />
+              <strong>{level.label}</strong><span>{level.metal}</span><small>{level.range} kunjungan</small>
+            </article>;
+          })}
+        </div>
+      </section>
+      <div className="t-community__sectionhead t-community__visits-head">
+        <div><h2>Tempat yang dikunjungi</h2><p>Destinasi TAPETA yang dibagikan ke komunitas.</p></div>
+        <span className="t-community__visit-total">{profile.visitedCount} tempat</span>
+      </div>
+      {profile.visitedPlaces.length === 0 ? (
+        <p className="t-community__state">Belum ada kunjungan yang dibagikan.</p>
+      ) : (
+        <div className="t-community__storylist t-community__visited-list">
+          {profile.visitedPlaces.map((place) => (
+            <article key={place.destinationId} className="t-community__story">
+              <StoryArtwork story={place} categoryName={categoriesById.get(place.categoryId)?.shortName ?? "Tempat"} />
+              <div className="t-community__story-body">
+                <div className="t-community__story-meta"><span>{place.cityName}</span><span aria-hidden="true">·</span><span>Dikunjungi {shortDate(place.visitedOn ?? null)}</span></div>
+                <h3>{place.placeName}</h3>
+                <button type="button" className="t-community__place-link" onClick={() => onOpenDestination(place.destinationId)}>Buka tempat</button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
       <div className="t-community__sectionhead">
         <div>
           <h2>Kontribusi terbit</h2>

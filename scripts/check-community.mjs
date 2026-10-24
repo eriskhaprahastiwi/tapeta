@@ -50,6 +50,22 @@ for (const story of stories) {
   assert.ok(!("moderator_note" in story), "stories do not return moderator notes");
 }
 
+for (const scope of [cityId, null]) {
+  const { data: visitLeaders, error } = await client.rpc("community_visit_leaderboard", { p_city_id: scope });
+  assert.ifError(error);
+  assert.ok(Array.isArray(visitLeaders), "visit leaderboard returns rows for local and national scopes");
+  for (const contributor of visitLeaders) {
+    assert.equal(typeof contributor.visited_count, "number");
+    assert.equal(typeof contributor.public_profile, "boolean");
+    assert.ok(!("email" in contributor));
+    assert.ok(!("moderator_note" in contributor));
+    if (!contributor.public_profile) {
+      assert.equal(contributor.display_label, "Kontributor");
+      assert.equal(contributor.profile_key, null);
+    }
+  }
+}
+
 const publicContributor = contributors.find((row) => row.public_profile && row.profile_key);
 if (publicContributor) {
   const { data: profile, error } = await client.rpc("community_contributor_profile", {
@@ -59,6 +75,8 @@ if (publicContributor) {
   assert.equal(profile?.public_profile, true);
   assert.equal(profile?.display_label, publicContributor.display_label);
   assert.ok(Array.isArray(profile?.contributions));
+  assert.equal(typeof profile?.visited_count, "number");
+  assert.ok(Array.isArray(profile?.visited_places));
   for (const contribution of profile.contributions) {
     assert.equal(contribution.submission_status, "published");
     assert.equal(contribution.publication_status, "published");
@@ -91,13 +109,15 @@ if (env.SUPABASE_IMPORT_EMAIL && env.SUPABASE_IMPORT_PASSWORD) {
 }
 
 if (!process.argv.includes("--rpc-only")) {
-  const { badgeForPublishedCount, communityStoryText, mapCommunityContributorRow, mapCommunityStoryRow } = await import("../src/lib/community.ts");
-  assert.equal(badgeForPublishedCount(0), null);
-  assert.equal(badgeForPublishedCount(1)?.label, "Pencatat");
-  assert.equal(badgeForPublishedCount(10)?.label, "Pencatat");
-  assert.equal(badgeForPublishedCount(11)?.label, "Penjelajah");
-  assert.equal(badgeForPublishedCount(15)?.label, "Penjelajah");
-  assert.equal(badgeForPublishedCount(16)?.label, "Pemandu");
+  const { badgeForVisitedCount, communityStoryText, mapCommunityContributorRow, mapCommunityStoryRow, mapCommunityVisitLeaderboardRow } = await import("../src/lib/community.ts");
+  assert.equal(badgeForVisitedCount(0), null);
+  assert.equal(badgeForVisitedCount(1)?.label, "Perintis");
+  assert.equal(badgeForVisitedCount(4)?.label, "Perintis");
+  assert.equal(badgeForVisitedCount(5)?.label, "Penjelajah");
+  assert.equal(badgeForVisitedCount(9)?.label, "Penjelajah");
+  assert.equal(badgeForVisitedCount(10)?.label, "Pemandu");
+  assert.equal(badgeForVisitedCount(14)?.label, "Pemandu");
+  assert.equal(badgeForVisitedCount(15)?.label, "Pelopor");
   assert.equal(communityStoryText(null), "Cerita belum ditambahkan.");
   assert.equal(communityStoryText("  Catatan warga  "), "Catatan warga");
   assert.deepEqual(
@@ -108,7 +128,7 @@ if (!process.argv.includes("--rpc-only")) {
       publicProfile: false,
       publishedCount: 12,
       latestPublishedAt: null,
-      badge: { key: "penjelajah", label: "Penjelajah" },
+      badge: null,
     },
   );
   assert.equal(
@@ -131,6 +151,9 @@ if (!process.argv.includes("--rpc-only")) {
   assert.equal(privateStory.profileKey, null);
   assert.equal(privateStory.destinationId, "dest-1");
   assert.equal(privateStory.stickerPath, "/assets/stickers/pasar-bawah.png");
+  assert.equal(mapCommunityVisitLeaderboardRow({ public_profile: false, display_label: "Nama Rahasia", profile_key: "secret", visited_count: 15 }).displayLabel, "Kontributor");
+  assert.equal(mapCommunityVisitLeaderboardRow({ public_profile: false, display_label: "Nama Rahasia", profile_key: "secret", visited_count: 15 }).profileKey, null);
+  assert.equal(mapCommunityVisitLeaderboardRow({ public_profile: true, display_label: "Rani", profile_key: "public-key", visited_count: 15 }).badge?.label, "Pelopor");
 }
 
 console.log(`Community RPC contract passed: ${contributors.length} contributors, ${stories.length} city stories.`);

@@ -18,6 +18,27 @@ try {
     page.on("pageerror", (error) => errors.push({ width, message: error.message }));
     for (const [name, hash] of [["landing", ""], ["explore", "#explore"], ["my", "#my"], ["community", "#komunitas"], ["contribute", "#contribute"], ["atlas", "#atlas"], ["admin-denied", "#admin-dash"], ["admin-import-denied", "#admin-import"], ["city", "#kotabaru"]]) {
       if (name === "community") {
+        await page.route("**/rest/v1/rpc/community_visit_leaderboard", (route) => {
+          const national = route.request().postDataJSON().p_city_id === null;
+          route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify([
+              { profile_key: "public-visitor", display_label: "Rani Penjelajah", public_profile: true, visited_count: national ? 12 : 10, latest_visited_at: "2026-10-20" },
+              { profile_key: null, display_label: "Kontributor", public_profile: false, visited_count: 3, latest_visited_at: "2026-10-19" },
+            ]),
+          });
+        });
+        await page.route("**/rest/v1/rpc/community_contributor_profile", (route) => route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            profile_key: "public-visitor", display_name: "Rani Penjelajah", public_profile: true, published_count: 1,
+            visited_count: 10,
+            visited_places: [{ destination_id: "visited-place-1", place_name: "Taman Kaca Mayang", description: "Taman kota", category_id: "alam", address: "Pekanbaru", region_code: "14.71.01", region_name: "Sukajadi", city_id: "osm:relation:16563796", city_name: "Pekanbaru", visited_on: "2026-10-20", public_profile: true }],
+            contributions: [],
+          }),
+        }));
         await page.route("**/rest/v1/rpc/community_stories*", (route) => route.fulfill({
           status: 200,
           contentType: "application/json",
@@ -210,6 +231,18 @@ try {
           document.querySelector(".t-community__state--error"),
         ));
         assert.ok(await page.locator(".t-community__leader, .t-community__empty, .t-community__state--error").count() > 0);
+        await page.getByRole("button", { name: "Leaderboard", exact: true }).click();
+        await page.getByRole("button", { name: "Lokal: Pekanbaru", exact: true }).waitFor();
+        await page.getByRole("button", { name: "Seluruh Indonesia", exact: true }).click();
+        await page.getByRole("button", { name: /Rani Penjelajah/ }).waitFor();
+        await page.getByRole("button", { name: /Rani Penjelajah/ }).click();
+        await page.getByRole("heading", { name: "Rani Penjelajah", exact: true }).waitFor();
+        assert.equal(await page.getByText("Tempat yang dikunjungi", { exact: true }).isVisible(), true);
+        assert.equal(await page.getByRole("heading", { name: "Taman Kaca Mayang", exact: true }).isVisible(), true);
+        for (const badge of ["Perintis", "Penjelajah", "Pemandu", "Pelopor"]) {
+          assert.equal(await page.locator(`.t-community__badge-medal[aria-label^="Lencana ${badge},"]`).count() > 0, true, `${badge} badge illustration should be present`);
+          assert.equal(await page.getByText(badge, { exact: true }).count() > 0, true, `${badge} progression label should be present`);
+        }
       }
       if (name === "admin-denied") assert.ok(await page.getByText("AREA TERBATAS").isVisible());
       if (name === "explore") {
