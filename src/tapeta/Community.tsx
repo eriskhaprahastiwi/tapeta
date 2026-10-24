@@ -274,7 +274,8 @@ export function Community({
           <>
             <header className="t-community__hero">
               <div className="t-community__hero-copy">
-                <h1 className="t-community__title">Cerita warga lokal</h1>
+                <p className="t-community__eyebrow">Komunitas TAPETA</p>
+                <h1 className="t-community__title">Cerita dari<br />tempat nyata</h1>
                 <p className="t-community__lead">
                   Tempat yang diterbitkan warga, beserta catatan untuk membantu orang lain menemukannya.
                 </p>
@@ -287,6 +288,7 @@ export function Community({
                   </button>
                 </div>
               </div>
+              <img className="t-community__hero-art" src="/assets/Cat’s Riverside Travel Sketch.png" alt="Ilustrasi cat air Sungai Siak, jembatan, dan perlengkapan perjalanan" />
               <aside className="t-community__note" aria-label="Tentang komunitas">
                 <span className="t-community__note-mark" aria-hidden="true">T</span>
                 <div className="t-community__note-body">

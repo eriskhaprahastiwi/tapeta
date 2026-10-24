@@ -7385,14 +7385,18 @@ button.t-account__nav.is-active {
   padding: 34px 28px 64px;
 }
 .t-community__hero {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  align-items: end;
-  gap: 40px;
-  padding: 8px 0 28px;
+  grid-template-columns: minmax(280px, .72fr) minmax(420px, 1.28fr);
+  align-items: center;
+  gap: 20px;
+  min-height: 320px;
+  padding: 42px 0 28px;
+  overflow: hidden;
   border-bottom: 1px solid var(--t-line);
 }
-.t-community__hero-copy { max-width: 720px; }
+.t-community__hero-copy { position: relative; z-index: 1; max-width: 440px; padding-left: 18px; }
+.t-community__eyebrow { margin: 0 0 10px; color: var(--t-brick); font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
 .t-community__title {
   margin: 0;
   font-family: var(--t-font-display);
@@ -7401,8 +7405,9 @@ button.t-account__nav.is-active {
   line-height: 1.04;
   letter-spacing: -1.1px;
   color: var(--t-ink);
-  white-space: nowrap;
+  white-space: normal;
 }
+.t-community__hero-art { align-self: stretch; width: 100%; height: 100%; min-height: 260px; object-fit: cover; object-position: 72% center; }
 .t-community__lead {
   max-width: 58ch;
   margin: 12px 0 0;
@@ -7431,6 +7436,10 @@ button.t-account__nav.is-active {
   cursor: pointer;
 }
 .t-community__note {
+  position: absolute;
+  z-index: 2;
+  top: 28px;
+  right: 0;
   display: grid;
   grid-template-columns: 36px minmax(0, 1fr);
   align-items: start;
@@ -7933,9 +7942,11 @@ button.t-community__place-link:hover { text-decoration: underline; text-underlin
   .t-community .t-topnav { gap: 6px; }
   .t-community .t-topnav__account { gap: 6px; margin-left: 0; }
   .t-community .t-topnav__link--btn { padding-inline: 2px; }
-  .t-community__hero { grid-template-columns: 1fr; gap: 20px; padding-bottom: 22px; }
+  .t-community__hero { grid-template-columns: 1fr; gap: 12px; min-height: 0; padding: 28px 0 22px; }
+  .t-community__hero-art { order: -1; min-height: 180px; height: 180px; object-position: 70% center; }
+  .t-community__hero-copy { padding-left: 0; max-width: 540px; }
   .t-community__title { font-size: clamp(30px, 4.2vw, 36px); }
-  .t-community__note { max-width: 560px; }
+  .t-community__note { position: static; max-width: 560px; }
   .t-community__storylist { grid-template-columns: 1fr; }
   .t-community__story:first-child { grid-column: auto; grid-template-columns: minmax(96px, 0.42fr) minmax(0, 1fr); gap: 14px; padding: 14px; }
   .t-community__story:first-child .t-community__story-art { height: 150px; }

@@ -195,12 +195,7 @@ try {
         const communityCityPicker = page.getByRole("button", { name: /Pilih kota:/ });
         await communityCityPicker.waitFor();
         assert.equal(await communityCityPicker.evaluate((button) => button.closest(".t-community__note") !== null), true, "Community city picker should sit above the city-change note");
-        assert.ok(await page.getByRole("heading", { name: "Cerita warga lokal", exact: true }).isVisible());
-        assert.equal(await page.getByRole("heading", { name: "Cerita warga lokal", exact: true }).evaluate((heading) => {
-          const range = document.createRange();
-          range.selectNodeContents(heading);
-          return range.getClientRects().length;
-        }), 1, "Community title stays on one line");
+        assert.ok(await page.getByRole("heading", { name: "Cerita dari tempat nyata", exact: true }).isVisible());
         await page.getByRole("button", { name: "Cerita warga", exact: true }).waitFor();
         await page.getByRole("button", { name: "Kontributor", exact: true }).waitFor();
         await page.locator(".t-community__story").first().waitFor();
