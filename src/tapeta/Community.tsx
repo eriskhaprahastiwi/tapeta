@@ -5,13 +5,16 @@ import { CATEGORY_COLORS } from "../data/categories";
 import { MARKER_GLYPHS } from "../lib/markerIcon";
 import {
   badgeForPublishedCount,
+  badgeForVisitedCount,
   communityStoryText,
   loadCommunityProfile,
   loadCommunityLeaderboard,
   loadCommunityStories,
+  loadCommunityVisitLeaderboard,
   type CommunityContributor,
   type CommunityProfile,
   type CommunityStory,
+  type CommunityVisitLeaderboardEntry,
 } from "../lib/community";
 import { DesainTopbar } from "./Topbar";
 import { useChrome } from "./ChromeContext";
@@ -35,7 +38,8 @@ export interface CommunityProps {
   onOpenPersonalPlace: (place: PersonalPlace) => Promise<void>;
 }
 
-type CommunityTab = "stories" | "contributors";
+type CommunityTab = "stories" | "contributors" | "leaderboard";
+type LeaderboardScope = "local" | "national";
 
 function readGuideSeen() {
   try {
@@ -69,6 +73,11 @@ function badgeClass(key: string) {
   return `t-community__badge t-community__badge--${key}`;
 }
 
+function BadgeMark({ badge }: { badge: NonNullable<ReturnType<typeof badgeForVisitedCount>> }) {
+  const glyph = badge.key === "perintis" ? "⌁" : badge.key === "penjelajah" ? "◉" : badge.key === "pemandu" ? "↗" : "⚑";
+  return <span className={`t-community__badge-mark t-community__badge-mark--${badge.key}`} aria-label={`Lencana ${badge.label}`}><span aria-hidden="true">{glyph}</span><small>{badge.label}</small></span>;
+}
+
 function StoryArtwork({ story, categoryName }: { story: CommunityStory; categoryName: string }) {
   const categoryId = story.categoryId as keyof typeof MARKER_GLYPHS;
   const glyph = MARKER_GLYPHS[categoryId] ?? MARKER_GLYPHS.lainnya;
@@ -100,15 +109,21 @@ export function Community({
 }: CommunityProps) {
   const { account } = useChrome();
   const [tab, setTab] = useState<CommunityTab>("stories");
+  const [leaderboardScope, setLeaderboardScope] = useState<LeaderboardScope>("local");
   const [stories, setStories] = useState<CommunityStory[]>([]);
   const [contributors, setContributors] = useState<CommunityContributor[]>([]);
+  const [visitLeaders, setVisitLeaders] = useState<CommunityVisitLeaderboardEntry[]>([]);
+  const [visitLeaderboardCityId, setVisitLeaderboardCityId] = useState<string | null>(null);
   const [storyCityId, setStoryCityId] = useState(cityId);
   const [storiesLoading, setStoriesLoading] = useState(Boolean(supabase));
   const [contributorsLoading, setContributorsLoading] = useState(Boolean(supabase));
+  const [visitLeadersLoading, setVisitLeadersLoading] = useState(Boolean(supabase));
   const [storiesError, setStoriesError] = useState<string | null>(supabase ? null : "Komunitas belum terhubung ke server.");
   const [contributorsError, setContributorsError] = useState<string | null>(supabase ? null : "Papan kontributor belum terhubung ke server.");
+  const [visitLeadersError, setVisitLeadersError] = useState<string | null>(supabase ? null : "Leaderboard belum terhubung ke server.");
   const [storiesRetry, setStoriesRetry] = useState(0);
   const [contributorsRetry, setContributorsRetry] = useState(0);
+  const [visitLeadersRetry, setVisitLeadersRetry] = useState(0);
   const [profileRetry, setProfileRetry] = useState(0);
   const [profileKey, setProfileKey] = useState<string | null>(null);
   const [profileState, setProfileState] = useState<{ key: string; profile: CommunityProfile | null; error: string | null } | null>(null);
@@ -119,6 +134,8 @@ export function Community({
   const visibleStories = storyCityId === cityId ? stories : [];
   const visibleStoriesLoading = storiesLoading || storyCityId !== cityId;
   const visibleStoriesError = storyCityId === cityId ? storiesError : null;
+  const visibleVisitLeaders = leaderboardScope === "local" && visitLeaderboardCityId !== cityId ? [] : visitLeaders;
+  const visibleVisitLeadersLoading = visitLeadersLoading || (leaderboardScope === "local" && visitLeaderboardCityId !== cityId);
 
   useEffect(() => {
     const dialog = guideRef.current;
@@ -148,6 +165,15 @@ export function Community({
       .finally(() => { if (active) setContributorsLoading(false); });
     return () => { active = false; };
   }, [contributorsRetry]);
+  useEffect(() => {
+    let active = true;
+    if (!supabase) return () => { active = false; };
+    void loadCommunityVisitLeaderboard(supabase, leaderboardScope === "local" ? cityId : null)
+      .then((rows) => { if (active) { setVisitLeaders(rows); setVisitLeaderboardCityId(leaderboardScope === "local" ? cityId : null); setVisitLeadersError(null); } })
+      .catch((cause) => { if (active) setVisitLeadersError(cause instanceof Error ? cause.message : "Leaderboard gagal dimuat."); })
+      .finally(() => { if (active) setVisitLeadersLoading(false); });
+    return () => { active = false; };
+  }, [cityId, leaderboardScope, visitLeadersRetry]);
   useEffect(() => {
     if (!profileKey || !supabase) return;
     let active = true;
@@ -185,12 +211,13 @@ export function Community({
     setContributorsError(null);
     setContributorsRetry((value) => value + 1);
   };
+  const retryVisitLeaders = () => { setVisitLeadersLoading(true); setVisitLeadersError(null); setVisitLeadersRetry((value) => value + 1); };
 
   const openStory = (destinationId: string) => onOpenDestination(destinationId);
 
   return (
     <div className="t-app t-app--doc t-community">
-      <DesainTopbar active="komunitas" cityName={cityName} provinceName={provinceName} onOpenCityPicker={onOpenCityPicker} />
+      <DesainTopbar active="komunitas" cityName={cityName} provinceName={provinceName} onOpenCityPicker={onOpenCityPicker} showCityPicker={false} />
 
       <main className="t-community__main">
         {profileKey ? (
@@ -222,7 +249,14 @@ export function Community({
               </div>
               <aside className="t-community__note" aria-label="Tentang komunitas">
                 <span className="t-community__note-mark" aria-hidden="true">T</span>
-                <p>Ganti kota untuk membaca cerita warga setempat. Tempat hanya muncul setelah ditinjau admin.</p>
+                <div className="t-community__note-body">
+                  <button type="button" className="t-community__citypicker" onClick={onOpenCityPicker} aria-label={`Pilih kota: ${cityName}, ${provinceName}`}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                    <span><strong>{cityName}</strong><small>{provinceName}</small></span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+                  </button>
+                  <p>Ganti kota untuk membaca cerita warga setempat. Tempat hanya muncul setelah ditinjau admin.</p>
+                </div>
               </aside>
             </header>
 
@@ -233,6 +267,7 @@ export function Community({
               <button type="button" aria-label="Kontributor" aria-pressed={tab === "contributors"} className={tab === "contributors" ? "is-active" : ""} onClick={() => setTab("contributors")}>
                 Kontributor <span aria-hidden="true">{contributors.length}</span>
               </button>
+              <button type="button" aria-label="Leaderboard" aria-pressed={tab === "leaderboard"} className={tab === "leaderboard" ? "is-active" : ""} onClick={() => setTab("leaderboard")}>Leaderboard</button>
             </div>
 
             {tab === "stories" ? (
@@ -293,7 +328,7 @@ export function Community({
                   </div>
                 )}
               </section>
-            ) : (
+            ) : tab === "contributors" ? (
               <section className="t-community__contributors" aria-labelledby="t-community-contributors-title">
                 <div className="t-community__sectionhead">
                   <div>
@@ -352,6 +387,15 @@ export function Community({
                     })}
                   </ol>
                 )}
+              </section>
+            ) : (
+              <section className="t-community__contributors" aria-labelledby="t-community-leaderboard-title">
+                <div className="t-community__sectionhead"><div><h2 id="t-community-leaderboard-title">Leaderboard kunjungan</h2><p>Diurutkan dari tempat TAPETA yang sudah dikunjungi.</p></div></div>
+                <div className="t-community__scope" role="group" aria-label="Cakupan leaderboard">
+                  <button type="button" className={leaderboardScope === "local" ? "is-active" : ""} aria-pressed={leaderboardScope === "local"} onClick={() => { setVisitLeadersLoading(true); setLeaderboardScope("local"); }}>Lokal: {cityName}</button>
+                  <button type="button" className={leaderboardScope === "national" ? "is-active" : ""} aria-pressed={leaderboardScope === "national"} onClick={() => { setVisitLeadersLoading(true); setLeaderboardScope("national"); }}>Seluruh Indonesia</button>
+                </div>
+                {visibleVisitLeadersLoading ? <p className="t-community__state" role="status">Memuat leaderboard…</p> : visitLeadersError ? <p className="t-community__state t-community__state--error" role="alert">{visitLeadersError} {supabase && <button type="button" onClick={retryVisitLeaders}>Coba lagi</button>}</p> : visibleVisitLeaders.length === 0 ? <div className="t-community__empty"><h3>Belum ada kunjungan yang dibagikan</h3><p>Tempat TAPETA yang ditandai sudah dikunjungi akan membentuk leaderboard di sini.</p></div> : <ol className="t-community__leaderboard">{visibleVisitLeaders.map((person, index) => <li key={person.profileKey ?? `private-visit-${index}`}>{person.profileKey ? <button type="button" className="t-community__leader" onClick={() => setProfileKey(person.profileKey)}><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">{person.displayLabel}</span><span className="t-community__person-sub">Profil publik</span></span>{person.badge && <BadgeMark badge={person.badge} />}<span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></button> : <div className="t-community__leader is-private"><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">Kontributor</span><span className="t-community__person-sub">Profil privat</span></span><span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></div>}</li>)}</ol>}
               </section>
             )}
           </>

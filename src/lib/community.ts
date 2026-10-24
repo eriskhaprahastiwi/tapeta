@@ -1,8 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export interface CommunityBadge {
-  key: "pencatat" | "penjelajah" | "pemandu";
-  label: "Pencatat" | "Penjelajah" | "Pemandu";
+  key: "perintis" | "penjelajah" | "pemandu" | "pelopor";
+  label: "Perintis" | "Penjelajah" | "Pemandu" | "Pelopor";
+}
+export interface CommunityVisitLeaderboardEntry {
+  profileKey: string | null; displayLabel: string; publicProfile: boolean; visitedCount: number; latestVisitedAt: string | null; badge: CommunityBadge | null;
 }
 
 export interface CommunityContributor {
@@ -29,6 +32,7 @@ export interface CommunityStory {
   publicProfile: boolean;
   reviewedAt: string | null;
   publishedAt: string | null;
+  visitedOn?: string | null;
   stickerPath: string | null;
   stickerAlt: string | null;
 }
@@ -38,18 +42,23 @@ export interface CommunityProfile {
   displayName: string;
   publishedCount: number;
   latestPublishedAt: string | null;
+  visitedCount: number;
+  visitedPlaces: CommunityStory[];
   contributions: CommunityStory[];
 }
 
 type RpcClient = Pick<SupabaseClient, "rpc">;
 type DbRow = Record<string, unknown>;
 
-export function badgeForPublishedCount(count: number): CommunityBadge | null {
+export function badgeForVisitedCount(count: number): CommunityBadge | null {
   if (count < 1) return null;
-  if (count <= 10) return { key: "pencatat", label: "Pencatat" };
-  if (count <= 15) return { key: "penjelajah", label: "Penjelajah" };
-  return { key: "pemandu", label: "Pemandu" };
+  if (count <= 4) return { key: "perintis", label: "Perintis" };
+  if (count <= 9) return { key: "penjelajah", label: "Penjelajah" };
+  if (count <= 14) return { key: "pemandu", label: "Pemandu" };
+  return { key: "pelopor", label: "Pelopor" };
 }
+
+export const badgeForPublishedCount = badgeForVisitedCount;
 
 export function communityStoryText(description: string | null): string {
   return description?.trim() || "Cerita belum ditambahkan.";
@@ -68,8 +77,12 @@ export function mapCommunityContributorRow(row: DbRow): CommunityContributor {
     publicProfile,
     publishedCount,
     latestPublishedAt: nullableString(row.latest_published_at),
-    badge: badgeForPublishedCount(publishedCount),
+    badge: null,
   };
+}
+export function mapCommunityVisitLeaderboardRow(row: DbRow): CommunityVisitLeaderboardEntry {
+  const visitedCount = Number(row.visited_count ?? 0); const publicProfile = row.public_profile === true;
+  return { profileKey: publicProfile ? nullableString(row.profile_key) : null, displayLabel: publicProfile ? String(row.display_label ?? "Kontributor") : "Kontributor", publicProfile, visitedCount, latestVisitedAt: nullableString(row.latest_visited_at), badge: badgeForVisitedCount(visitedCount) };
 }
 
 export function mapCommunityStoryRow(row: DbRow): CommunityStory {
@@ -88,6 +101,7 @@ export function mapCommunityStoryRow(row: DbRow): CommunityStory {
     publicProfile: row.public_profile === true,
     reviewedAt: nullableString(row.reviewed_at),
     publishedAt: nullableString(row.published_at),
+    visitedOn: nullableString(row.visited_on),
     stickerPath: nullableString(row.sticker_path),
     stickerAlt: nullableString(row.sticker_alt),
   };
@@ -104,6 +118,9 @@ export async function loadCommunityStories(client: RpcClient, cityId: string): P
   if (error) throw error;
   return ((data ?? []) as DbRow[]).map(mapCommunityStoryRow);
 }
+export async function loadCommunityVisitLeaderboard(client: RpcClient, cityId: string | null): Promise<CommunityVisitLeaderboardEntry[]> {
+  const { data, error } = await client.rpc("community_visit_leaderboard", { p_city_id: cityId }); if (error) throw error; return ((data ?? []) as DbRow[]).map(mapCommunityVisitLeaderboardRow);
+}
 
 export async function loadCommunityProfile(client: RpcClient, profileKey: string): Promise<CommunityProfile | null> {
   const { data, error } = await client.rpc("community_contributor_profile", { p_profile_key: profileKey });
@@ -114,11 +131,14 @@ export async function loadCommunityProfile(client: RpcClient, profileKey: string
   const contributions = Array.isArray(row.contributions)
     ? (row.contributions as DbRow[]).map(mapCommunityStoryRow)
     : [];
+  const visitedPlaces = Array.isArray(row.visited_places) ? (row.visited_places as DbRow[]).map(mapCommunityStoryRow) : [];
   return {
     profileKey: String(row.profile_key ?? profileKey),
     displayName: String(row.display_name ?? "Kontributor"),
     publishedCount: Number(row.published_count ?? contributions.length),
     latestPublishedAt: nullableString(row.latest_published_at),
+    visitedCount: Number(row.visited_count ?? visitedPlaces.length),
+    visitedPlaces,
     contributions,
   };
 }

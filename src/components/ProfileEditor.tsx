@@ -37,7 +37,7 @@ export function ProfileEditor({ onClose, onSaved }: { onClose: () => void; onSav
     }}>
       <h2 id="profile-title">Kelola profil</h2>
       <label className="t-auth__field">Nama tampilan<input value={name} onChange={(event) => setName(event.target.value)} minLength={2} maxLength={80} required /></label>
-      <label><input type="checkbox" checked={publicProfile} onChange={(event) => setPublicProfile(event.target.checked)} /> Izinkan profil saya ditampilkan kepada komunitas</label>
+      <fieldset className="t-auth__privacy"><legend>Visibilitas komunitas</legend><label><input type="checkbox" checked={publicProfile} onChange={(event) => setPublicProfile(event.target.checked)} /> Jadikan profil saya publik</label><p>{publicProfile ? "Nama, kunjungan ke destinasi TAPETA, kontribusi, dan badge dapat dilihat komunitas." : "Anda tetap dapat masuk leaderboard sebagai Kontributor anonim, tanpa nama atau daftar kunjungan."}</p></fieldset>
       {message && <p role="status">{message}</p>}
       <button className="t-auth__submit" disabled={!ready || busy}>{busy ? "Menyimpan…" : "Simpan profil"}</button>
       <button type="button" className="t-auth__link" onClick={onClose}>Tutup</button>
