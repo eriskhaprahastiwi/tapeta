@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { TapetaLogo } from "../components/TapetaLogo";
+import { useChrome } from "./ChromeContext";
 import "./landing.css";
 
 function Sailboat() {
@@ -17,25 +18,10 @@ function Sailboat() {
   );
 }
 
-function Compass() {
-  return (
-    <svg className="t-landing__compass" viewBox="0 0 58 58" fill="none" aria-hidden="true">
-      <circle cx="29" cy="29" r="19" stroke="#758078" strokeOpacity=".55" strokeWidth="1" />
-      <circle cx="29" cy="29" r="3" fill="#b63a2e" fillOpacity=".65" />
-      <path d="M29 7v15M29 36v15M7 29h15M36 29h15" stroke="#758078" strokeOpacity=".55" strokeWidth="1" />
-      <path d="m29 12 3 13-3 4-3-4 3-13Z" fill="#b63a2e" fillOpacity=".72" />
-      <path d="m29 46-3-13 3-4 3 4-3 13Z" fill="#758078" fillOpacity=".5" />
-      <text x="29" y="5" textAnchor="middle">U</text>
-      <text x="53" y="32" textAnchor="middle">T</text>
-      <text x="29" y="58" textAnchor="middle">S</text>
-      <text x="5" y="32" textAnchor="middle">B</text>
-    </svg>
-  );
-}
-
 function Landing({ onEnter }: { onEnter: () => void }) {
   const northMotion = useRef<SVGAnimateMotionElement | null>(null);
   const southMotion = useRef<SVGAnimateMotionElement | null>(null);
+  const { account } = useChrome();
 
   useEffect(() => {
     const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -66,7 +52,7 @@ function Landing({ onEnter }: { onEnter: () => void }) {
   return (
     <main className="t-landing">
       <section className="t-landing__hero" aria-label="Intro TAPETA">
-        <div className="t-landing__mapstage" aria-hidden="true">
+        <div className="t-landing__mapstage">
           <img
             className="t-landing__map"
             src="/assets/map/nusantara-watercolor-v2.png"
@@ -97,7 +83,7 @@ function Landing({ onEnter }: { onEnter: () => void }) {
               <g className="t-landing__boat-static" transform="translate(380 790)"><g transform="translate(-60 -41) scale(.66)"><Sailboat /></g></g>
             </g>
           </svg>
-          <div className="t-landing__maplabels">
+          <div className="t-landing__maplabels" aria-hidden="true">
             <span className="t-landing__label t-landing__label--sumatra">SUMATRA</span>
             <span className="t-landing__label t-landing__label--kalimantan">KALIMANTAN</span>
             <span className="t-landing__label t-landing__label--jawa">JAWA</span>
@@ -105,10 +91,10 @@ function Landing({ onEnter }: { onEnter: () => void }) {
             <span className="t-landing__label t-landing__label--maluku">MALUKU</span>
             <span className="t-landing__label t-landing__label--papua">PAPUA</span>
             <span className="t-landing__label t-landing__label--nusa">NUSA TENGGARA</span>
-            <span className="t-landing__label t-landing__label--sea-south">LAUT CINA SELATAN</span>
             <span className="t-landing__label t-landing__label--sea-pacific">SAMUDRA PASIFIK</span>
             <span className="t-landing__label t-landing__label--sea-banda">LAUT BANDA</span>
           </div>
+          <button type="button" className="t-landing__mapaction" onClick={onEnter} aria-label="Ketuk peta untuk menjelajahi Indonesia" />
         </div>
 
         <header className="t-landing__header">
@@ -120,34 +106,43 @@ function Landing({ onEnter }: { onEnter: () => void }) {
             </span>
           </div>
           <div className="t-landing__entry">
-            <span>Kunjungan pertama? Biar dapat cerita.</span>
-            <button type="button" className="t-landing__skip" onClick={onEnter}>
-              Lewati intro <span aria-hidden="true">→</span>
-            </button>
+            {account.signedIn ? (
+              <button type="button" className="t-landing__skip" onClick={account.onOpenAccount} aria-label="Buka menu akun">
+                {account.initials}
+              </button>
+            ) : (
+              <button type="button" className="t-landing__skip" onClick={account.onOpenAuth}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /><path d="m10 17 5-5-5-5M15 12H3" /></svg>
+                Masuk
+              </button>
+            )}
           </div>
         </header>
 
         <div className="t-landing__copy">
-          <h1>Ayo Jelajah!</h1>
-          <p className="t-kicker">NUSANTARA</p>
+          <h1 aria-label="Ayo Jelajah Nusantara!"><span>Ayo Jelajah</span><em> Nusantara!</em></h1>
           <p>Temukan tempat, bagikan cerita.</p>
-          <button type="button" className="t-btn t-btn--brick" onClick={onEnter}>
-            Ayo Jelajah! <span aria-hidden="true">→</span>
-          </button>
+          <div className="t-landing__actions">
+            <button type="button" className="t-btn t-btn--brick" onClick={onEnter}>
+              Mulai menjelajah
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" /></svg>
+            </button>
+            <span className="t-landing__hint">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v3m6.4-.4-2.1 2.1M21 12h-3" /><path d="M9.5 20.5 5 16a1.8 1.8 0 0 1 2.5-2.5l1.8 1.8V8a1.8 1.8 0 0 1 3.6 0v4.2" /><path d="M12.9 11.3a1.8 1.8 0 0 1 3.6 0v1.1a1.8 1.8 0 0 1 3.5.6v2.5a5 5 0 0 1-5 5h-1.3a6 6 0 0 1-4.2-1.7" /></svg>
+              atau ketuk pulau di peta
+            </span>
+          </div>
         </div>
 
         <footer className="t-landing__footer">
-          <div className="t-landing__footer-note">
-            <Compass />
-            <small>Peta ilustrasi · Bukan skala sebenarnya</small>
-          </div>
-          <button type="button" className="t-landing__map-cta" onClick={onEnter}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
-              <circle cx="12" cy="10" r="2.5" />
-            </svg>
-            <span>Ketuk peta untuk menjelajahi Indonesia</span>
-          </button>
+          <span className="t-landing__attribution">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="m14.5 7.5-1.8 4.8-4.8 1.8 1.8-4.8 4.8-1.8Z" /></svg>
+            Peta ilustrasi · Bukan skala sebenarnya
+          </span>
+          <span className="t-landing__attribution">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z" /><path d="M9 3v15m6-12v15" /></svg>
+            Batas wilayah © OpenStreetMap
+          </span>
         </footer>
       </section>
     </main>
@@ -155,4 +150,71 @@ function Landing({ onEnter }: { onEnter: () => void }) {
 }
 
 export const IntroDesktop = Landing;
-export const IntroMobile = Landing;
+
+function MobileLanding({ onEnter }: { onEnter: () => void }) {
+  const { account } = useChrome();
+
+  return (
+    <main className="tm-intro">
+      <header className="tm-intro__header">
+        <div className="tm-intro__brand">
+          <TapetaLogo size={42} showWordmark={false} />
+          <span className="tm-intro__brandcopy">
+            <strong>TAPETA</strong>
+            <small>PETA EKSPLORASI INDONESIA</small>
+          </span>
+        </div>
+        {account.signedIn ? (
+          <button type="button" className="tm-intro__account" onClick={account.onOpenAccount} aria-label="Buka menu akun">
+            {account.initials}
+          </button>
+        ) : (
+          <button type="button" className="tm-intro__login" onClick={account.onOpenAuth}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <path d="m10 17 5-5-5-5M15 12H3" />
+            </svg>
+            Masuk
+          </button>
+        )}
+      </header>
+
+      <section className="tm-intro__copy">
+        <h1 aria-label="Ayo Jelajah Nusantara!"><span>Ayo Jelajah</span><em> Nusantara!</em></h1>
+        <p>Temukan tempat, bagikan cerita.</p>
+        <button type="button" className="tm-intro__cta" onClick={onEnter}>
+          Mulai menjelajah
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M5 12h14m-5-5 5 5-5 5" />
+          </svg>
+        </button>
+        <span className="tm-intro__hint">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 3v3m6.4-.4-2.1 2.1M21 12h-3" />
+            <path d="M9.5 20.5 5 16a1.8 1.8 0 0 1 2.5-2.5l1.8 1.8V8a1.8 1.8 0 0 1 3.6 0v4.2" />
+            <path d="M12.9 11.3a1.8 1.8 0 0 1 3.6 0v1.1a1.8 1.8 0 0 1 3.5.6v2.5a5 5 0 0 1-5 5h-1.3a6 6 0 0 1-4.2-1.7" />
+          </svg>
+          atau ketuk pulau di peta
+        </span>
+      </section>
+
+      <section className="tm-intro__mapstage" aria-label="Peta ilustrasi Indonesia">
+        <button type="button" className="tm-intro__mapbutton" onClick={onEnter} aria-label="Ketuk peta untuk menjelajahi Indonesia">
+          <img className="t-landing__map" src="/assets/map/nusantara-watercolor-v2.png" alt="" fetchPriority="high" />
+        </button>
+        <div className="tm-intro__attribution" aria-hidden="true">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="12" cy="12" r="8" /><path d="m14.5 7.5-1.8 4.8-4.8 1.8 1.8-4.8 4.8-1.8Z" /></svg>
+            Peta ilustrasi
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z" /><path d="M9 3v15m6-12v15" /></svg>
+            © OpenStreetMap
+          </span>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+export const IntroMobile = MobileLanding;

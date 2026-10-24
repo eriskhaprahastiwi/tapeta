@@ -4,6 +4,7 @@ import { CATEGORY_COLORS } from "../data/categories";
 import { MARKER_GLYPHS } from "../lib/markerIcon";
 import { MapView } from "../components/MapView";
 import { TapetaLogo } from "../components/TapetaLogo";
+import { ListIcon, MapIcon, PenIcon, PinIcon, SearchIcon, UserIcon } from "../components/Icons";
 import { useChrome } from "./ChromeContext";
 import { shareDestination } from "../lib/destinationLink";
 import { OsmPlaceSearch } from "../components/OsmPlaceSearch";
@@ -35,7 +36,9 @@ export function MobileTapeta(props: MobileTapetaProps) {
   const selectedId = props.selectedDestinationId;
   const setSelectedId = props.onSelectDestination;
   const [query, setQuery] = useState("");
-  const [showAll, setShowAll] = useState(false);
+  const [listOpen, setListOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [activeCategories, setActiveCategories] = useState<Set<CategoryId>>(new Set());
 
   const { account, navigate } = useChrome();
   const cityName = props.city?.name ?? "Pekanbaru";
@@ -47,10 +50,20 @@ export function MobileTapeta(props: MobileTapetaProps) {
     if (!needle) return props.destinations;
     return props.destinations.filter(
       (destination) =>
-        destination.name.toLowerCase().includes(needle) ||
-        destination.address.toLowerCase().includes(needle),
+        (activeCategories.size === 0 || activeCategories.has(destination.categoryId)) &&
+        (destination.name.toLowerCase().includes(needle) ||
+          destination.address.toLowerCase().includes(needle)),
     );
-  }, [props.destinations, query]);
+  }, [activeCategories, props.destinations, query]);
+
+  const toggleCategory = (categoryId: CategoryId) => {
+    setActiveCategories((current) => {
+      const next = new Set(current);
+      if (next.has(categoryId)) next.delete(categoryId);
+      else next.add(categoryId);
+      return next;
+    });
+  };
 
   const openDetail = (id: string) => setSelectedId(id);
 
@@ -74,44 +87,26 @@ export function MobileTapeta(props: MobileTapetaProps) {
   return (
     <div className="tm-shell tm-shell--map">
       <div className="tm-explore__top">
-        <span className="tm-explore__brand">
-          <TapetaLogo size={30} wordmarkSize={20} onClick={props.onExitToIntro} />
-          <h1 className="tm-explore__brandlabel">Jelajahi · {province}</h1>
+        <h1 className="visually-hidden">Jelajahi {cityName}</h1>
+        <TapetaLogo size={34} wordmarkSize={22} tagline="PETA EKSPLORASI INDONESIA" onClick={props.onExitToIntro} />
+        <span className="tm-explore__topactions">
+          <button type="button" className="tm-explore__notification" onClick={account.onOpenNotifications} aria-label="Notifikasi" aria-expanded={account.notificationOpen}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+              <path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" />
+              <path d="M10 19a2 2 0 0 0 4 0" />
+            </svg>
+          </button>
+          {account.signedIn ? (
+            <button type="button" className="tm-explore__avatar" onClick={account.onOpenAccount} aria-label="Menu akun">
+              {account.initials}
+            </button>
+          ) : (
+            <button type="button" className="tm-explore__avatar tm-explore__avatar--masuk" onClick={account.onOpenAuth}>
+              Masuk
+            </button>
+          )}
         </span>
-        {account.signedIn ? (
-          <button type="button" className="tm-explore__avatar" onClick={account.onOpenAccount} aria-label="Menu akun">
-            {account.initials}
-          </button>
-        ) : (
-          <button type="button" className="tm-explore__avatar tm-explore__avatar--masuk" onClick={account.onOpenAuth}>
-            Masuk
-          </button>
-        )}
       </div>
-      <nav className="tm-nav" aria-label="Navigasi utama">
-        <button type="button" className="tm-nav__link is-active" onClick={props.onClearSelection}>
-          Explore
-        </button>
-        <button type="button" className="tm-nav__link" onClick={() => navigate("my")}>
-          My TAPETA
-        </button>
-        <button type="button" className="tm-nav__link" onClick={() => navigate("komunitas")}>
-          Komunitas
-        </button>
-      </nav>
-      <label className="tm-explore__search">
-        <span aria-hidden="true">⌕</span>
-        <input
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Cari destinasi, alamat…"
-          aria-label="Cari destinasi"
-        />
-      </label>
-      <span className="tm-explore__chip">
-        {props.destinations.length} stiker di {cityName}
-      </span>
       <div className="tm-explore__map">
         <MapView
           cityBounds={props.city?.bounds}
@@ -134,15 +129,58 @@ export function MobileTapeta(props: MobileTapetaProps) {
           onSelectDestination={(id) => openDetail(id)}
           onClearSelection={() => undefined}
         />
+        <button type="button" className="tm-explore__citypicker" onClick={props.onOpenCityPicker} aria-label={`Pilih kota: ${cityName}, ${province}`}>
+          <PinIcon size={17} />
+          <strong>{cityName}</strong>
+          <span>{province}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+        <span className="tm-explore__status" aria-label={`${props.regionStats.filter((item) => item.status === "explored").length} sudah dijelajahi, ${props.regionStats.filter((item) => item.status === "in-progress").length} sedang dijelajahi, ${props.regionStats.filter((item) => item.status === "unexplored").length} belum dijelajahi`}>
+          <i className="is-explored" />{props.regionStats.filter((item) => item.status === "explored").length}
+          <i className="is-progress" />{props.regionStats.filter((item) => item.status === "in-progress").length}
+          <i className="is-unexplored" />{props.regionStats.filter((item) => item.status === "unexplored").length}
+        </span>
       </div>
-      <section className="tm-sheet" aria-label="Di sekitar">
+      <section className="tm-sheet tm-sheet--paper" aria-label="Di sekitar">
         <span className="tm-sheet__handle" aria-hidden="true" />
         <div className="tm-sheet__head">
-          <span className="tm-sheet__title">Di sekitar {cityName}</span>
-          <span className="tm-sheet__count">{props.destinations.length} tempat</span>
+          <span>
+            <span className="tm-sheet__eyebrow">DI SEKITAR {cityName.toUpperCase()}</span>
+            <span className="tm-sheet__title">{props.destinations.length} destinasi</span>
+          </span>
+          <button type="button" className="tm-sheet__view" onClick={() => setListOpen((current) => !current)} aria-pressed={listOpen}>
+            <ListIcon size={15} />
+            {listOpen ? "Kartu" : "Daftar"}
+          </button>
         </div>
-        <div className="tm-sheet__list">
-          <OsmPlaceSearch key={`${props.city?.relationId}:${query}`} city={props.city} query={query} cityName={cityName} regions={props.regions} selected={props.osmLocation} onSelect={props.onSelectOsm} onSuggest={props.onSuggestOsm} />
+        <div className="tm-sheet__searchrow">
+          <label className="tm-explore__search">
+            <SearchIcon size={17} />
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Cari destinasi atau alamat…"
+              aria-label="Cari destinasi"
+            />
+          </label>
+          <button type="button" className="tm-sheet__filter" onClick={() => setFiltersOpen((current) => !current)} aria-label="Filter kategori" aria-expanded={filtersOpen}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M4 7h16M7 12h10m-7 5h4" /><circle cx="8" cy="7" r="1.5" fill="currentColor" /><circle cx="16" cy="12" r="1.5" fill="currentColor" /><circle cx="12" cy="17" r="1.5" fill="currentColor" /></svg>
+          </button>
+        </div>
+        {filtersOpen && (
+          <div className="tm-sheet__filters" aria-label="Filter kategori">
+            {(["kafe", "kuliner", "alam", "budaya", "rekreasi", "lainnya"] as CategoryId[]).map((categoryId) => (
+              <button key={categoryId} type="button" aria-pressed={activeCategories.has(categoryId)} onClick={() => toggleCategory(categoryId)}>
+                {props.categoriesById.get(categoryId)?.shortName ?? categoryId}
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="tm-sheet__results">
+          {(query.trim().length >= 3 || props.osmLocation) && (
+            <OsmPlaceSearch key={`${props.city?.relationId}:${query}`} city={props.city} query={query} cityName={cityName} regions={props.regions} selected={props.osmLocation} onSelect={props.onSelectOsm} onSuggest={props.onSuggestOsm} />
+          )}
           {filtered.length === 0 && (
             <p className="tm-sheet__empty">
               Belum ada hasil. Coba pencarian lain atau{" "}
@@ -152,7 +190,23 @@ export function MobileTapeta(props: MobileTapetaProps) {
               .
             </p>
           )}
-          {(showAll ? filtered : filtered.slice(0, 4)).map((destination) => {
+          {!listOpen && filtered.length > 0 && (
+            <div className="tm-sheet__cards">
+              {filtered.map((destination) => {
+                const color = CATEGORY_COLORS[destination.categoryId];
+                return (
+                  <button key={destination.id} type="button" className="tm-sheet__card" onClick={() => openDetail(destination.id)}>
+                    <span className="tm-sheet__art" style={{ background: `${color}26` }}>
+                      {destination.sticker ? <img src={destination.sticker.src} alt="" /> : <span style={{ color }}><MapIcon size={24} /></span>}
+                    </span>
+                    <span className="tm-sheet__cardname">{destination.name}</span>
+                    <span className="tm-sheet__cardmeta">{props.categoriesById.get(destination.categoryId)?.shortName ?? "Tempat"} · {props.regionNameByDestination.get(destination.id) ?? destination.regionCode}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          {listOpen && filtered.map((destination) => {
             const color = CATEGORY_COLORS[destination.categoryId];
             return (
               <button
@@ -187,12 +241,13 @@ export function MobileTapeta(props: MobileTapetaProps) {
             );
           })}
         </div>
-        {filtered.length > 4 && (
-          <button type="button" className="tm-sheet__all" onClick={() => setShowAll((value) => !value)}>
-            {showAll ? "Ringkas daftar" : `Lihat semua ${filtered.length} destinasi`}
-          </button>
-        )}
       </section>
+      <nav className="tm-bottomnav" aria-label="Navigasi utama">
+        <button type="button" className="tm-bottomnav__link is-active" onClick={props.onClearSelection} aria-current="page"><MapIcon size={21} /><span>Explore</span></button>
+        <button type="button" className="tm-bottomnav__link" onClick={props.onOpenContribute}><PenIcon size={21} /><span>Usulkan</span></button>
+        <button type="button" className="tm-bottomnav__link" onClick={() => navigate("my")}><UserIcon size={21} /><span>My TAPETA</span></button>
+        <button type="button" className="tm-bottomnav__link" onClick={() => navigate("komunitas")}><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3" /><circle cx="17" cy="9" r="2.3" /><path d="M3.8 20c.6-3.3 2.8-5.2 5.2-5.2s4.6 1.9 5.2 5.2M15 15.5c2.5.1 4.5 1.6 5.2 4.5" /></svg><span>Komunitas</span></button>
+      </nav>
     </div>
   );
 }

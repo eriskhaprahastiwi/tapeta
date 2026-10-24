@@ -1,6 +1,7 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { MapView, type MapFocus } from "./components/MapView";
 import { CityPicker } from "./components/CityPicker";
+import { EntryLocationPrompt } from "./components/EntryLocationPrompt";
 import { CATEGORY_BY_ID } from "./data/categories";
 import { buildRegionStats } from "./lib/geo";
 import { useMediaQuery } from "./lib/useMediaQuery";
@@ -153,6 +154,10 @@ export default function App() {
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
 
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
+  const [entryLocationOpen, setEntryLocationOpen] = useState(false);
+  const [entryCitySelection, setEntryCitySelection] = useState(false);
+  const [entryContribution, setEntryContribution] = useState(false);
+  const [unscopedMap, setUnscopedMap] = useState(false);
   const [lastSubmissionId, setLastSubmissionId] = useState<string | null>(null);
   const [detectingCity, setDetectingCity] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -400,6 +405,16 @@ export default function App() {
   const handleSelectCity = useCallback(
     (meta: CityMeta) => {
       setCityPickerOpen(false);
+      if (entryCitySelection) {
+        setEntryCitySelection(false);
+        if (entryContribution) {
+          setEntryContribution(false);
+          setView("contribute");
+        } else {
+          setUnscopedMap(false);
+          setView("app");
+        }
+      }
       if (cityRef.current?.relationId === meta.relationId) {
         saveCityMeta(meta);
         return;
@@ -410,7 +425,7 @@ export default function App() {
       url.searchParams.delete("destination");
       window.history.replaceState(null, "", url);
     },
-    [loadCity],
+    [entryCitySelection, entryContribution, loadCity, setView],
   );
 
   const picker = cityPickerOpen ? (
@@ -476,8 +491,8 @@ export default function App() {
     : "Memuat batas wilayah";
 
   const openMap = useCallback(() => {
-    setView("app");
-  }, [setView]);
+    setEntryLocationOpen(true);
+  }, []);
 
   const goHome = useCallback(() => {
     setView("intro");
@@ -710,6 +725,21 @@ export default function App() {
       return isMobile ? <IntroMobile onEnter={openMap} /> : <IntroDesktop onEnter={openMap} />;
     }
 
+    if (view === "app" && unscopedMap) {
+      return (
+        <main className="t-unscoped-map">
+          <MapView cityBounds={undefined} regions={EMPTY_REGIONS} regionStats={[]} destinations={[]} categoriesById={CATEGORY_BY_ID} cityName={null} selectedRegionId={null} selectedDestinationId={null} userLocation={null} focus={null} resetNonce={0} isLoading={false} loadingLabel="" error={null} onRetry={() => undefined} onSelectRegion={() => undefined} onSelectDestination={() => undefined} onClearSelection={() => undefined} />
+          <section className="t-unscoped-map__notice" aria-labelledby="t-unscoped-map-title">
+            <p className="t-unscoped-map__eyebrow">PETA INDONESIA</p>
+            <h1 id="t-unscoped-map-title">Lokasi ini belum dijelajahi di TAPETA</h1>
+            <p>Pilih kota yang sudah memiliki cerita warga, atau pilih kota tujuanmu untuk menjadi kontributor pertama.</p>
+            <button type="button" className="t-btn t-btn--brick" onClick={() => { setEntryCitySelection(true); setEntryContribution(false); setCityPickerOpen(true); }}>Lihat kota yang sudah dijelajahi</button>
+            <button type="button" className="t-unscoped-map__contribute" onClick={() => { setEntryCitySelection(true); setEntryContribution(true); setCityPickerOpen(true); }}>Jadi kontributor pertama</button>
+          </section>
+        </main>
+      );
+    }
+
     if (!isMobile) {
       return (
         <ExploreDesktop
@@ -804,6 +834,28 @@ export default function App() {
         <>
           {chromeView(state)}
           {picker}
+          <EntryLocationPrompt
+            open={entryLocationOpen}
+            locating={locating || detectingCity}
+            onClose={() => setEntryLocationOpen(false)}
+            onUseLocation={() => {
+              setEntryLocationOpen(false);
+              setView("app");
+              void detectCity();
+            }}
+            onChooseCity={() => {
+              setEntryLocationOpen(false);
+              setEntryCitySelection(true);
+              setCityPickerOpen(true);
+            }}
+            onExploreWithoutCity={() => {
+              setEntryLocationOpen(false);
+              setCity(null);
+              setDestinations([]);
+              setUnscopedMap(true);
+              setView("app");
+            }}
+          />
           {locationNotice}
         </>
       )}

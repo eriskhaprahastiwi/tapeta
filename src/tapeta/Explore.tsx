@@ -7,7 +7,7 @@ import type {
   RegionFeature,
   RegionStats,
 } from "../types";
-import { MapIcon } from "../components/Icons";
+import { ChevronDownIcon, MapIcon } from "../components/Icons";
 import { DesainTopbar } from "./Topbar";
 import { statusLabel } from "../lib/geo";
 import { MARKER_GLYPHS } from "../lib/markerIcon";
@@ -185,6 +185,7 @@ export function ExploreDesktop(props: ExploreProps) {
         provinceName={city?.province ?? city?.name ?? "Pekanbaru"}
         onOpenHome={onOpenHome}
         onOpenCityPicker={onOpenCityPicker}
+        showCityPicker={false}
       />
 
       <div className={`t-app__main${selectedDestination ? " has-destination" : ""}`}>
@@ -457,6 +458,21 @@ export function ExploreDesktop(props: ExploreProps) {
             <>
               <div className="t-mapstage">
                 {props.children}
+                {!selectedDestination && (
+                  <button
+                    type="button"
+                    className="t-map-citypicker"
+                    onClick={onOpenCityPicker}
+                    aria-label={`Pilih kota: ${city?.name ?? "Pekanbaru"}, ${city?.province ?? "Riau"}`}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M8 1.5a4.5 4.5 0 0 0-4.5 4.5c0 3.3 4.5 8.5 4.5 8.5s4.5-5.2 4.5-8.5A4.5 4.5 0 0 0 8 1.5Zm0 2.8a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4Z" />
+                    </svg>
+                    <span>{city?.name ?? "Pekanbaru"}</span>
+                    <small>{city?.province ?? "Riau"}</small>
+                    <ChevronDownIcon size={14} className="t-map-citypicker__chevron" />
+                  </button>
+                )}
             {selectedRegion && selectedRegion.count === 0 && !selectedDestination && (
               <div className="t-mapempty" role="status">
                 <span className="t-mapempty__code">

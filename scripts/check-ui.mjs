@@ -49,9 +49,15 @@ try {
       assert.equal(layout.overflow, false, `${width}/${name}: horizontal overflow`);
       assert.ok(layout.textLength > 80, `${width}/${name}: empty page`);
       if (name === "landing") {
-        await page.getByRole("heading", { name: "Ayo Jelajah!", exact: true }).waitFor();
-        const copyOrder = await page.locator(".t-landing__copy").evaluate((copy) => [...copy.children].map((element) => element.textContent?.trim()));
-        assert.ok(copyOrder[0]?.startsWith("Ayo Jelajah!") && copyOrder[1] === "NUSANTARA", `${width}: NUSANTARA should appear beneath the landing heading`);
+        const mobileLanding = width <= 860;
+        await page.getByRole("heading", { name: "Ayo Jelajah Nusantara!", exact: true }).waitFor();
+        if (mobileLanding) {
+          assert.equal(await page.getByText("Temukan tempat, bagikan cerita.", { exact: true }).isVisible(), true);
+          assert.equal(await page.getByText("atau ketuk pulau di peta", { exact: true }).isVisible(), true);
+        } else {
+          assert.equal(await page.getByText("atau ketuk pulau di peta", { exact: true }).isVisible(), true);
+          assert.equal(await page.getByRole("button", { name: "Masuk", exact: true }).isVisible(), true);
+        }
         if (width > 320) assert.ok(await page.getByText("PETA EKSPLORASI INDONESIA", { exact: true }).isVisible());
         const illustration = page.locator(".t-landing__map");
         await illustration.evaluate((image) => image.decode());
@@ -59,7 +65,7 @@ try {
          assert.ok(imageSource.src?.endsWith("/assets/map/nusantara-watercolor-v2.png"));
          assert.ok(imageSource.width > 0, `${width}: watercolor illustration did not load`);
          const mask = await illustration.evaluate((image) => getComputedStyle(image).maskImage);
-         assert.match(mask, /radial-gradient/, `${width}: watercolor illustration needs a four-edge feather mask`);
+         assert.match(mask, mobileLanding ? /linear-gradient/ : /radial-gradient/, `${width}: watercolor illustration needs the appropriate feather mask`);
          if (width === 1440) {
            assert.equal(await page.locator(".t-landing__boat").count(), 2, "landing should show two illustrated pinisi");
            assert.equal(await page.locator(".t-landing__boat-motion").count(), 2, "both pinisi should have a full sailing loop");
@@ -69,41 +75,77 @@ try {
            assert.ok(durations.length === 2 && durations.every((duration) => duration <= 12), `full-map sailing should finish briskly, got ${durations.join(", ")}s`);
            assert.equal(await page.locator(".t-landing__waves").count(), 0, "landing has no added wave overlay");
            assert.deepEqual(await page.locator(".t-landing__boat-animation").evaluateAll((motions) => motions.map((motion) => motion.getAttribute("rotate"))), ["0", "0"], "both pinisi stay upright along their routes");
-           const getBoatPositions = () => page.locator(".t-landing__boat-motion").evaluateAll((boats) => boats.map((boat) => {
-             const bounds = boat.getBoundingClientRect();
-             return { x: bounds.x, y: bounds.y };
-           }));
-           const positionsBefore = await getBoatPositions();
-           await page.waitForFunction((before) => {
-             const boats = [...document.querySelectorAll(".t-landing__boat-motion")];
-             return boats.length === before.length && boats.every((boat, index) => {
-               const bounds = boat.getBoundingClientRect();
-               return Math.hypot(bounds.x - before[index].x, bounds.y - before[index].y) >= 24;
-             });
-           }, positionsBefore, { timeout: 5000 });
-           await page.emulateMedia({ reducedMotion: "reduce" });
+            await page.emulateMedia({ reducedMotion: "reduce" });
            assert.equal(await page.locator(".t-landing__boat-motion").first().evaluate((motion) => getComputedStyle(motion).display), "none");
            assert.notEqual(await page.locator(".t-landing__boat-static").first().evaluate((boat) => getComputedStyle(boat).display), "none");
            await page.emulateMedia({ reducedMotion: "no-preference" });
          }
          assert.equal(await page.locator(".t-landmark").count(), 0);
-        await page.getByRole("button", { name: /Lewati intro/ }).click();
-        await page.locator(".leaflet-container").waitFor();
-        assert.ok(page.url().endsWith("#explore"), "skip intro opens the map");
-        await page.goto(base);
-        await page.locator(".t-landing__map").evaluate((image) => image.decode());
-        await page.getByRole("button", { name: "Ayo Jelajah!", exact: true }).click();
-        await page.locator(".leaflet-container").waitFor();
-        assert.ok(page.url().endsWith("#explore"));
-        await page.goto(base);
-        await page.locator(".t-landing__map").evaluate((image) => image.decode());
-        await page.getByRole("button", { name: /Ketuk peta untuk menjelajahi Indonesia/ }).click();
-        await page.locator(".leaflet-container").waitFor();
+        await page.getByRole("button", { name: "Mulai menjelajah", exact: true }).click();
+        const entryLocation = page.getByRole("dialog", { name: "Mulai dari mana?" });
+        await entryLocation.waitFor();
+        if (mobileLanding) {
+          const placement = await entryLocation.evaluate((dialog) => {
+            const bounds = dialog.getBoundingClientRect();
+            return { center: bounds.top + bounds.height / 2, viewportCenter: innerHeight / 2 };
+          });
+          assert.ok(Math.abs(placement.center - placement.viewportCenter) <= 72, `${width}: mobile location prompt should be vertically centered`);
+        }
+        assert.equal(await entryLocation.getByRole("button", { name: "Gunakan lokasi saya", exact: true }).isVisible(), true);
+        assert.equal(await entryLocation.getByRole("button", { name: "Cari kota atau kabupaten", exact: true }).isVisible(), true);
+        assert.equal(await entryLocation.getByRole("button", { name: "Jelajahi peta Indonesia dulu", exact: true }).isVisible(), true);
+        await entryLocation.getByRole("button", { name: "Jelajahi peta Indonesia dulu", exact: true }).click();
+        await page.getByText("Lokasi ini belum dijelajahi di TAPETA", { exact: true }).waitFor();
+        assert.ok(page.url().endsWith("#explore"), "entry fallback opens the map");
+        assert.equal(await page.getByText("Lokasi ini belum dijelajahi di TAPETA", { exact: true }).isVisible(), true);
+        assert.equal(await page.getByRole("button", { name: "Lihat kota yang sudah dijelajahi", exact: true }).isVisible(), true);
+        assert.equal(await page.getByRole("button", { name: "Jadi kontributor pertama", exact: true }).isVisible(), true);
+         await page.goto(base);
+         await page.locator(".t-landing__map").evaluate((image) => image.decode());
+         await page.getByRole("button", { name: "Mulai menjelajah", exact: true }).click();
+         await page.getByRole("dialog", { name: "Mulai dari mana?" }).getByRole("button", { name: "Jelajahi peta Indonesia dulu", exact: true }).click();
+         await page.getByText("Lokasi ini belum dijelajahi di TAPETA", { exact: true }).waitFor();
+         assert.ok(page.url().endsWith("#explore"));
+         await page.goto(base);
+         await page.locator(".t-landing__map").evaluate((image) => image.decode());
+         await page.getByRole("button", { name: /Ketuk peta untuk menjelajahi Indonesia/ }).click();
+         await page.getByRole("dialog", { name: "Mulai dari mana?" }).getByRole("button", { name: "Jelajahi peta Indonesia dulu", exact: true }).click();
+         await page.getByText("Lokasi ini belum dijelajahi di TAPETA", { exact: true }).waitFor();
         assert.ok(page.url().endsWith("#explore"), "map prompt opens the map");
         await page.goto(base);
         await page.locator(".t-landing__map").evaluate((image) => image.decode());
       }
+      if (name === "explore" && width > 860) {
+        assert.equal(await page.locator(".t-topbar .t-citypill").count(), 0, "city selection belongs to the map, not the top navigation");
+        const cityPicker = page.getByRole("button", { name: /Pilih kota:/ });
+        await cityPicker.waitFor();
+        assert.equal(await cityPicker.evaluate((button) => button.closest(".t-mapstage") !== null), true, "city picker should be inside the map stage");
+        assert.equal(await page.locator(".t-topnav__dot").count(), 0, "active navigation should not resemble an unread notification");
+        assert.equal(await page.locator(".t-topnav__item--active").getAttribute("aria-current"), "page");
+      }
+      if (name === "explore" && width <= 860) {
+        await page.getByRole("button", { name: /Pilih kota:/ }).waitFor();
+        assert.equal(await page.locator(".tm-explore__map > .tm-explore__citypicker").count(), 1, "mobile city picker should sit on the map");
+        assert.equal(await page.locator(".tm-nav").count(), 0, "mobile explore should not retain the desktop navigation row");
+        assert.equal(await page.locator(".tm-sheet--paper").count(), 1, "mobile explore should use the catalog sheet");
+        await page.locator(".tm-sheet__cards").waitFor();
+        assert.equal(await page.locator(".tm-bottomnav__link").count(), 4, "mobile explore should expose the four primary destinations");
+      }
+      if (name === "explore" && width > 860) {
+        const sticker = page.locator(".t-fcard").first();
+        await sticker.hover();
+        assert.notEqual(await sticker.locator(".t-fcard__art").evaluate((art) => getComputedStyle(art).boxShadow), "none", `${width}: hovering a location sticker should show a highlight`);
+      }
       if (name === "my") {
+        assert.equal(await page.locator(".t-topbar .t-citypill").count(), 0, "My TAPETA should not show a city picker in its navigation");
+        if (width <= 860) {
+          const mobileNav = page.locator(".t-topnav");
+          assert.equal(
+            await mobileNav.evaluate((nav) => nav.scrollHeight <= nav.clientHeight),
+            true,
+            "Mobile navigation must be tall enough to contain the notification control",
+          );
+        }
         await page.getByRole("button", { name: "Masuk", exact: true }).first().click();
         await page.locator("dialog[open]").waitFor();
         assert.equal(await page.locator("dialog input[type=email]").isDisabled(), false);
@@ -128,6 +170,10 @@ try {
         assert.equal(await page.locator("dialog[open]").count(), 0);
       }
       if (name === "community") {
+        assert.equal(await page.locator(".t-topbar .t-citypill").count(), 0, "Community should not show a city picker in its navigation");
+        const communityCityPicker = page.getByRole("button", { name: /Pilih kota:/ });
+        await communityCityPicker.waitFor();
+        assert.equal(await communityCityPicker.evaluate((button) => button.closest(".t-community__note") !== null), true, "Community city picker should sit above the city-change note");
         assert.ok(await page.getByRole("heading", { name: "Cerita warga lokal", exact: true }).isVisible());
         await page.getByRole("button", { name: "Cerita warga", exact: true }).waitFor();
         await page.getByRole("button", { name: "Kontributor", exact: true }).waitFor();
@@ -286,6 +332,10 @@ try {
         await page.getByRole("button", { name: "Gunakan lokasi saya", exact: true }).click();
         await page.waitForFunction(() => document.querySelector(".t-contrib__note")?.textContent?.includes("Akurasi GPS ±35 m"));
         assert.equal(await next.isEnabled(), true, "Accurate GPS remains usable");
+      }
+      if (name === "my") {
+        assert.equal(await page.locator(".t-myempty__art").count(), 0, `${width}: dashboard empty cards should not use large illustrations`);
+        assert.equal(await page.locator(".t-myempty__mark").count(), 4, `${width}: each dashboard empty card should use its functional icon`);
       }
       await page.screenshot({ path: `.qa/tapeta-20261022-${width}-${name}.png`, fullPage: true });
       results.push({ width, name, ...layout });
