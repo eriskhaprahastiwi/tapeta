@@ -7,7 +7,7 @@ const env = Object.fromEntries((await readFile(new URL("../.env.local", import.m
 const base = process.env.PREVIEW_URL || "http://127.0.0.1:5178/";
 const browser = await chromium.launch();
 try {
-  for (const width of [320, 390, 1440]) {
+  for (const width of process.env.CHECK_WIDTH ? [Number(process.env.CHECK_WIDTH)] : [320, 390, 1440]) {
     const page = await browser.newPage({ viewport: { width, height: 1000 } });
     const errors = []; page.on("pageerror", (error) => errors.push(error.message));
     let place = null, story = null;
@@ -46,6 +46,7 @@ try {
     await page.route("**/nominatim.openstreetmap.org/search?*", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify([{ osm_type: "node", osm_id: 99990001, name: "Tempat wishlist uji", display_name: "Alamat uji Pekanbaru", lat: "0.53", lon: "101.44" }]) }));
     await page.goto(base + "#explore");
     await page.locator('input[type="search"]').first().fill("Tempat wishlist uji");
+    await page.waitForFunction(() => !document.querySelector(".t-osm-search__search")?.hasAttribute("disabled"));
     await page.getByRole("button", { name: "Cari lokasi OSM", exact: true }).click();
     await page.getByRole("button", { name: "Tempat wishlist uji", exact: true }).click();
     await page.getByRole("button", { name: "Simpan", exact: true }).click();
@@ -89,6 +90,13 @@ try {
     await section("Ingin dikunjungi");
     await page.getByRole("button", { name: "Hapus dari wishlist", exact: true }).click();
     await page.getByText(/Wishlist masih kosong/).waitFor();
+    assert.equal(await page.locator(".t-personal__emptyart").count(), 0, "wishlist empty state uses a dashboard icon, not an illustration");
+    assert.equal(await page.locator(".t-personal__emptymark svg").count(), 1, "wishlist empty state shows its icon");
+    await section("Sudah dikunjungi");
+    await page.getByText(/Belum ada kunjungan yang dicatat/).waitFor();
+    assert.equal(await page.locator(".t-personal__emptyart").count(), 0, "visited empty state uses a dashboard icon, not an illustration");
+    assert.equal(await page.locator(".t-personal__emptymark svg").count(), 1, "visited empty state shows its icon");
+    await section("Ingin dikunjungi");
     failList = true;
     await page.reload(); await section("Ingin dikunjungi");
     await page.getByRole("alert").filter({ hasText: "Gangguan simpanan uji" }).waitFor();

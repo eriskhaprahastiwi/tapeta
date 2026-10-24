@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { readSession } from "../lib/session";
 import { EVENT_LABELS, loadTimeline, placeSourceLabel, refreshPersonal, submitVisitStory, updatePlace, usePersonalPlaces, type PersonalEvent, type PersonalPlace, type StoryState } from "../lib/personal";
-import { ClockIcon } from "./Icons";
-import { VisitedArt, WishlistArt } from "./MyTapetaArt";
+import { ClockIcon, FlagIcon, MapIcon } from "./Icons";
 
 export type PersonalSection = "wishlist" | "visited" | "timeline";
 const localToday = () => {
@@ -64,9 +63,9 @@ export function PersonalPlaces({
       <section className="t-personal" aria-label={title}>
         <div className="t-personal__empty">
           {section === "wishlist" ? (
-            <span className="t-personal__emptyart" aria-hidden="true"><WishlistArt /></span>
+            <span className="t-personal__emptymark" aria-hidden="true"><MapIcon size={22} /></span>
           ) : section === "visited" ? (
-            <span className="t-personal__emptyart" aria-hidden="true"><VisitedArt /></span>
+            <span className="t-personal__emptymark" aria-hidden="true"><FlagIcon size={22} /></span>
           ) : (
             <span className="t-personal__emptymark" aria-hidden="true"><ClockIcon size={22} /></span>
           )}
@@ -125,8 +124,8 @@ export function PersonalPlaces({
           </div>
           {!loading && !visible.length && !error && (
             <div className="t-personal__empty">
-              <span className="t-personal__emptyart" aria-hidden="true">
-                {section === "visited" ? <VisitedArt /> : <WishlistArt />}
+              <span className="t-personal__emptymark" aria-hidden="true">
+                {section === "visited" ? <FlagIcon size={22} /> : <MapIcon size={22} />}
               </span>
               <strong>
                 {city ? "Tidak ada tempat di kota ini" : section === "visited" ? "Belum ada kunjungan yang dicatat" : "Wishlist masih kosong"}
