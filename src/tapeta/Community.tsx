@@ -105,6 +105,19 @@ function BadgeMedal({ badge, large = false }: { badge: NonNullable<ReturnType<ty
   );
 }
 
+function BadgeGallery() {
+  return (
+    <div className="t-community__badge-gallery" aria-label="Jenjang lencana kunjungan">
+      {BADGE_LEVELS.map((level) => (
+        <div key={level.key}>
+          <BadgeMedal badge={badgeForVisitedCount(level.first)!} />
+          <span>{level.range} kunjungan</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function StoryArtwork({ story, categoryName }: { story: CommunityStory; categoryName: string }) {
   const categoryId = story.categoryId as keyof typeof MARKER_GLYPHS;
   const glyph = MARKER_GLYPHS[categoryId] ?? MARKER_GLYPHS.lainnya;
@@ -422,7 +435,7 @@ export function Community({
                   <button type="button" className={leaderboardScope === "local" ? "is-active" : ""} aria-pressed={leaderboardScope === "local"} onClick={() => { setVisitLeadersLoading(true); setLeaderboardScope("local"); }}>Lokal: {cityName}</button>
                   <button type="button" className={leaderboardScope === "national" ? "is-active" : ""} aria-pressed={leaderboardScope === "national"} onClick={() => { setVisitLeadersLoading(true); setLeaderboardScope("national"); }}>Seluruh Indonesia</button>
                 </div>
-                {visibleVisitLeadersLoading ? <p className="t-community__state" role="status">Memuat leaderboard…</p> : visitLeadersError ? <p className="t-community__state t-community__state--error" role="alert">{visitLeadersError} {supabase && <button type="button" onClick={retryVisitLeaders}>Coba lagi</button>}</p> : visibleVisitLeaders.length === 0 ? <div className="t-community__empty"><h3>Belum ada kunjungan yang dibagikan</h3><p>Tempat TAPETA yang ditandai sudah dikunjungi akan membentuk leaderboard di sini.</p></div> : <ol className="t-community__leaderboard">{visibleVisitLeaders.map((person, index) => <li key={person.profileKey ?? `private-visit-${index}`}>{person.profileKey ? <button type="button" className="t-community__leader t-community__leader--visits" onClick={() => setProfileKey(person.profileKey)}><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">{person.displayLabel}</span><span className="t-community__person-sub">Profil publik</span></span>{person.badge && <span className="t-community__leader-badge"><BadgeMedal badge={person.badge} /></span>}<span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></button> : <div className="t-community__leader t-community__leader--visits is-private"><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">Kontributor</span><span className="t-community__person-sub">Profil privat</span></span><span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></div>}</li>)}</ol>}
+                {visibleVisitLeadersLoading ? <p className="t-community__state" role="status">Memuat leaderboard…</p> : visitLeadersError ? <p className="t-community__state t-community__state--error" role="alert">{visitLeadersError} {supabase && <button type="button" onClick={retryVisitLeaders}>Coba lagi</button>}</p> : visibleVisitLeaders.length === 0 ? <div className="t-community__empty"><h3>Belum ada kunjungan yang dibagikan</h3><p>Tempat TAPETA yang ditandai sudah dikunjungi akan membentuk leaderboard di sini.</p><BadgeGallery /></div> : <ol className="t-community__leaderboard">{visibleVisitLeaders.map((person, index) => <li key={person.profileKey ?? `private-visit-${index}`}>{person.profileKey ? <button type="button" className="t-community__leader t-community__leader--visits" onClick={() => setProfileKey(person.profileKey)}><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">{person.displayLabel}</span><span className="t-community__person-sub">Profil publik</span></span>{person.badge && <span className="t-community__leader-badge"><BadgeMedal badge={person.badge} /></span>}<span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></button> : <div className="t-community__leader t-community__leader--visits is-private"><span className="t-community__rank">{index + 1}</span><span className="t-community__person"><span className="t-community__person-name">Kontributor</span><span className="t-community__person-sub">Profil privat</span></span><span className="t-community__score"><strong>{person.visitedCount}</strong><span>kunjungan</span></span></div>}</li>)}</ol>}
               </section>
             )}
           </>

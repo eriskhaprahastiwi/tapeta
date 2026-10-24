@@ -23,10 +23,10 @@ try {
           route.fulfill({
             status: 200,
             contentType: "application/json",
-            body: JSON.stringify([
+            body: JSON.stringify(national ? [
               { profile_key: "public-visitor", display_label: "Rani Penjelajah", public_profile: true, visited_count: national ? 12 : 10, latest_visited_at: "2026-10-20" },
               { profile_key: null, display_label: "Kontributor", public_profile: false, visited_count: 3, latest_visited_at: "2026-10-19" },
-            ]),
+            ] : []),
           });
         });
         await page.route("**/rest/v1/rpc/community_contributor_profile", (route) => route.fulfill({
@@ -196,6 +196,11 @@ try {
         await communityCityPicker.waitFor();
         assert.equal(await communityCityPicker.evaluate((button) => button.closest(".t-community__note") !== null), true, "Community city picker should sit above the city-change note");
         assert.ok(await page.getByRole("heading", { name: "Cerita warga lokal", exact: true }).isVisible());
+        assert.equal(await page.getByRole("heading", { name: "Cerita warga lokal", exact: true }).evaluate((heading) => {
+          const range = document.createRange();
+          range.selectNodeContents(heading);
+          return range.getClientRects().length;
+        }), 1, "Community title stays on one line");
         await page.getByRole("button", { name: "Cerita warga", exact: true }).waitFor();
         await page.getByRole("button", { name: "Kontributor", exact: true }).waitFor();
         await page.locator(".t-community__story").first().waitFor();
@@ -233,6 +238,8 @@ try {
         assert.ok(await page.locator(".t-community__leader, .t-community__empty, .t-community__state--error").count() > 0);
         await page.getByRole("button", { name: "Leaderboard", exact: true }).click();
         await page.getByRole("button", { name: "Lokal: Pekanbaru", exact: true }).waitFor();
+        await page.getByText("Belum ada kunjungan yang dibagikan", { exact: true }).waitFor();
+        assert.equal(await page.locator(".t-community__badge-gallery .t-community__badge-medal").count(), 4, "empty leaderboard previews all visit badges");
         await page.getByRole("button", { name: "Seluruh Indonesia", exact: true }).click();
         await page.getByRole("button", { name: /Rani Penjelajah/ }).waitFor();
         await page.getByRole("button", { name: /Rani Penjelajah/ }).click();
