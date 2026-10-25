@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AccountMenu, AuthDialog, NotificationPanel } from "../components/AccountUI";
+import { ProfileEditor } from "../components/ProfileEditor";
 import { NoticeDialog } from "../components/NoticeDialog";
 import { useAccountSession } from "../lib/useAccountSession";
 import { initialsOf, setCurrentSession } from "../lib/session";
@@ -21,6 +22,7 @@ export interface AccountLayerState {
   notificationOpen: boolean;
   onOpenAuth: () => void;
   onOpenAccount: () => void;
+  onOpenProfileEditor: () => void;
   onOpenNotifications: () => void;
   onSignOut: () => void;
   onSessionUpdated: (session: LocalSession) => void;
@@ -32,6 +34,7 @@ export interface AccountLayerState {
 export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLayerProps) {
   const { session, notifications, setSession, signOut, markRead, error, recovery, setRecovery, refreshNotifications } = useAccountSession();
   const [authOpen, setAuthOpen] = useState(false);
+  const [profileEditorOpen, setProfileEditorOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [notice, setNotice] = useState<{ title: string; body: string; hint?: string } | null>(null);
@@ -111,6 +114,10 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
       setNotifOpen(false);
       setMenuOpen((open) => !open);
     },
+    onOpenProfileEditor: () => {
+      setMenuOpen(false);
+      setProfileEditorOpen(true);
+    },
     onOpenNotifications: () => {
       rememberTrigger(".t-topnav__notif");
       void refreshNotifications();
@@ -144,6 +151,8 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
         }}
       />
 
+      {profileEditorOpen && session && <ProfileEditor onClose={() => { setProfileEditorOpen(false); window.setTimeout(() => document.querySelector<HTMLElement>(".t-topnav__avatar")?.focus(), 0); }} onSaved={updateSession} />}
+
       {session && menuOpen && (
         <div className="t-accountmenu-host" ref={menuHostRef}>
           <AccountMenu
@@ -154,6 +163,7 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
               onOpenMyTapeta();
               onNavigate("my");
             }}
+            onOpenProfileEditor={state.onOpenProfileEditor}
             onOpenNotifications={() => {
               setMenuOpen(false);
               setNotifOpen(true);

@@ -34,6 +34,14 @@ export function useAccountSession() {
     }).catch((cause) => { if (active) { setError(cause instanceof Error ? cause.message : "Sesi akun gagal dimuat."); setReady(true); } });
     const { data: listener } = supabase.auth.onAuthStateChange((event, authSession) => {
       if (event === "PASSWORD_RECOVERY") setRecovery(true);
+      if (event === "USER_UPDATED" && authSession) {
+        void appSessionForUser(authSession.user).then((next) => {
+          if (!active) return;
+          setCurrentSession(next);
+          setSession(next);
+        }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : "Data akun gagal diperbarui."); });
+        return;
+      }
       window.setTimeout(() => { if (active) void apply(authSession); }, 0);
     });
     window.addEventListener("focus", refreshPersonal);

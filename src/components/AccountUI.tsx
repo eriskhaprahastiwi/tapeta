@@ -151,6 +151,7 @@ export interface AccountMenuProps {
   session: LocalSession;
   onClose: () => void;
   onOpenMyTapeta: () => void;
+  onOpenProfileEditor: () => void;
   onOpenNotifications: () => void;
   onOpenAdmin: () => void;
   onSignOut: () => void;
@@ -160,6 +161,7 @@ export function AccountMenu({
   session,
   onClose,
   onOpenMyTapeta,
+  onOpenProfileEditor,
   onOpenNotifications,
   onOpenAdmin,
   onSignOut,
@@ -178,6 +180,9 @@ export function AccountMenu({
       <p className="t-accountmenu__badge">Akun TAPETA · {session.role}</p>
       <button type="button" role="menuitem" className="t-accountmenu__item" onClick={onOpenMyTapeta}>
         My TAPETA
+      </button>
+      <button type="button" role="menuitem" className="t-accountmenu__item" onClick={onOpenProfileEditor}>
+        Edit profil
       </button>
       <button type="button" role="menuitem" className="t-accountmenu__item" onClick={onOpenNotifications}>
         Notifikasi

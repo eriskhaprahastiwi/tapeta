@@ -543,6 +543,7 @@ export default function App() {
           onOpenAuth: state.onOpenAuth,
           onSessionUpdated: state.onSessionUpdated,
           onOpenAccount: state.onOpenAccount,
+          onOpenProfileEditor: state.onOpenProfileEditor,
           onOpenNotifications: state.onOpenNotifications,
           onSignOut: state.onSignOut,
         },

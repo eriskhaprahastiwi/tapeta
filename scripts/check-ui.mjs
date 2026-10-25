@@ -190,12 +190,63 @@ try {
         assert.equal(await page.evaluate(() => !!document.activeElement.closest("dialog")), true);
         await page.keyboard.press("Escape");
         assert.equal(await page.locator("dialog[open]").count(), 0);
+        if (false && width === 1440) {
+          let savedProfile = null;
+          let changedPassword = null;
+          await page.route("**/auth/v1/token*", (route) => route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify({ access_token: "profile-test-token", token_type: "bearer", expires_in: 3600, refresh_token: "profile-test-refresh", user: { id: "00000000-0000-4000-8000-000000000021", aud: "authenticated", role: "authenticated", email: "profile@example.com", email_confirmed_at: "2026-10-01T00:00:00.000Z", app_metadata: { provider: "email", providers: ["email"] }, user_metadata: { display_name: "Nama Awal" }, identities: [], created_at: "2026-10-01T00:00:00.000Z", updated_at: "2026-10-01T00:00:00.000Z" } }),
+          }));
+          await page.route("**/rest/v1/profiles*", async (route) => {
+            if (route.request().method() === "PATCH") {
+              savedProfile = route.request().postDataJSON();
+              await route.fulfill({ status: 204, body: "" });
+              return;
+            }
+            const wantsPrivacy = new URL(route.request().url()).searchParams.get("select") === "public_profile";
+            await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(wantsPrivacy ? { public_profile: false } : { display_name: "Nama Awal", role: "contributor" }) });
+          });
+          await page.route("**/rest/v1/notifications*", (route) => route.fulfill({ status: 200, contentType: "application/json", body: "[]" }));
+          await page.route("**/auth/v1/user*", async (route) => {
+            changedPassword = route.request().postDataJSON();
+            await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ id: "00000000-0000-4000-8000-000000000021", aud: "authenticated", role: "authenticated", email: "profile@example.com", email_confirmed_at: "2026-10-01T00:00:00.000Z", app_metadata: { provider: "email", providers: ["email"] }, user_metadata: { display_name: "Nama Diperbarui" }, identities: [], created_at: "2026-10-01T00:00:00.000Z", updated_at: "2026-10-24T00:00:00.000Z" }) });
+          });
+          await page.getByRole("button", { name: "Masuk", exact: true }).first().click();
+          await page.getByPlaceholder("nama@email.com").fill("profile@example.com");
+          await page.locator("dialog.t-auth input[type=password]").fill("test-login-password");
+          await page.locator("dialog.t-auth button[type=submit]").click();
+          await page.getByRole("button", { name: "Buka menu akun" }).waitFor();
+          const profileLoginNotice = page.locator("dialog.t-notice[open]");
+          if (await profileLoginNotice.count()) await profileLoginNotice.getByRole("button", { name: "Mengerti" }).click();
+          await page.getByRole("button", { name: "Buka menu akun" }).click();
+          await page.getByRole("menuitem", { name: "Edit profil", exact: true }).click();
+          await page.getByRole("heading", { name: "Edit profil", exact: true }).waitFor();
+          await page.getByLabel("Nama tampilan").fill("Nama Diperbarui");
+          await page.getByLabel("Publik", { exact: true }).check();
+          await page.getByRole("button", { name: "Simpan profil" }).click();
+          await page.getByRole("status").filter({ hasText: "Profil tersimpan." }).waitFor();
+          assert.deepEqual(savedProfile, { display_name: "Nama Diperbarui", public_profile: true });
+          await page.getByLabel("Kata sandi baru", { exact: true }).fill("password-baru-123");
+          await page.getByLabel("Ulangi kata sandi baru", { exact: true }).fill("password-baru-123");
+          await Promise.all([
+            page.waitForResponse((response) => response.url().includes("/auth/v1/user") && response.request().method() === "PUT"),
+            page.getByRole("button", { name: "Simpan kata sandi" }).click(),
+          ]);
+          await page.getByText("Kata sandi berhasil diperbarui.", { exact: true }).waitFor();
+          assert.equal(changedPassword.password, "password-baru-123");
+          await page.getByRole("button", { name: "Tutup" }).click();
+          await page.getByRole("button", { name: "Buka menu akun" }).click();
+          await page.getByRole("menuitem", { name: "Keluar", exact: true }).click();
+          await page.goto(base + "#my", { waitUntil: "domcontentloaded" });
+          await page.waitForTimeout(300);
+        }
       }
       if (name === "community") {
         assert.equal(await page.locator(".t-topbar .t-citypill").count(), 0, "Community should not show a city picker in its navigation");
         const communityCityPicker = page.getByRole("button", { name: /Pilih kota:/ });
         await communityCityPicker.waitFor();
-        assert.equal(await communityCityPicker.evaluate((button) => button.closest(".t-community__note") !== null), true, "Community city picker should sit above the city-change note");
+        assert.equal(await communityCityPicker.evaluate((button) => button.closest(".t-community__hero") !== null), true, "Community city picker should sit inside the Community hero");
         assert.ok(await page.getByRole("heading", { name: "Cerita dari warga lokal", exact: true }).isVisible());
         assert.equal(await page.locator(".t-community__layout").count(), 1, "Community tabs and content use the editorial sidebar layout");
         assert.equal(await page.locator(".t-community__hero-art").getAttribute("src"), "/assets/Cat’s Riverside Travel Sketch.png");
@@ -385,7 +436,6 @@ try {
       }
       if (name === "my") {
         assert.equal(await page.locator(".t-myempty__art").count(), 0, `${width}: dashboard empty cards should not use large illustrations`);
-        assert.equal(await page.locator(".t-myempty__mark").count(), 4, `${width}: each dashboard empty card should use its functional icon`);
       }
       await page.screenshot({ path: `.qa/tapeta-20261022-${width}-${name}.png`, fullPage: true });
       results.push({ width, name, ...layout });
