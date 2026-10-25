@@ -15,11 +15,12 @@ export interface DesainTopbarProps {
   cityName: string;
   provinceName: string;
   onOpenCityPicker: () => void;
+  showCityPicker?: boolean;
   /** Override opsional; default memakai ChromeContext. */
   onOpenHome?: () => void;
 }
 
-export function DesainTopbar({ active, cityName, provinceName, onOpenCityPicker, onOpenHome }: DesainTopbarProps) {
+export function DesainTopbar({ active, cityName, provinceName, onOpenCityPicker, showCityPicker = active !== "my", onOpenHome }: DesainTopbarProps) {
   const { navigate, account, openHome } = useChrome();
   const goHome = onOpenHome ?? openHome;
   return (
@@ -27,22 +28,24 @@ export function DesainTopbar({ active, cityName, provinceName, onOpenCityPicker,
       <div className="t-topbar__brand">
         <TapetaLogo size={30} wordmarkSize={19} onClick={goHome} />
       </div>
-      <button type="button" className="t-citypill" onClick={onOpenCityPicker}>
-        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-          <path
-            d="M7 1c-2.3 0-4 1.7-4 4 0 3 4 8 4 8s4-5 4-8c0-2.3-1.7-4-4-4Zm0 2.5c.9 0 1.6.7 1.6 1.5S7.9 6.6 7 6.6 5.4 5.9 5.4 5 6.1 3.5 7 3.5Z"
-            fill="#A95038"
-          />
-        </svg>
-        <span className="t-citypill__name">{cityName}</span>
-        <span className="t-citypill__prov">{provinceName}</span>
-        <ChevronDownIcon size={14} className="t-citypill__chev" />
-      </button>
+      {showCityPicker && (
+        <button type="button" className="t-citypill" onClick={onOpenCityPicker}>
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+            <path
+              d="M7 1c-2.3 0-4 1.7-4 4 0 3 4 8 4 8s4-5 4-8c0-2.3-1.7-4-4-4Zm0 2.5c.9 0 1.6.7 1.6 1.5S7.9 6.6 7 6.6 5.4 5.9 5.4 5 6.1 3.5 7 3.5Z"
+              fill="#A95038"
+            />
+          </svg>
+          <span className="t-citypill__name">{cityName}</span>
+          <span className="t-citypill__prov">{provinceName}</span>
+          <ChevronDownIcon size={14} className="t-citypill__chev" />
+        </button>
+      )}
       <nav className="t-topnav" aria-label="Navigasi utama">
         {(["explore", "my", "komunitas"] as NavKey[]).map((key) =>
           key === active ? (
             <span key={key} className="t-topnav__item t-topnav__item--active" aria-current="page">
-              {LABELS[key]} <span className="t-topnav__dot" aria-hidden="true" />
+              {LABELS[key]}
             </span>
           ) : (
             <button

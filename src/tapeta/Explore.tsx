@@ -7,23 +7,26 @@ import type {
   RegionFeature,
   RegionStats,
 } from "../types";
-import { MapIcon } from "../components/Icons";
+import { ChevronDownIcon, MapIcon } from "../components/Icons";
 import { DesainTopbar } from "./Topbar";
 import { statusLabel } from "../lib/geo";
 import { MARKER_GLYPHS } from "../lib/markerIcon";
 import { CATEGORY_COLORS as CAT_COLOR } from "../data/categories";
 import { shareDestination } from "../lib/destinationLink";
+import { OsmPlaceSearch } from "../components/OsmPlaceSearch";
+import type { OsmLocation } from "../types";
+import { SavePlaceButton } from "../components/SavePlaceButton";
 
 const CAT_ORDER: CategoryId[] = ["kafe", "kuliner", "alam", "budaya", "rekreasi", "lainnya"];
 
-const FEATURED = [
-  { name: "Asia Heritage", slug: "asia-heritage", bg: "#f4dfad", hint: "Rumah gadang · Suku 5" },
-  { name: "Danau Khayangan", slug: "danau-bandar-khayangan", bg: "#cbdcbd", hint: "Danau kota · Tenayan" },
-  { name: "Masjid An-Nur", slug: "masjid-raya-an-nur", bg: "#f0c4a6", hint: "Masjid provinsi" },
-  { name: "Taman Wisata Okura", slug: "taman-wisata-okura", bg: "#e8c5c9", hint: "Taman kota" },
-  { name: "Rumah Tuan Kadi", slug: "rumah-singgah-tuan-kadi", bg: "#cbdcbd", hint: "Rumah adat Melayu" },
-  { name: "Soeman H.S.", slug: "perpustakaan-soeman-hs", bg: "#f4dfad", hint: "Perpustakaan provinsi" },
-];
+const FEATURED_BG: Record<string, string> = {
+  "asia-heritage": "#f4dfad",
+  "danau-bandar-khayangan": "#cbdcbd",
+  "masjid-raya-an-nur": "#f0c4a6",
+  "taman-wisata-okura": "#e8c5c9",
+  "rumah-singgah-tuan-kadi": "#cbdcbd",
+  "perpustakaan-soeman-hs": "#f4dfad",
+};
 
 interface ExploreProps {
   city: CityContext | null;
@@ -51,6 +54,9 @@ interface ExploreProps {
   onOpenHome: () => void;
   onOpenAtlas: () => void;
   onOpenContribute: () => void;
+  osmLocation: OsmLocation | null;
+  onSelectOsm: (place: OsmLocation) => void;
+  onSuggestOsm: (place: OsmLocation) => void;
   children?: React.ReactNode;
 }
 
@@ -144,10 +150,15 @@ export function ExploreDesktop(props: ExploreProps) {
     ? destinations.find((item) => item.id === selectedDestinationId) ?? null
     : null;
   const selectedRegion = selectedDestination ? null : selectedRegionRaw;
-  const featuredWithId = (slugItem: (typeof FEATURED)[number]) => {
-    const match = destinations.find((destination) => destination.sticker?.src === `/assets/stickers/${slugItem.slug}.png`);
-    return match ?? null;
-  };
+  const featuredDestinations = useMemo(() => {
+    const withSticker = destinations.filter((destination) => destination.sticker);
+    return withSticker.slice(0, 8).map((destination) => ({
+      slug: destination.sticker!.src.split("/").pop()!.replace(/\.png$/, ""),
+      name: destination.name,
+      bg: FEATURED_BG[destination.sticker!.src.split("/").pop()!.replace(/\.png$/, "")] ?? "#efe3cf",
+      destination,
+    }));
+  }, [destinations]);
 
   const nearbyDestinations = useMemo(() => {
     if (!selectedDestination) return [];
@@ -174,6 +185,7 @@ export function ExploreDesktop(props: ExploreProps) {
         provinceName={city?.province ?? city?.name ?? "Pekanbaru"}
         onOpenHome={onOpenHome}
         onOpenCityPicker={onOpenCityPicker}
+        showCityPicker={false}
       />
 
       <div className={`t-app__main${selectedDestination ? " has-destination" : ""}`}>
@@ -185,9 +197,9 @@ export function ExploreDesktop(props: ExploreProps) {
                   <span className="t-coverage__kicker">
                     PAKET ILUSTRASI · {regionStats.length} KECAMATAN
                   </span>
-                  <span className="t-coverage__title">
+                  <h1 className="t-coverage__title">
                     {city ? `${city.name}, ${city.province}` : "Memuat wilayah"}
-                  </span>
+                  </h1>
                   <div className="t-coverage__stats">
                     <span className="t-statline">
                       <i className="t-statline__dot" style={{ background: "#5E7C64" }} />
@@ -205,13 +217,12 @@ export function ExploreDesktop(props: ExploreProps) {
                 </div>
 
                 <div className="t-pcount">
-                  <span className="t-pcount__num">{destinations.length} destinasi</span>
+                  <h2 className="t-pcount__num">{destinations.length} destinasi</h2>
                   <span className="t-pcount__ctx">Terbit &amp; terverifikasi admin</span>
-                  <div className="t-viewtabs" role="tablist" aria-label="Pilih tampilan">
+                  <div className="t-viewtabs" role="group" aria-label="Pilih tampilan">
                     <button
                       type="button"
-                      role="tab"
-                      aria-selected={viewTab === "peta"}
+                      aria-pressed={viewTab === "peta"}
                       className={viewTab === "peta" ? "is-active" : ""}
                       onClick={() => setViewTab("peta")}
                     >
@@ -220,8 +231,7 @@ export function ExploreDesktop(props: ExploreProps) {
                     </button>
                     <button
                       type="button"
-                      role="tab"
-                      aria-selected={viewTab === "daftar"}
+                      aria-pressed={viewTab === "daftar"}
                       className={viewTab === "daftar" ? "is-active" : ""}
                       onClick={() => setViewTab("daftar")}
                     >
@@ -229,8 +239,7 @@ export function ExploreDesktop(props: ExploreProps) {
                     </button>
                     <button
                       type="button"
-                      role="tab"
-                      aria-selected={viewTab === "atlas"}
+                      aria-pressed={viewTab === "atlas"}
                       className={viewTab === "atlas" ? "is-active" : ""}
                       onClick={() => {
                         setViewTab("atlas");
@@ -258,6 +267,7 @@ export function ExploreDesktop(props: ExploreProps) {
                   <span className="t-search__kbd" aria-hidden="true">⌘K</span>
                 </label>
 
+                <OsmPlaceSearch key={`${city?.relationId}:${query}`} city={city} query={query} cityName={city?.name ?? "Pekanbaru"} regions={regions} selected={props.osmLocation} onSelect={props.onSelectOsm} onSuggest={props.onSuggestOsm} />
                 <div className="t-chips">
                   <div className="t-chips__row">
                     {CAT_ORDER.slice(0, 3).map((id) => (
@@ -378,9 +388,11 @@ export function ExploreDesktop(props: ExploreProps) {
                 </div>
 
                 <div className="t-pfoot">
-                  <button type="button" className="t-pfoot__all" onClick={() => onResetCategories()}>
-                    Lihat semua {destinations.length} destinasi →
-                  </button>
+                  {destinations.length > 0 && (
+                    <button type="button" className="t-pfoot__all" onClick={() => onResetCategories()}>
+                      Tampilkan semua {destinations.length} destinasi
+                    </button>
+                  )}
                   <button type="button" className="t-propose" onClick={onOpenContribute}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fdf9ef" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
                       <path d="M12 5v14M5 12h14" />
@@ -446,6 +458,21 @@ export function ExploreDesktop(props: ExploreProps) {
             <>
               <div className="t-mapstage">
                 {props.children}
+                {!selectedDestination && (
+                  <button
+                    type="button"
+                    className="t-map-citypicker"
+                    onClick={onOpenCityPicker}
+                    aria-label={`Pilih kota: ${city?.name ?? "Pekanbaru"}, ${city?.province ?? "Riau"}`}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M8 1.5a4.5 4.5 0 0 0-4.5 4.5c0 3.3 4.5 8.5 4.5 8.5s4.5-5.2 4.5-8.5A4.5 4.5 0 0 0 8 1.5Zm0 2.8a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4Z" />
+                    </svg>
+                    <span>{city?.name ?? "Pekanbaru"}</span>
+                    <small>{city?.province ?? "Riau"}</small>
+                    <ChevronDownIcon size={14} className="t-map-citypicker__chevron" />
+                  </button>
+                )}
             {selectedRegion && selectedRegion.count === 0 && !selectedDestination && (
               <div className="t-mapempty" role="status">
                 <span className="t-mapempty__code">
@@ -484,25 +511,21 @@ export function ExploreDesktop(props: ExploreProps) {
               </span>
             </div>
             <div className="t-featured__row">
-              {FEATURED.filter((item) => featuredWithId(item)).map((item) => {
-                const match = featuredWithId(item);
-                const sticker = `/assets/stickers/${item.slug}.png`;
-                return (
-                  <button
-                    type="button"
-                    key={item.slug}
-                    className="t-fcard"
-                    onClick={() => match && onSelectDestination(match.id, true)}
-                    title={match ? `${item.name} — tampakkan di peta` : item.name}
-                  >
-                    <span className="t-fcard__art" style={{ background: item.bg }}>
-                      <img src={sticker} alt="" loading="lazy" />
-                    </span>
-                    <span className="t-fcard__name">{match?.name}</span>
-                    <span className="t-fcard__cat">{match ? categoriesById.get(match.categoryId)?.name : ""}</span>
-                  </button>
-                );
-              })}
+              {featuredDestinations.map((item) => (
+                <button
+                  type="button"
+                  key={item.destination.id}
+                  className="t-fcard"
+                  onClick={() => onSelectDestination(item.destination.id, true)}
+                  title={`${item.name}, tampakkan di peta`}
+                >
+                  <span className="t-fcard__art" style={{ background: item.bg }}>
+                    <img src={item.destination.sticker!.src} alt="" loading="lazy" />
+                  </span>
+                  <span className="t-fcard__name">{item.name}</span>
+                  <span className="t-fcard__cat">{categoriesById.get(item.destination.categoryId)?.name ?? ""}</span>
+                </button>
+              ))}
               {!destinations.some((item) => item.sticker) && <p>Belum ada stiker destinasi yang diterbitkan untuk kota ini.</p>}
               </div>
             </section>
@@ -677,7 +700,7 @@ function ListMainView({
 
 function formatShortDate(iso: string) {
   const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "Belum tersedia";
   return new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" }).format(date);
 }
 
@@ -712,7 +735,7 @@ function DestinationDetail({
   const updated =
     new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric" }).format(
       new Date(destination.updatedAt),
-    ) || "—";
+    ) || "Belum tersedia";
   const verified = destination.publicationStatus === "published";
   const [shareMessage, setShareMessage] = useState("");
   return (
@@ -771,6 +794,7 @@ function DestinationDetail({
         </div>
         {destination.description && <p className="t-dpanel__desc">{destination.description}</p>}
         <div className="t-dpanel__actions">
+          <SavePlaceButton target={{ destinationId: destination.id }} />
           <button type="button" className="t-btn t-btn--brick" onClick={onFocusMap}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fdf9ef" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="9" />

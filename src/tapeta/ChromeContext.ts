@@ -11,6 +11,7 @@ export interface ChromeAccount {
   notificationOpen: boolean;
   onOpenAuth: () => void;
   onOpenAccount: () => void;
+  onOpenProfileEditor: () => void;
   onOpenNotifications: () => void;
   onSignOut: () => void;
   onSessionUpdated: (session: LocalSession) => void;
@@ -35,6 +36,7 @@ const FALLBACK: ChromeContextValue = {
     notificationOpen: false,
     onOpenAuth: NOOP,
     onOpenAccount: NOOP,
+    onOpenProfileEditor: NOOP,
     onOpenNotifications: NOOP,
     onSignOut: NOOP,
     onSessionUpdated: NOOP,

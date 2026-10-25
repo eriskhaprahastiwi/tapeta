@@ -1,5 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AccountMenu, AuthDialog, NotificationPanel } from "../components/AccountUI";
+import { ProfileEditor } from "../components/ProfileEditor";
 import { NoticeDialog } from "../components/NoticeDialog";
 import { useAccountSession } from "../lib/useAccountSession";
 import { initialsOf, setCurrentSession } from "../lib/session";
@@ -21,6 +22,7 @@ export interface AccountLayerState {
   notificationOpen: boolean;
   onOpenAuth: () => void;
   onOpenAccount: () => void;
+  onOpenProfileEditor: () => void;
   onOpenNotifications: () => void;
   onSignOut: () => void;
   onSessionUpdated: (session: LocalSession) => void;
@@ -32,9 +34,61 @@ export interface AccountLayerState {
 export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLayerProps) {
   const { session, notifications, setSession, signOut, markRead, error, recovery, setRecovery, refreshNotifications } = useAccountSession();
   const [authOpen, setAuthOpen] = useState(false);
+  const [profileEditorOpen, setProfileEditorOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [notice, setNotice] = useState<{ title: string; body: string; hint?: string } | null>(null);
+  const menuHostRef = useRef<HTMLDivElement | null>(null);
+  const notifHostRef = useRef<HTMLDivElement | null>(null);
+  const [trigger, setTrigger] = useState<HTMLElement | null>(null);
+
+  const rememberTrigger = (selector: string) => {
+    const active = document.activeElement;
+    setTrigger(
+      active instanceof HTMLElement && active.matches(selector)
+        ? active
+        : document.querySelector<HTMLElement>(selector),
+    );
+  };
+
+  const closePopovers = useCallback((restoreFocus = true) => {
+    setMenuOpen(false);
+    setNotifOpen(false);
+    if (restoreFocus) window.setTimeout(() => trigger?.focus(), 0);
+  }, [trigger]);
+
+  useEffect(() => {
+    if (!menuOpen && !notifOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.stopPropagation();
+      closePopovers();
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      if (menuHostRef.current?.contains(target) || notifHostRef.current?.contains(target)) return;
+      if (target instanceof Element && target.closest(".t-topnav__account")) return;
+      closePopovers(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown, true);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown, true);
+    };
+  }, [menuOpen, notifOpen, closePopovers]);
+
+  useEffect(() => {
+    if (menuOpen) menuHostRef.current?.querySelector<HTMLElement>(".t-accountmenu__item")?.focus();
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (notifOpen) notifHostRef.current?.querySelector<HTMLElement>(".t-notif__close")?.focus();
+  }, [notifOpen]);
 
   const unreadCount = notifications.filter((item) => !item.read).length;
   const updateSession = useCallback((next: LocalSession) => {
@@ -56,10 +110,16 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
     },
     onSessionUpdated: updateSession,
     onOpenAccount: () => {
+      rememberTrigger(".t-topnav__avatar");
       setNotifOpen(false);
       setMenuOpen((open) => !open);
     },
+    onOpenProfileEditor: () => {
+      setMenuOpen(false);
+      setProfileEditorOpen(true);
+    },
     onOpenNotifications: () => {
+      rememberTrigger(".t-topnav__notif");
       void refreshNotifications();
       setMenuOpen(false);
       setNotifOpen((open) => !open);
@@ -91,8 +151,10 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
         }}
       />
 
+      {profileEditorOpen && session && <ProfileEditor onClose={() => { setProfileEditorOpen(false); window.setTimeout(() => document.querySelector<HTMLElement>(".t-topnav__avatar")?.focus(), 0); }} onSaved={updateSession} />}
+
       {session && menuOpen && (
-        <div className="t-accountmenu-host">
+        <div className="t-accountmenu-host" ref={menuHostRef}>
           <AccountMenu
             session={session}
             onClose={() => setMenuOpen(false)}
@@ -101,6 +163,7 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
               onOpenMyTapeta();
               onNavigate("my");
             }}
+            onOpenProfileEditor={state.onOpenProfileEditor}
             onOpenNotifications={() => {
               setMenuOpen(false);
               setNotifOpen(true);
@@ -115,7 +178,7 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
       )}
 
       {notifOpen && (
-        <div className="t-notif-host">
+        <div className="t-notif-host" ref={notifHostRef}>
           {error && <p role="alert">{error} <button onClick={() => void refreshNotifications()}>Coba lagi</button></p>}
           <NotificationPanel
             open={notifOpen}

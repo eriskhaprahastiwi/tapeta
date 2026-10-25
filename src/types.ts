@@ -73,6 +73,17 @@ export interface Bounds {
   east: number;
 }
 
+export interface OsmLocation {
+  sourceLabel?: string;
+  destinationId?: string;
+  id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lon: number;
+  sourceUrl: string;
+}
+
 export interface RegionStats {
   region: RegionFeature;
   destinations: Destination[];

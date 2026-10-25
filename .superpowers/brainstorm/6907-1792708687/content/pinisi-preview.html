@@ -1,0 +1,28 @@
+<style>
+  .sea-preview { position: relative; min-height: 410px; overflow: hidden; border-radius: 18px; background: linear-gradient(180deg,#b9e5e6 0%,#73bdc1 42%,#327f8c 100%); color:#123d46; }
+  .sea-preview::before,.sea-preview::after { content:""; position:absolute; left:-10%; width:120%; height:90px; border:1px solid rgba(255,255,255,.3); border-color:rgba(255,255,255,.42) transparent transparent; border-radius:50%; }
+  .sea-preview::before { top:46%; box-shadow:0 12px 0 rgba(255,255,255,.12),0 27px 0 rgba(255,255,255,.1),0 44px 0 rgba(255,255,255,.09); animation: swell 8s linear infinite; }
+  .sea-preview::after { top:68%; left:-30%; animation: swell 11s linear infinite reverse; }
+  @keyframes swell { to { transform:translateX(8%); } }
+  .sea-label { position:absolute; top:20px; left:24px; z-index:3; font-size:12px; letter-spacing:.15em; text-transform:uppercase; color:#15515a; }
+  .island { position:absolute; right:-20px; bottom:18%; width:220px; height:110px; border-radius:55% 0 0 0; background:linear-gradient(160deg,#7a9c70,#436b59); transform:rotate(-4deg); }
+  .island:before { content:""; position:absolute; width:100px; height:92px; right:50px; top:-28px; border-radius:100% 0 60% 0; background:#547b61; }
+  .route { position:absolute; z-index:1; width:65%; height:150px; border-top:1px dashed rgba(255,255,255,.8); border-radius:50%; transform:rotate(-10deg); }
+  .route.one { left:10%; top:43%; }
+  .route.two { left:28%; top:58%; transform:rotate(8deg); width:56%; }
+  .ship { position:absolute; z-index:2; width:100px; height:100px; animation: sail 18s ease-in-out infinite alternate; filter:drop-shadow(0 8px 5px rgba(11,54,62,.22)); }
+  .ship.one { left:18%; top:30%; }
+  .ship.two { left:61%; top:55%; animation-duration:23s; animation-direction:alternate-reverse; }
+  @keyframes sail { 0% { translate:0 5px; rotate:-7deg; } 50% { translate:145px -12px; rotate:1deg; } 100% { translate:265px 9px; rotate:-5deg; } }
+  .wave-copy { position:absolute; bottom:20px; left:24px; z-index:3; color:#e7f4ef; font-size:13px; }
+  @media (max-width:600px) { .sea-preview { min-height:330px; } .ship { width:78px;height:78px; } @keyframes sail { 0% { translate:0 5px; rotate:-7deg; } 50% { translate:55px -10px; rotate:1deg; } 100% { translate:105px 8px; rotate:-5deg; } } .island { width:130px;height:75px; } }
+</style>
+<h2>Pratinjau: dua pinisi melintasi laut</h2>
+<p class="subtitle">Dua kapal bergerak dengan kecepatan dan jalur berbeda, di atas laut biru dengan garis ombak dan pulau di kejauhan.</p>
+<div class="sea-preview">
+  <div class="sea-label">Selat Indonesia · siang hari</div>
+  <div class="route one"></div><div class="route two"></div><div class="island"></div>
+  <svg class="ship one" viewBox="0 0 120 110" aria-label="Pinisi pertama" role="img"><path d="M18 73h85L88 93H36z" fill="#704734"/><path d="M26 75l13-24 17 24z" fill="#fff4d9"/><path d="M61 75l18-37 17 37z" fill="#f3dfb8"/><path d="M53 28v49M84 19v58" stroke="#543c2d" stroke-width="3"/><path d="M35 96q29 8 58 0" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/></svg>
+  <svg class="ship two" viewBox="0 0 120 110" aria-label="Pinisi kedua" role="img"><path d="M18 73h85L88 93H36z" fill="#674330"/><path d="M26 75l13-24 17 24z" fill="#fff0d0"/><path d="M61 75l18-37 17 37z" fill="#e7d2a7"/><path d="M53 28v49M84 19v58" stroke="#543c2d" stroke-width="3"/><path d="M35 96q29 8 58 0" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/></svg>
+  <div class="wave-copy">Pinisi berlayar di jalurnya masing-masing</div>
+</div>

@@ -113,7 +113,7 @@ export function TapetaLogo({
   const classes = `tapeta-logo${className ? ` ${className}` : ""}`;
   if (onClick) {
     return (
-      <button type="button" className={classes} onClick={onClick} style={style} aria-label="TAPETA — beranda">
+      <button type="button" className={classes} onClick={onClick} style={style} aria-label="TAPETA, ke beranda">
         {content}
       </button>
     );

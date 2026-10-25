@@ -3,6 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import { appSessionForUser, markNotificationsRead, readNotifications, readSession, setCurrentSession, type LocalNotification, type LocalSession } from "./session";
 import { clearSubmissionCache } from "./submissions";
 import { supabase } from "./supabase";
+import { clearPersonalCache, refreshPersonal } from "./personal";
 
 export function useAccountSession() {
   const [session, setSession] = useState<LocalSession | null>(null);
@@ -16,7 +17,7 @@ export function useAccountSession() {
     let active = true;
     const apply = async (authSession: Session | null) => {
       const request = ++version.current;
-      setCurrentSession(null); setSession(null); setNotifications([]); clearSubmissionCache(); setReady(false); setError(null);
+      setCurrentSession(null); setSession(null); setNotifications([]); clearSubmissionCache(); clearPersonalCache(); setReady(false); setError(null);
       try {
         const next = authSession ? await appSessionForUser(authSession.user) : null;
         if (!active || request !== version.current) return;
@@ -33,9 +34,19 @@ export function useAccountSession() {
     }).catch((cause) => { if (active) { setError(cause instanceof Error ? cause.message : "Sesi akun gagal dimuat."); setReady(true); } });
     const { data: listener } = supabase.auth.onAuthStateChange((event, authSession) => {
       if (event === "PASSWORD_RECOVERY") setRecovery(true);
+      if (event === "USER_UPDATED" && authSession) {
+        void appSessionForUser(authSession.user).then((next) => {
+          if (!active) return;
+          setCurrentSession(next);
+          setSession(next);
+        }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : "Data akun gagal diperbarui."); });
+        return;
+      }
       window.setTimeout(() => { if (active) void apply(authSession); }, 0);
     });
-    return () => { active = false; listener.subscription.unsubscribe(); };
+    window.addEventListener("focus", refreshPersonal);
+    window.addEventListener("tapeta:catalog", refreshPersonal);
+    return () => { active = false; listener.subscription.unsubscribe(); window.removeEventListener("focus", refreshPersonal); window.removeEventListener("tapeta:catalog", refreshPersonal); };
   }, []);
   return {
     session, notifications, setSession, setNotifications, ready, error, recovery, setRecovery,
@@ -46,7 +57,7 @@ export function useAccountSession() {
       catch (cause) { if (request === version.current) setError(cause instanceof Error ? cause.message : "Notifikasi gagal dimuat."); }
     },
     async signOut() {
-      version.current++; setCurrentSession(null); setSession(null); setNotifications([]); clearSubmissionCache();
+      version.current++; setCurrentSession(null); setSession(null); setNotifications([]); clearSubmissionCache(); clearPersonalCache();
       if (supabase) { const { error } = await supabase.auth.signOut(); if (error) throw error; }
     },
     async markRead() {

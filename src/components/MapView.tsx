@@ -13,6 +13,7 @@ import { statusLabel } from "../lib/geo";
 import { createMarkerIcon } from "../lib/markerIcon";
 import { CATEGORY_COLORS } from "../data/categories";
 import { PEKANBARU_WATERCOLOR } from "../data/pekanbaruWatercolor";
+import { buildMaskedPekanbaruWatercolor } from "../lib/watercolorClip";
 import { useMediaQuery } from "../lib/useMediaQuery";
 
 const OSM_TILES = import.meta.env.VITE_OSM_TILE_URL || "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -26,6 +27,38 @@ const STATUS_COLORS = {
 } as const;
 
 const SELECTED_STROKE = "#9C4935";
+
+/** Ukuran stiker mengikuti zoom: 0 = pakai pin kategori. */
+const STICKER_MIN = 28;
+const STICKER_MAX = 84;
+function stickerSizeForZoom(zoom: number) {
+  if (zoom < 10) return 0;
+  if (zoom < 11) return 28;
+  if (zoom < 12) return 30;
+  if (zoom < 13) return 34;
+  if (zoom < 14) return 42;
+  if (zoom < 15) return 54;
+  if (zoom < 16) return 64;
+  if (zoom < 17) return 74;
+  return STICKER_MAX;
+}
+function stickerMin(active: boolean) {
+  return active ? 60 : STICKER_MIN;
+}
+function sizeOf(active: boolean, base: number) {
+  return active ? Math.max(base + 12, 64) : base;
+}
+type ScreenBox = { left: number; top: number; right: number; bottom: number };
+function collision(box: ScreenBox, placed: ScreenBox[]) {
+  const pad = 6;
+  return placed.some(
+    (other) =>
+      box.left - pad < other.right &&
+      box.right + pad > other.left &&
+      box.top - pad < other.bottom &&
+      box.bottom + pad > other.top,
+  );
+}
 const LOCATION_COLOR = "#B4553F";
 function tooltipText(value: string) {
   const element = document.createElement("span");
@@ -61,6 +94,7 @@ interface MapViewProps {
   /** Opsional: mode pemilihan titik (alur usulkan tempat). */
   onPickPoint?: (lat: number, lon: number) => void;
   pickedPoint?: { lat: number; lon: number } | null;
+  searchPoint?: { lat: number; lon: number; name: string; sourceLabel?: string } | null;
 }
 
 export function MapView({
@@ -84,6 +118,7 @@ export function MapView({
   onClearSelection,
   onPickPoint,
   pickedPoint = null,
+  searchPoint = null,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -96,6 +131,10 @@ export function MapView({
   const [tileError, setTileError] = useState(false);
   const [zoom, setZoom] = useState(5);
   const [showIllustration, setShowIllustration] = useState(true);
+  const showIllustrationRef = useRef(true);
+  useEffect(() => {
+    showIllustrationRef.current = showIllustration;
+  }, [showIllustration]);
   const compactViewport = useMediaQuery("(max-width: 860px)");
 
   const statsMap = useMemo(
@@ -204,6 +243,7 @@ export function MapView({
       return;
     }
 
+    let cancelled = false;
     const layer = L.geoJSON(regions as unknown as GeoJSON.FeatureCollection, {
       style: (feature) => {
         const code = String(feature?.properties?.code ?? "");
@@ -264,17 +304,34 @@ export function MapView({
     const bounds = layer.getBounds();
     if (bounds.isValid()) {
       if (isPekanbaru) {
-        // Bounds hasil kalibrasi mengikat raster ke koordinat OSM, sehingga Leaflet
-        // menangani pan dan zoom tanpa meregangkan gambar melalui SVG/CSS.
         const { west, south, east, north } = PEKANBARU_WATERCOLOR.bounds;
-        watercolorLayerRef.current = L.imageOverlay(
-          PEKANBARU_WATERCOLOR.src,
-          [[south, west], [north, east]],
-          { pane: "pekanbaruWatercolor", interactive: false, opacity: 0.96, className: "pekanbaru-watercolor-overlay" },
-        ).addTo(map);
+        const overlayBounds: L.LatLngBoundsExpression = [[south, west], [north, east]];
+        const mountOverlay = (src: string) => {
+          const activeMap = mapRef.current;
+          if (!activeMap || cancelled || !activeMap.getPane("pekanbaruWatercolor")) return;
+          watercolorLayerRef.current?.remove();
+          watercolorLayerRef.current = L.imageOverlay(src, overlayBounds, {
+            pane: "pekanbaruWatercolor",
+            interactive: false,
+            opacity: 0.96,
+            className: "pekanbaru-watercolor-overlay",
+          }).addTo(activeMap);
+          watercolorLayerRef.current.setOpacity(showIllustrationRef.current ? 0.96 : 0);
+        };
+
+        // Tampilkan ilustrasi asli lebih dulu, lalu ganti dengan versi yang sudah
+        // dipotong ke batas kecamatan agar tidak ada persegi kertas di kota lain.
+        mountOverlay(PEKANBARU_WATERCOLOR.src);
+        void buildMaskedPekanbaruWatercolor(regions).then((masked) => {
+          if (masked) mountOverlay(masked);
+        });
       }
       map.fitBounds(bounds, { padding: [30, 30] });
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [regions, isPekanbaru, cityBounds]);
 
   useEffect(() => {
@@ -312,6 +369,18 @@ export function MapView({
     }
   }, [regionStats, selectedRegionId, statsMap, isPekanbaru]);
 
+  const attachMarkerHandlers = (marker: L.Marker, name: string, id: string, tooltipOffset: number) => {
+    marker.bindTooltip(tooltipText(name), {
+      direction: "top",
+      offset: [0, tooltipOffset],
+      className: "marker-tooltip",
+    });
+    marker.on("click", (event) => {
+      if (event.originalEvent) L.DomEvent.stopPropagation(event.originalEvent);
+      selectDestinationRef.current(id);
+    });
+  };
+
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -322,12 +391,42 @@ export function MapView({
     }
 
     const group = L.layerGroup();
+    const stickerSize = stickerSizeForZoom(zoom);
+    const placed: Array<{ left: number; top: number; right: number; bottom: number }> = [];
+
     for (const destination of destinations) {
       const active = destination.id === selectedDestinationId;
+      const useSticker = Boolean(destination.sticker) && stickerSize > 0;
+      const size = useSticker ? Math.max(sizeOf(active, stickerSize), stickerMin(active)) : 0;
+
+      if (useSticker) {
+        // Hindari tumpang tindih: stiker yang bertabrakan dengan stiker aktif
+        // dipindah ke pin kategori agar tetap terlihat dan bisa diklik.
+        const point = map.latLngToContainerPoint([destination.lat, destination.lon]);
+        const half = size / 2;
+        const box = { left: point.x - half, top: point.y - size, right: point.x + half, bottom: point.y };
+        if (!active && collision(box, placed)) {
+          placed.push(box);
+          const fallback = L.marker([destination.lat, destination.lon], {
+            icon: createMarkerIcon(destination.categoryId, false, true, CATEGORY_COLORS[destination.categoryId]),
+            title: destination.name,
+            alt: `${destination.name}, ${categoriesById.get(destination.categoryId)?.shortName ?? "destinasi"}`,
+            keyboard: true,
+            riseOnHover: true,
+          });
+          attachMarkerHandlers(fallback, destination.name, destination.id, -size);
+          fallback.addTo(group);
+          continue;
+        }
+        placed.push(box);
+      }
+
       const marker = L.marker([destination.lat, destination.lon], {
-        icon: destination.sticker && zoom >= 14 ? L.icon({
-          iconUrl: destination.sticker.src, iconSize: [64, 64], iconAnchor: [32, 64],
-          className: "destination-sticker",
+        icon: useSticker ? L.icon({
+          iconUrl: destination.sticker!.src,
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size],
+          className: `destination-sticker${active ? " is-active" : ""}`,
         }) : createMarkerIcon(
           destination.categoryId,
           active,
@@ -341,17 +440,7 @@ export function MapView({
         zIndexOffset: active ? 1000 : 0,
       });
 
-      marker.bindTooltip(tooltipText(destination.name), {
-        direction: "top",
-        offset: [0, -38],
-        className: "marker-tooltip",
-      });
-
-      marker.on("click", (event) => {
-        if (event.originalEvent) L.DomEvent.stopPropagation(event.originalEvent);
-        selectDestinationRef.current(destination.id);
-      });
-
+      attachMarkerHandlers(marker, destination.name, destination.id, useSticker ? -size + 6 : -38);
       marker.addTo(group);
     }
 
@@ -418,6 +507,17 @@ export function MapView({
     userLayerRef.current = group;
     map.flyTo([userLocation.lat, userLocation.lon], 14.5, { duration: 0.9 });
   }, [userLocation]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !searchPoint) return;
+    const marker = L.circleMarker([searchPoint.lat, searchPoint.lon], { radius: 10, color: "#a95038", fillColor: "#fffcf6", fillOpacity: 1, weight: 3 }).addTo(map);
+    const label = document.createElement("span");
+    label.textContent = `${searchPoint.name} · ${searchPoint.sourceLabel ?? "Lokasi OSM, belum diverifikasi TAPETA"}`;
+    marker.bindPopup(label).openPopup();
+    map.setView([searchPoint.lat, searchPoint.lon], 16, { animate: false });
+    return () => { marker.remove(); };
+  }, [searchPoint]);
 
   useEffect(() => {
     const map = mapRef.current;

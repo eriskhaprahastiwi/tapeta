@@ -27,6 +27,22 @@ export const PEKANBARU_WATERCOLOR_BOUNDS = {
   north: 0.695907,
 } as const;
 
+/** Bbox garis pantai Pekanbaru yang digambar di dalam aset (piksel). */
+export const PEKANBARU_WATERCOLOR_OUTLINE = {
+  left: 220 / 1494,
+  top: 18 / 1053,
+  right: 1255 / 1494,
+  bottom: 995 / 1053,
+} as const;
+
+/** Bbox kota pada koordinat OSM, sasaran klip overlay. */
+export const PEKANBARU_CITY_BBOX = {
+  west: 101.324004,
+  south: 0.420395,
+  east: 101.605402,
+  north: 0.690923,
+} as const;
+
 export const PEKANBARU_WATERCOLOR = {
   src: "/assets/map/pekanbaru-watercolor-v2.png",
   width: 1494,

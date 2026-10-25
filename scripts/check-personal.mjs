@@ -1,0 +1,96 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+const { default: postgres } = await import(process.env.POSTGRES_MODULE || "postgres");
+const env = Object.fromEntries((await readFile(new URL("../.env.local", import.meta.url), "utf8")).split("\n").flatMap((line) => {
+  const match = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
+  return match ? [[match[1], match[2].replace(/^['"]|['"]$/g, "")]] : [];
+}));
+const sql = postgres(env.SUPABASE_DB_URL, { ssl: "require", max: 1 });
+try {
+  await sql.unsafe("begin");
+  const migration = await readFile(new URL("../supabase/migrations/202610230006_personal_places.sql", import.meta.url), "utf8").catch(() => "");
+  const [installed] = await sql`select to_regclass('public.personal_places') as feature_table`;
+  if (migration && !installed.feature_table) await sql.unsafe(migration);
+  const users = await sql`select id,role from public.profiles order by role::text`;
+  const admin = users.find((u) => u.role === "admin");
+  const owner = users.find((u) => u.role === "contributor");
+  assert.ok(admin && owner, "Need existing admin and contributor for rolled-back privacy probes");
+  await sql`update public.profiles set public_profile=false where id=${owner.id}`;
+  const [fixture] = await sql`insert into public.destinations(city_id,name,category_id,address,location,source_url,publication_status)
+    values('osm:relation:16563796','Destinasi wishlist uji','kafe','Alamat uji',ST_SetSRID(ST_MakePoint(101.44,0.53),4326)::geography,'https://www.openstreetmap.org/node/99990002','draft') returning id`;
+  const actAs = async (id) => { await sql.unsafe("reset role"); await sql`select set_config('request.jwt.claim.sub', ${id}, true)`; await sql.unsafe("set local role authenticated"); };
+  const rejects = async (fn, pattern) => {
+    await sql.unsafe("savepoint expected_failure");
+    let caught;
+    try { await fn(); } catch (error) { caught = error; }
+    await sql.unsafe("rollback to savepoint expected_failure");
+    await sql.unsafe("release savepoint expected_failure");
+    assert.ok(caught, "Expected operation to reject");
+    assert.match(caught.message, pattern);
+  };
+  await actAs(owner.id);
+  const city = { id: "osm:relation:16563796", name: "Pekanbaru", province: "Riau", relationId: 16563796 };
+  const osm = { id: "node:99990001", name: "Tempat uji pribadi", address: "Alamat uji", lat: 0.53, lon: 101.44, sourceUrl: "https://www.openstreetmap.org/node/99990001" };
+  const save = async () => (await sql`select public.save_personal_place(null,${sql.json(osm)},${sql.json(city)}) as value`)[0].value;
+  const place = await save();
+  const secondOsm = { ...osm, id: "node:99990002", lat: 0.54, sourceUrl: "https://www.openstreetmap.org/node/99990002" };
+  const osmMatch = (await sql`select public.save_personal_place(null,${sql.json(secondOsm)},${sql.json(city)}) as value`)[0].value;
+  await sql.unsafe("reset role"); await sql`update public.destinations set publication_status='published' where id=${fixture.id}`; await actAs(owner.id);
+  const catalogMatch = (await sql`select public.save_personal_place(${fixture.id},null,null) as value`)[0].value;
+  assert.equal(osmMatch.id, catalogMatch.id, "Canonical OSM identity deduplicates catalog and OSM saves");
+  assert.equal(catalogMatch.lat, 0.53, "Promoting OSM to a verified destination replaces client coordinates with catalog coordinates");
+  await rejects(() => sql`select public.update_personal_place(${place.id},'visit',current_date+1)`, /Tanggal/);
+  await rejects(() => sql`select public.submit_visit_story(${place.id},${"Belum mengunjungi tempat ini tetapi mencoba cerita."})`, /dikunjungi/);
+  assert.equal((await save()).id, place.id, "Repeated save is idempotent");
+  const timeline = async () => (await sql`select public.personal_timeline(0) as value`)[0].value;
+  assert.equal((await timeline()).filter((e) => e.kind === "saved" && e.place_id === place.id).length, 1);
+  await sql`select public.update_personal_place(${place.id},'visit',current_date)`;
+  await sql`select public.update_personal_place(${place.id},'visit',current_date)`;
+  assert.equal((await timeline()).filter((e) => e.kind === "visited" && e.place_id === place.id).length, 1);
+  await sql`select public.update_personal_place(${place.id},'unsave',null)`;
+  let places = (await sql`select public.list_personal_places() as value`)[0].value;
+  assert.ok(places.some((p) => p.id === place.id && p.visited_on && !p.saved), "Removing wishlist preserves visit");
+  await rejects(() => sql`select public.moderate_visit_story(${place.id},'published',null)`, /admin/);
+  const story = (await sql`select public.submit_visit_story(${place.id},${"Cerita kunjungan uji yang cukup panjang untuk ditinjau."}) as value`)[0].value;
+  assert.equal(story.status, "pending");
+  const revisedStory = (await sql`select public.submit_visit_story(${place.id},${"Cerita diperbarui setelah halaman tinjauan moderator dibuka."}) as value`)[0].value;
+  assert.equal((await sql`select public.list_visit_stories('public',${city.id}) as value`)[0].value.some((s) => s.id === story.id), false);
+  await sql.unsafe("reset role");
+  await sql`insert into public.personal_places(user_id,place_key,name,address,city_id,city_name,province,relation_id,lat,lon)
+    select ${owner.id},'qa:bulk:'||g,'Tempat riwayat uji '||g,'Alamat uji',${city.id},'Pekanbaru','Riau',16563796,0.53,101.44 from generate_series(1,101) g`;
+  await sql`insert into public.visit_stories(user_id,place_id,body,status,updated_at)
+    select user_id,id,'Cerita kunjungan yang diterbitkan untuk uji paginasi.','published',now()+interval '1 minute' from public.personal_places where user_id=${owner.id} and place_key like 'qa:bulk:%'`;
+  await actAs(owner.id);
+  assert.equal((await sql`select public.list_personal_places() as value`)[0].value.find((p) => p.id === place.id).story.id, story.id, "Associated owner story is available regardless of global feed limit");
+  await actAs(admin.id);
+  assert.ok((await sql`select public.list_visit_stories('admin',${city.id},'pending',0) as value`)[0].value.some((s) => s.id === story.id), "Old pending work is not hidden by newer published stories");
+  assert.equal((await sql`select public.list_visit_stories('admin',${city.id},'published',100) as value`)[0].value.length, 1, "Moderation lists are paginated server-side");
+  await rejects(() => sql`select public.update_personal_place(${place.id},'unsave',null)`, /tidak ditemukan/);
+  places = (await sql`select public.list_personal_places() as value`)[0].value;
+  assert.ok(!places.some((p) => p.id === place.id), "Even admin cannot read someone else's wishlist");
+  assert.equal((await sql`select count(*)::int as n from public.personal_places where id=${place.id}`)[0].n, 0, "RLS hides other owner rows");
+  await rejects(() => sql`select public.moderate_visit_story(${story.id},'rejected','',${revisedStory.revision ?? 2})`, /alasan/);
+  await rejects(() => sql`select public.moderate_visit_story(${story.id},'published',null,${story.revision ?? 1})`, /berubah|versi/i);
+  const beforeDestinations = (await sql`select count(*)::int as n from public.destinations`)[0].n;
+  await sql`select public.moderate_visit_story(${story.id},'published',null,${revisedStory.revision ?? 2})`;
+  const published = (await sql`select public.list_visit_stories('public',${city.id},null,100) as value`)[0].value.find((s) => s.id === story.id);
+  assert.ok(published);
+  assert.equal(published.visited_on, undefined, "Published stories do not expose visit dates");
+  assert.equal(published.saved, undefined);
+  assert.equal(published.author_label, "Kontributor", "Private profile authors stay anonymous in public stories");
+  assert.equal((await sql`select count(*)::int as n from public.destinations`)[0].n, beforeDestinations, "Story publication never creates a destination");
+  await actAs(owner.id);
+  const dateInZone = (await sql`select (now() at time zone 'Pacific/Kiritimati')::date::text as day`)[0].day;
+  await sql`select public.update_personal_place(${place.id},'visit',${dateInZone},'Pacific/Kiritimati')`;
+  await rejects(() => sql`select public.update_personal_place(${place.id},'visit',${dateInZone}::date+1,'Pacific/Kiritimati')`, /Tanggal/);
+  assert.ok((await timeline()).some((e) => e.kind === "story_published"));
+  await sql`select public.update_personal_place(${place.id},'unvisit',null)`;
+  await sql.unsafe("reset role");
+  await sql`select set_config('request.jwt.claim.sub','',true)`;
+  await sql.unsafe("set local role anon");
+  await rejects(() => sql`select public.list_personal_places()`, /permission denied/);
+  await rejects(() => sql`select public.list_visit_stories(null,${city.id})`, /Lingkup/);
+  await rejects(() => sql`select public.list_visit_stories('admin',${city.id})`, /admin/);
+  assert.ok((await sql`select public.list_visit_stories('public',${city.id},null,100) as value`)[0].value.some((row) => row.id === story.id), "Public stories are readable without a session");
+  console.log("PASS: private RLS, idempotent saves/visits, visit persistence, story moderation and timeline (rolled back)");
+} finally { await sql.unsafe("rollback").catch(() => {}); await sql.end(); }

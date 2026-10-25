@@ -1,6 +1,7 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { MapView, type MapFocus } from "./components/MapView";
 import { CityPicker } from "./components/CityPicker";
+import { EntryLocationPrompt } from "./components/EntryLocationPrompt";
 import { CATEGORY_BY_ID } from "./data/categories";
 import { buildRegionStats } from "./lib/geo";
 import { useMediaQuery } from "./lib/useMediaQuery";
@@ -15,6 +16,7 @@ import type {
   Destination,
   RegionFeature,
   UserLocation,
+  OsmLocation,
 } from "./types";
 import { AtlasView } from "./components/atlas/AtlasView";
 import { PenFrames } from "./components/PenFrames";
@@ -24,11 +26,12 @@ import { Contribute } from "./tapeta/Contribute";
 import { Perbaikan } from "./tapeta/Docs";
 import { Community } from "./tapeta/Community";
 import { AdminQueue, KotaBaru, MyTapeta } from "./tapeta/Account";
-import { AdminDash, AdminReports, States } from "./tapeta/States";
+import { AdminDash, AdminImport, AdminReports, States } from "./tapeta/States";
 import { MobileTapeta } from "./tapeta/Mobile";
 import { AccountLayer, type AccountLayerState } from "./tapeta/AccountLayer";
 import { ChromeContext } from "./tapeta/ChromeContext";
 import { SubmissionResult } from "./tapeta/SubmissionResult";
+import { placeSourceLabel, type PersonalPlace } from "./lib/personal";
 
 const EMPTY_REGIONS: RegionFeature[] = [];
 
@@ -71,6 +74,7 @@ export default function App() {
     | "adminDash"
     | "adminContributors"
     | "adminHistory"
+    | "adminImport"
     | "states"
     | "contributeDone"
   >(() => {
@@ -87,6 +91,7 @@ export default function App() {
     if (hash === "#admin-dash") return "adminDash";
     if (hash === "#admin-contributors") return "adminContributors";
     if (hash === "#admin-history") return "adminHistory";
+    if (hash === "#admin-import") return "adminImport";
     if (hash === "#states") return "states";
     return "intro";
   });
@@ -94,7 +99,7 @@ export default function App() {
     const hashes: Record<typeof view, string> = {
       intro: "", app: "#explore", atlas: "#atlas", design: "#design", contribute: "#contribute",
       komunitas: "#komunitas", perbaikan: "#perbaikan", my: "#my", admin: "#admin", kotabaru: "#kotabaru",
-      adminDash: "#admin-dash", adminContributors: "#admin-contributors", adminHistory: "#admin-history",
+      adminDash: "#admin-dash", adminContributors: "#admin-contributors", adminHistory: "#admin-history", adminImport: "#admin-import",
       states: "#states", contributeDone: "#contribute-done",
     };
     if (window.location.hash !== hashes[next]) window.history.pushState(null, "", window.location.pathname + window.location.search + hashes[next]);
@@ -117,6 +122,7 @@ export default function App() {
         "#admin-dash": "adminDash",
         "#admin-contributors": "adminContributors",
         "#admin-history": "adminHistory",
+        "#admin-import": "adminImport",
         "#states": "states",
         "#contribute-done": "contributeDone",
       };
@@ -134,6 +140,8 @@ export default function App() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
 
   const [query, setQuery] = useState("");
+  const [osmSelection, setOsmSelection] = useState<{ cityId: number; place: OsmLocation } | null>(null);
+  const [contributionPlace, setContributionPlace] = useState<OsmLocation | null>(null);
   const deferredQuery = useDeferredValue(query);
   const [activeCategories, setActiveCategories] = useState<Set<CategoryId>>(new Set());
   const [selectedRegionCode, setSelectedRegionCode] = useState<string | null>(null);
@@ -146,6 +154,10 @@ export default function App() {
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
 
   const [cityPickerOpen, setCityPickerOpen] = useState(false);
+  const [entryLocationOpen, setEntryLocationOpen] = useState(false);
+  const [entryCitySelection, setEntryCitySelection] = useState(false);
+  const [entryContribution, setEntryContribution] = useState(false);
+  const [unscopedMap, setUnscopedMap] = useState(false);
   const [lastSubmissionId, setLastSubmissionId] = useState<string | null>(null);
   const [detectingCity, setDetectingCity] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -393,6 +405,16 @@ export default function App() {
   const handleSelectCity = useCallback(
     (meta: CityMeta) => {
       setCityPickerOpen(false);
+      if (entryCitySelection) {
+        setEntryCitySelection(false);
+        if (entryContribution) {
+          setEntryContribution(false);
+          setView("contribute");
+        } else {
+          setUnscopedMap(false);
+          setView("app");
+        }
+      }
       if (cityRef.current?.relationId === meta.relationId) {
         saveCityMeta(meta);
         return;
@@ -403,7 +425,7 @@ export default function App() {
       url.searchParams.delete("destination");
       window.history.replaceState(null, "", url);
     },
-    [loadCity],
+    [entryCitySelection, entryContribution, loadCity, setView],
   );
 
   const picker = cityPickerOpen ? (
@@ -469,8 +491,8 @@ export default function App() {
     : "Memuat batas wilayah";
 
   const openMap = useCallback(() => {
-    setView("app");
-  }, [setView]);
+    setEntryLocationOpen(true);
+  }, []);
 
   const goHome = useCallback(() => {
     setView("intro");
@@ -521,6 +543,7 @@ export default function App() {
           onOpenAuth: state.onOpenAuth,
           onSessionUpdated: state.onSessionUpdated,
           onOpenAccount: state.onOpenAccount,
+          onOpenProfileEditor: state.onOpenProfileEditor,
           onOpenNotifications: state.onOpenNotifications,
           onSignOut: state.onSignOut,
         },
@@ -531,7 +554,17 @@ export default function App() {
   );
 
   const renderView = (chromeState: AccountLayerState) => {
-    if ((view === "admin" || view === "adminDash" || view === "adminContributors" || view === "adminHistory") && !["admin", "moderator"].includes(chromeState.role ?? "")) {
+    const openPersonalPlace = async (place: PersonalPlace) => {
+      const relationId = Number(place.relation_id);
+      if (city?.relationId !== relationId) {
+        const next = await loadCity({ relationId, name: place.city_name, province: place.province, type: "city" });
+        if (!next) throw new Error("Kota tujuan belum berhasil dimuat. Coba lagi atau gunakan Petunjuk arah.");
+      }
+      clearSelection();
+      setOsmSelection({ cityId: relationId, place: { id: `${place.osm_type ?? "saved"}:${place.osm_id ?? place.id}`, destinationId: place.destination_id ?? undefined, name: place.name, address: place.address, lat: place.lat, lon: place.lon, sourceUrl: place.source_url ?? `https://www.openstreetmap.org/?mlat=${place.lat}&mlon=${place.lon}`, sourceLabel: placeSourceLabel(place) } });
+      setView("app");
+    };
+    if ((view === "admin" || view === "adminDash" || view === "adminContributors" || view === "adminHistory" || view === "adminImport") && !["admin", "moderator"].includes(chromeState.role ?? "")) {
       return (
         <main className="t-app t-app--doc" style={{ minHeight: "100dvh", display: "grid", placeItems: "center", padding: 24 }}>
           <section style={{ maxWidth: 480, padding: 32, borderRadius: 20, background: "#FFFCF6", border: "1px solid #D8C8B2", textAlign: "center" }}>
@@ -554,6 +587,8 @@ export default function App() {
     if (view === "komunitas") {
       return (
         <Community
+          onOpenPersonalPlace={openPersonalPlace}
+          cityId={`osm:relation:${city?.relationId ?? PEKANBARU_CITY.relationId}`}
           cityName={cityName}
           provinceName={provinceName}
           destinations={destinations}
@@ -589,6 +624,10 @@ export default function App() {
       return <AdminDash destinations={destinations} cityName={cityName} provinceName={provinceName} onOpenCityPicker={() => setCityPickerOpen(true)} />;
     }
 
+    if (view === "adminImport") {
+      return <AdminImport cityName={cityName} provinceName={provinceName} onOpenCityPicker={() => setCityPickerOpen(true)} />;
+    }
+
     if (view === "adminContributors" || view === "adminHistory") {
       return <AdminReports mode={view === "adminContributors" ? "contributors" : "history"} destinations={destinations} cityName={cityName} provinceName={provinceName} onOpenCityPicker={() => setCityPickerOpen(true)} />;
     }
@@ -616,6 +655,7 @@ export default function App() {
       const chromeAccount = chromeState;
       return (
         <MyTapeta
+          onOpenPersonalPlace={openPersonalPlace}
           cityName={cityName}
           provinceName={provinceName}
           destinations={destinations}
@@ -636,14 +676,24 @@ export default function App() {
           cityName={cityName}
           provinceName={provinceName}
           onOpenCityPicker={() => setCityPickerOpen(true)}
-          onOpenContribute={() => setView("contribute")}
         />
       );
     }
 
+    const osmLocation = osmSelection?.cityId === (city?.relationId ?? PEKANBARU_CITY.relationId) ? osmSelection.place : null;
+    const selectOsm = (place: OsmLocation) => {
+      clearSelection();
+      setOsmSelection({ cityId: city?.relationId ?? PEKANBARU_CITY.relationId, place: { ...place } });
+    };
+    const suggestOsm = (place: OsmLocation) => {
+      setContributionPlace(place);
+      setView("contribute");
+    };
+
     if (view === "contribute") {
       return (
         <Contribute
+          initialPlace={contributionPlace}
           cityId={`osm:relation:${city?.relationId ?? PEKANBARU_CITY.relationId}`}
           cityName={cityName}
           provinceName={provinceName}
@@ -651,9 +701,10 @@ export default function App() {
           regionStats={regionStats}
           destinations={destinations}
           categories={[...CATEGORY_BY_ID.values()]}
-          onClose={() => setView("app")}
+          onClose={() => { setContributionPlace(null); setView("app"); }}
           onOpenCityPicker={() => setCityPickerOpen(true)}
           onSubmitted={(id) => {
+            setContributionPlace(null);
             setView("contributeDone");
             setLastSubmissionId(id);
           }}
@@ -675,9 +726,27 @@ export default function App() {
       return isMobile ? <IntroMobile onEnter={openMap} /> : <IntroDesktop onEnter={openMap} />;
     }
 
+    if (view === "app" && unscopedMap) {
+      return (
+        <main className="t-unscoped-map">
+          <MapView cityBounds={undefined} regions={EMPTY_REGIONS} regionStats={[]} destinations={[]} categoriesById={CATEGORY_BY_ID} cityName={null} selectedRegionId={null} selectedDestinationId={null} userLocation={null} focus={null} resetNonce={0} isLoading={false} loadingLabel="" error={null} onRetry={() => undefined} onSelectRegion={() => undefined} onSelectDestination={() => undefined} onClearSelection={() => undefined} />
+          <section className="t-unscoped-map__notice" aria-labelledby="t-unscoped-map-title">
+            <p className="t-unscoped-map__eyebrow">PETA INDONESIA</p>
+            <h1 id="t-unscoped-map-title">Lokasi ini belum dijelajahi di TAPETA</h1>
+            <p>Pilih kota yang sudah memiliki cerita warga, atau pilih kota tujuanmu untuk menjadi kontributor pertama.</p>
+            <button type="button" className="t-btn t-btn--brick" onClick={() => { setEntryCitySelection(true); setEntryContribution(false); setCityPickerOpen(true); }}>Lihat kota yang sudah dijelajahi</button>
+            <button type="button" className="t-unscoped-map__contribute" onClick={() => { setEntryCitySelection(true); setEntryContribution(true); setCityPickerOpen(true); }}>Jadi kontributor pertama</button>
+          </section>
+        </main>
+      );
+    }
+
     if (!isMobile) {
       return (
         <ExploreDesktop
+          osmLocation={osmLocation}
+          onSelectOsm={selectOsm}
+          onSuggestOsm={suggestOsm}
           city={city}
           cityLoading={cityLoading}
           cityError={cityError}
@@ -709,9 +778,10 @@ export default function App() {
           onDismissCityError={() => setCityError(null)}
           onOpenHome={goHome}
           onOpenAtlas={() => setView("atlas")}
-          onOpenContribute={() => setView("contribute")}
+          onOpenContribute={() => { setContributionPlace(null); setView("contribute"); }}
         >
           <MapView
+            searchPoint={osmLocation}
             cityBounds={city?.bounds}
             regions={regions}
             regionStats={regionStats}
@@ -737,6 +807,9 @@ export default function App() {
 
     return (
       <MobileTapeta
+        osmLocation={osmLocation}
+        onSelectOsm={selectOsm}
+        onSuggestOsm={suggestOsm}
         selectedDestinationId={selectedDestinationId}
         onSelectDestination={(id) => openDestination(id, true)}
         onClearSelection={clearSelection}
@@ -750,7 +823,7 @@ export default function App() {
         categoriesById={CATEGORY_BY_ID}
         regionNameByDestination={regionNameByDestination}
         onOpenCityPicker={() => setCityPickerOpen(true)}
-        onOpenContribute={() => setView("contribute")}
+        onOpenContribute={() => { setContributionPlace(null); setView("contribute"); }}
         onExitToIntro={goHome}
       />
     );
@@ -762,6 +835,28 @@ export default function App() {
         <>
           {chromeView(state)}
           {picker}
+          <EntryLocationPrompt
+            open={entryLocationOpen}
+            locating={locating || detectingCity}
+            onClose={() => setEntryLocationOpen(false)}
+            onUseLocation={() => {
+              setEntryLocationOpen(false);
+              setView("app");
+              void detectCity();
+            }}
+            onChooseCity={() => {
+              setEntryLocationOpen(false);
+              setEntryCitySelection(true);
+              setCityPickerOpen(true);
+            }}
+            onExploreWithoutCity={() => {
+              setEntryLocationOpen(false);
+              setCity(null);
+              setDestinations([]);
+              setUnscopedMap(true);
+              setView("app");
+            }}
+          />
           {locationNotice}
         </>
       )}
