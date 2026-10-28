@@ -1,17 +1,18 @@
 /**
  * Kalibrasi geografis ilustrasi cat air Kota Pekanbaru.
  *
- * Asset: public/assets/map/pekanbaru-watercolor-v2.png (1494 × 1053 px)
+ * Asset: public/assets/map/pekanbaru-watercolor-v2.png (1278 × 1230 px)
  * Batas administratif: public/data/pekanbaru-kecamatan.geojson
  *   (OSM via Nominatim, ODbL; bbox 101.324004–101.605402 BT, 0.420395–0.690923 LU)
  *
  * Cara nilai ini diperoleh (dapat diulang):
- *   1. Ukur bbox garis batas kota pada ilustrasi: x 220–1255, y 18–995 dari
- *      kanvas 1494 × 1053. Garis ini adalah batas administratif yang digambar.
- *   2. Petakan bbox tersebut ke bbox GeoJSON kecamatan OSM; piksel di luar garis
- *      adalah margin cat air dan tetap menjadi bagian dari bounds gambar.
- *   3. Konversi vertikal memakai Mercator agar hasilnya identik dengan proyeksi
- *      Leaflet pada semua level zoom.
+ *   1. Render peta referensi dari OSM relation 16563796 (batas kota, jalan
+ *      utama, sungai, danau) dalam Web Mercator ke bounds di bawah: bbox kota
+ *      ditambah margin 3% lebar di tiap sisi.
+ *   2. Ilustrasi digambar dengan menjiplak peta referensi itu, lalu diekspor
+ *      dengan rasio kanvas yang sama. Bounds gambar = bounds peta referensi.
+ *   3. Verifikasi: batas kota dan jalan trunk OSM yang ditumpuk di atas
+ *      ilustrasi jatuh tepat di garis yang digambar.
  *
  * Bounds di bawah sengaja lebih lebar dari bbox kota karena kanvas menyisakan
  * margin cat air. Memakai bbox kota langsung akan mengecilkan ilustrasi terhadap
@@ -21,18 +22,18 @@
  * lalu pastikan garis batas cat air mengikuti garis batas kecamatan saat zoom 12–14.
  */
 export const PEKANBARU_WATERCOLOR_BOUNDS = {
-  west: 101.26419,
-  south: 0.404334,
-  east: 101.670382,
-  north: 0.695907,
+  west: 101.315562,
+  south: 0.411953,
+  east: 101.613844,
+  north: 0.699364,
 } as const;
 
 /** Bbox garis pantai Pekanbaru yang digambar di dalam aset (piksel). */
 export const PEKANBARU_WATERCOLOR_OUTLINE = {
-  left: 220 / 1494,
-  top: 18 / 1053,
-  right: 1255 / 1494,
-  bottom: 995 / 1053,
+  left: 36 / 1278,
+  top: 36 / 1230,
+  right: 1242 / 1278,
+  bottom: 1194 / 1230,
 } as const;
 
 /** Bbox kota pada koordinat OSM, sasaran klip overlay. */
@@ -45,14 +46,14 @@ export const PEKANBARU_CITY_BBOX = {
 
 export const PEKANBARU_WATERCOLOR = {
   src: "/assets/map/pekanbaru-watercolor-v2.png",
-  width: 1494,
-  height: 1053,
+  width: 1278,
+  height: 1230,
   bounds: PEKANBARU_WATERCOLOR_BOUNDS,
   /** Relation OSM kota Pekanbaru yang menjadi acuan kalibrasi. */
   relationId: 16563796,
   calibration: {
-    method: "outline pixel bbox mapped to OSM administrative bbox",
-    outlinePx: { left: 220, top: 18, right: 1255, bottom: 995 },
+    method: "traced over OSM reference map rendered to these exact bounds",
+    outlinePx: { left: 36, top: 36, right: 1242, bottom: 1194 },
     projection: "Web Mercator",
   },
   attribution: "Cakupan: batas admin OSM (ODbL) · ilustrasi cat air TAPETA",

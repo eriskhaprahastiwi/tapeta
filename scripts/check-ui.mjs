@@ -361,7 +361,7 @@ try {
         }));
         assert.deepEqual(
           dimensions,
-          { width: 1494, height: 1053 },
+          { width: 1278, height: 1230 },
           "The clipped watercolor must retain the source canvas dimensions to preserve its map alignment",
         );
       }
