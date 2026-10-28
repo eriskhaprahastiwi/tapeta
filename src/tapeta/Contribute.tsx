@@ -558,6 +558,8 @@ export function Contribute(props: ContributeProps) {
                         aria-label="Jam buka"
                         disabled={allDay}
                         value={opensAt}
+                        onClick={(e) => e.currentTarget.showPicker?.()}
+                        onFocus={(e) => e.currentTarget.showPicker?.()}
                         onChange={(e) => setOpensAt(e.target.value)}
                       />
                     </label>
@@ -568,6 +570,8 @@ export function Contribute(props: ContributeProps) {
                         aria-label="Jam tutup"
                         disabled={allDay}
                         value={closesAt}
+                        onClick={(e) => e.currentTarget.showPicker?.()}
+                        onFocus={(e) => e.currentTarget.showPicker?.()}
                         onChange={(e) => setClosesAt(e.target.value)}
                       />
                     </label>
