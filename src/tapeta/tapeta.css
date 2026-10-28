@@ -636,6 +636,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .t-forum__leaders li { display:grid; grid-template-columns:36px 1fr auto; gap:12px; align-items:center; padding:14px 4px; border-bottom:1px solid var(--t-line); }
 .t-forum__leaders li span { font-weight:700; color:#b64032; }
 .t-forum__leaders li em { font-style:normal; color:var(--t-muted); }
+.t-hours__days { display:flex; gap:4px; flex-wrap:wrap; margin:10px 0; }
+.t-hours__days button { border:1px solid var(--t-line); border-radius:8px; background:#fffaf1; padding:6px 9px; color:var(--t-ink); font-size:12px; }
+.t-hours__days button.is-active { background:#172432; color:#fffaf1; }
 
 .t-topbar__brand {
   display: flex;

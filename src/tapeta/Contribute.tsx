@@ -19,6 +19,10 @@ import type { OsmLocation } from "../types";
 import { OsmPlaceSearch } from "../components/OsmPlaceSearch";
 
 type Step = 1 | 2 | 3;
+const WEEKDAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"] as const;
+type Weekday = (typeof WEEKDAYS)[number];
+type DayHours = { closed: boolean; open: string; close: string };
+const emptyWeeklyHours = (): Record<Weekday, DayHours> => Object.fromEntries(WEEKDAYS.map((day) => [day, { closed: false, open: "", close: "" }])) as Record<Weekday, DayHours>;
 
 export interface ContributeProps {
   cityId: string;
@@ -70,9 +74,9 @@ export function Contribute(props: ContributeProps) {
         }
       : EMPTY_DRAFT,
   );
-  const [opensAt, setOpensAt] = useState("");
-  const [closesAt, setClosesAt] = useState("");
   const [allDay, setAllDay] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<Weekday>("Senin");
+  const [weeklyHours, setWeeklyHours] = useState<Record<Weekday, DayHours>>(emptyWeeklyHours);
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
   const [gpsConfirmed, setGpsConfirmed] = useState(false);
   const [manualCoordinateEdits, setManualCoordinateEdits] = useState({
@@ -118,8 +122,8 @@ export function Contribute(props: ContributeProps) {
   const validLocation =
     validCoordinates && detected !== null && !gpsNeedsManualConfirmation;
   const missingRequirements = [
-    ...(!allDay && Boolean(opensAt) !== Boolean(closesAt)
-      ? ["Isi jam buka dan tutup, atau kosongkan keduanya."]
+    ...(!allDay && WEEKDAYS.some((day) => !weeklyHours[day].closed && Boolean(weeklyHours[day].open) !== Boolean(weeklyHours[day].close))
+      ? ["Isi jam buka dan tutup untuk setiap hari, atau tandai hari tersebut tutup."]
       : []),
     ...(draft.name.trim().length < 2
       ? ["Isi nama tempat minimal 2 karakter."]
@@ -192,11 +196,12 @@ export function Contribute(props: ContributeProps) {
           name: draft.name.trim(),
           categoryId: draft.categoryId,
           address: draft.address.trim(),
-          hours: allDay
-            ? "Buka 24 jam"
-            : opensAt && closesAt
-              ? `${opensAt} – ${closesAt}${closesAt <= opensAt ? " (hari berikutnya)" : ""}`
-              : "",
+          hours: allDay ? "Buka 24 jam" : WEEKDAYS.map((day) => {
+            const value = weeklyHours[day];
+            if (value.closed) return `${day}: tutup`;
+            if (!value.open && !value.close) return `${day}: belum diisi`;
+            return `${day}: ${value.open}–${value.close}${value.close <= value.open ? " (hari berikutnya)" : ""}`;
+          }).join("; "),
           source: draft.source.trim(),
           description: draft.description.trim(),
           lat: draft.lat,
@@ -551,16 +556,22 @@ export function Contribute(props: ContributeProps) {
                       />{" "}
                       Buka 24 jam
                     </label>
+                    <div className="t-hours__days" role="tablist" aria-label="Pilih hari operasional">
+                      {WEEKDAYS.map((day) => <button key={day} type="button" role="tab" aria-selected={selectedDay === day} className={selectedDay === day ? "is-active" : ""} onClick={() => setSelectedDay(day)}>{day.slice(0, 3)}</button>)}
+                    </div>
+                    <label className="t-contrib__agree">
+                      <input type="checkbox" checked={weeklyHours[selectedDay].closed} disabled={allDay} onChange={(e) => setWeeklyHours((current) => ({ ...current, [selectedDay]: { ...current[selectedDay], closed: e.target.checked } }))} /> Tutup pada hari ini
+                    </label>
                     <label>
                       Jam buka
                       <input
                         type="time"
                         aria-label="Jam buka"
-                        disabled={allDay}
-                        value={opensAt}
+                        disabled={allDay || weeklyHours[selectedDay].closed}
+                        value={weeklyHours[selectedDay].open}
                         onClick={(e) => e.currentTarget.showPicker?.()}
                         onFocus={(e) => e.currentTarget.showPicker?.()}
-                        onChange={(e) => setOpensAt(e.target.value)}
+                        onChange={(e) => setWeeklyHours((current) => ({ ...current, [selectedDay]: { ...current[selectedDay], open: e.target.value } }))}
                       />
                     </label>
                     <label>
@@ -568,14 +579,14 @@ export function Contribute(props: ContributeProps) {
                       <input
                         type="time"
                         aria-label="Jam tutup"
-                        disabled={allDay}
-                        value={closesAt}
+                        disabled={allDay || weeklyHours[selectedDay].closed}
+                        value={weeklyHours[selectedDay].close}
                         onClick={(e) => e.currentTarget.showPicker?.()}
                         onFocus={(e) => e.currentTarget.showPicker?.()}
-                        onChange={(e) => setClosesAt(e.target.value)}
+                        onChange={(e) => setWeeklyHours((current) => ({ ...current, [selectedDay]: { ...current[selectedDay], close: e.target.value } }))}
                       />
                     </label>
-                    {!allDay && opensAt && closesAt && closesAt <= opensAt && (
+                    {!allDay && weeklyHours[selectedDay].open && weeklyHours[selectedDay].close && weeklyHours[selectedDay].close <= weeklyHours[selectedDay].open && (
                       <small>Tutup pada hari berikutnya.</small>
                     )}
                   </fieldset>
