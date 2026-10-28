@@ -6,6 +6,7 @@ export type SubmissionStatus = "menunggu" | "perbaikan" | "terbit" | "ditolak";
 export interface Submission {
   id: string; name: string; categoryId: CategoryId; address: string; hours: string; source: string;
   description: string; lat: number; lon: number; regionName: string; submittedBy: string;
+  screeningReasons: string[]; pollTotal: number; pollValid: number;
   submittedAt: string; status: SubmissionStatus; storage: "server"; moderatorNote?: string; decidedAt?: string;
 }
 type DbSubmission = Record<string, unknown>;
@@ -19,6 +20,7 @@ function mapRow(row: DbSubmission): Submission {
     address: String(row.address ?? ""), hours: String(row.hours ?? ""), source: String(row.source_label ?? row.source_url ?? ""),
     description: String(row.description ?? ""), lat: Number(row.lat ?? 0), lon: Number(row.lon ?? 0),
     regionName: String(row.region_code ?? ""), submittedBy: String(row.display_name ?? "Kontributor"),
+    screeningReasons: Array.isArray(row.screening_reasons) ? row.screening_reasons.map(String) : [], pollTotal: Number(row.poll_total ?? 0), pollValid: Number(row.poll_valid ?? 0),
     submittedAt: String(row.created_at ?? ""), status: fromDbStatus(row.status), storage: "server",
     moderatorNote: row.moderator_note ? String(row.moderator_note) : undefined,
     decidedAt: row.decided_at ? String(row.decided_at) : undefined };
@@ -30,7 +32,7 @@ export async function loadSubmissions(scope: "mine" | "admin" = "mine") {
   if (!supabase || !readSession()) return [];
   const key = cacheKey(scope), version = generation;
   const client = requireBackend();
-  const { data, error } = await client.rpc(scope === "admin" ? "list_admin_submissions" : "list_my_submissions");
+  const { data, error } = await client.rpc(scope === "admin" ? "list_admin_screened_submissions" : "list_my_submissions");
   if (error) throw error;
   if (key !== cacheKey(scope) || version !== generation) return [];
   caches.set(key, ((data ?? []) as DbSubmission[]).map(mapRow));
