@@ -18,6 +18,9 @@ import { RevisionEditor } from "../components/RevisionEditor";
 import type { LocalSession } from "../lib/session";
 import { PersonalPlaces, type PersonalSection } from "../components/PersonalPlaces";
 import { EVENT_LABELS, loadTimeline, refreshPersonal, usePersonalPlaces, type PersonalEvent, type PersonalPlace } from "../lib/personal";
+import { ContentRules } from "../components/ContentRules";
+import { CommunityReview } from "../components/CommunityReview";
+import { supabase } from "../lib/supabase";
 import { VisitStories } from "../components/VisitStories";
 import { BadgeCheckIcon, BookmarkIcon, CheckCircleIcon, ClockIcon, FileTextIcon, FlagIcon, HomeIcon, ListIcon, MapIcon, PenIcon, SendIcon, StarIcon, UserIcon } from "../components/Icons";
 
@@ -59,7 +62,7 @@ export function MyTapeta({
 }: MyTapetaProps) {
   const session = readSession();
   const [subs, setSubs] = useState<Submission[]>(() => listSubmissions());
-  const [filter, setFilter] = useState<"semua" | SubmissionStatus>("semua");
+  const [filter, setFilter] = useState<"semua" | SubmissionStatus>("menunggu");
   const [section, setSection] = useState<"dashboard" | "kontribusi" | "disetujui" | PersonalSection>("dashboard");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(Boolean(session));
@@ -506,7 +509,7 @@ export function AdminQueue({
 }: AdminQueueProps) {
   const [items, setItems] = useState<Submission[]>(() => listSubmissions("admin"));
   const [activeId, setActiveId] = useState<string | null>(items[0]?.id ?? null);
-  const [queueFilter, setQueueFilter] = useState<"semua" | SubmissionStatus>("semua");
+  const [queueFilter, setQueueFilter] = useState<"semua" | SubmissionStatus>("menunggu");
   const [deciding, setDeciding] = useState(false);
   const [note, setNote] = useState("");
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -522,15 +525,28 @@ export function AdminQueue({
     const sync = () => {
       const next = listSubmissions("admin");
       setItems(next);
-      setActiveId((current) => next.some((item) => item.id === current) ? current : next[0]?.id ?? null);
+      setActiveId((current) => next.some((item) => item.id === new URLSearchParams(window.location.hash.split("?")[1]).get("submission")) ? new URLSearchParams(window.location.hash.split("?")[1]).get("submission") : next.some((item) => item.id === current) ? current : next[0]?.id ?? null);
     };
     void loadSubmissions("admin").then(sync).catch((error) => setLoadError(error.message)).finally(() => setLoading(false));
     window.addEventListener("tapeta:submissions", sync);
-    return () => window.removeEventListener("tapeta:submissions", sync);
+    window.addEventListener("hashchange", sync);
+    return () => { window.removeEventListener("tapeta:submissions", sync); window.removeEventListener("hashchange", sync); };
   }, [retry]);
 
   const active = items.find((item) => item.id === activeId) ?? null;
-  const filtered = queueFilter === "semua" ? items : items.filter((item) => item.status === queueFilter);
+  const [summary, setSummary] = useState<{ reasons: string[]; valid: number; total: number; ends_at: string; objections: {choice:string;reason:string}[] } | null>(null);
+  const [summaryError, setSummaryError] = useState("");
+  useEffect(() => {
+    let alive=true;setSummary(null);setSummaryError("");
+    if(activeId&&supabase) void supabase.rpc("submission_review_summary",{p_id:activeId}).then(({data,error})=>{
+      if(!alive)return;if(error)setSummaryError(error.message);else setSummary(data);
+    });return()=>{alive=false;};
+  },[activeId,items]);
+  const [triage, setTriage] = useState("all");
+  const filtered = (queueFilter === "semua" ? items : items.filter((item) => item.status === queueFilter)).filter(item => {
+    const ready = item.pollTotal >= 3 && item.pollValid * 3 >= item.pollTotal * 2 && item.screeningReasons.length === 0;
+    return triage === "all" || (triage === "ready" && ready) || (triage === "flagged" && item.screeningReasons.length > 0) || (triage === "waiting" && !ready && item.screeningReasons.length === 0);
+  });
   const counts = {
     menunggu: items.filter((item) => item.status === "menunggu").length,
     perbaikan: items.filter((item) => item.status === "perbaikan").length,
@@ -561,6 +577,8 @@ export function AdminQueue({
       />
       <AdminBar active="antrean" />
       <div className="t-admin">
+        <CommunityReview />
+        <ContentRules />
         <VisitStories scope="admin" />
         <div className="t-admin__head">
           <span className="t-admin__eyebrow">ANTREAN · KOTA {cityName.toUpperCase()}</span>
@@ -569,6 +587,7 @@ export function AdminQueue({
             Usulan warga yang menunggu keputusan. Setiap keputusan dicatat di riwayat moderasi dan
             dikirim sebagai notifikasi ke pengusul.
           </p>
+          <label className="t-admin__triage">Hasil pemeriksaan<select value={triage} onChange={event => setTriage(event.target.value)}><option value="all">Semua hasil</option><option value="ready">Lolos sistem dan polling</option><option value="flagged">Ditandai sistem</option><option value="waiting">Menunggu dukungan polling</option></select></label>
           <div className="t-admin__queuecontrols">
             <div className="t-queuefilters" role="group" aria-label="Filter status usulan">
               {(["semua", "menunggu", "perbaikan", "terbit", "ditolak"] as const).map((key) => (
@@ -620,7 +639,7 @@ export function AdminQueue({
               <button type="button" className="t-btn t-btn--brick t-btn--brick-sm" onClick={() => { window.location.hash = "#admin-import"; }}>
                 Buka import &amp; stiker
               </button>
-              <button type="button" className="t-btn t-btn--ghost t-btn--brick-sm" onClick={() => { window.location.hash = "#admin-dash"; }}>
+              <button type="button" className="t-btn t-btn--ghost t-btn--brick-sm" onClick={() => { window.location.hash = "#admin"; }}>
                 Kembali ke ringkasan
               </button>
             </div>
@@ -653,7 +672,7 @@ export function AdminQueue({
                   <span className="t-queue__main">
                     <span className="t-queue__name">{row.name}</span>
                     <span className="t-queue__kind">
-                      {row.categoryId} · {row.regionName || "kecamatan belum terdeteksi"}
+                      {row.categoryId} · {row.regionName || "kecamatan belum terdeteksi"} · {row.screeningReasons.length ? "Ditandai sistem" : `${row.pollValid}/${row.pollTotal} dukungan`}
                     </span>
                   </span>
                   <span className="t-queue__who">{row.submittedBy}</span>
@@ -705,6 +724,13 @@ export function AdminQueue({
                   ))}
                 </div>
                 <p className="t-review__desc">{active.description || "Tidak ada deskripsi."}</p>
+                <section className="t-review__criteria" aria-label="Pemeriksaan sistem dan polling">
+                  {summaryError && <p role="alert">Pemeriksaan sistem belum termuat: {summaryError}</p>}
+                  {summary && <><strong>Pemeriksaan sistem</strong><p>{summary.reasons.length ? summary.reasons.join(" · ") : "Lolos pemeriksaan awal"}</p>
+                  <p>Polling: {summary.valid} dukungan dari {summary.total} suara. Berakhir {new Date(summary.ends_at).toLocaleString("id-ID")}.</p>
+                  {summary.objections.map((vote,index)=><p key={index}>{vote.choice === "fix" ? "Perlu perbaikan" : "Diragukan"}: {vote.reason}</p>)}
+                  <p>Minimal 3 suara dan dukungan dua pertiga. Jika belum terpenuhi atau ditandai sistem, pemeriksaan manual memerlukan alasan minimal 20 karakter.</p></>}
+                </section>
                 <div className="t-review__criteria">
                   <span className="t-review__crittitle">Periksa sebelum memutuskan</span>
                   <ul>

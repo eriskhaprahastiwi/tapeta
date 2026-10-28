@@ -48,6 +48,21 @@ export function useAccountSession() {
     window.addEventListener("tapeta:catalog", refreshPersonal);
     return () => { active = false; listener.subscription.unsubscribe(); window.removeEventListener("focus", refreshPersonal); window.removeEventListener("tapeta:catalog", refreshPersonal); };
   }, []);
+  useEffect(() => {
+    if (!session) return;
+    let active = true;
+    const refresh = async () => {
+      const request = version.current;
+      try {
+        const items = await readNotifications(session.id);
+        if (active && request === version.current) setNotifications(items);
+      } catch { /* Opening the panel exposes errors and offers retry. */ }
+    };
+    const timer = window.setInterval(() => { if (document.visibilityState === "visible") void refresh(); }, 30000);
+    window.addEventListener("focus", refresh);
+    window.addEventListener("tapeta:submissions", refresh);
+    return () => { active = false; window.clearInterval(timer); window.removeEventListener("focus", refresh); window.removeEventListener("tapeta:submissions", refresh); };
+  }, [session?.id]);
   return {
     session, notifications, setSession, setNotifications, ready, error, recovery, setRecovery,
     async refreshNotifications() {
@@ -60,11 +75,11 @@ export function useAccountSession() {
       version.current++; setCurrentSession(null); setSession(null); setNotifications([]); clearSubmissionCache(); clearPersonalCache();
       if (supabase) { const { error } = await supabase.auth.signOut(); if (error) throw error; }
     },
-    async markRead() {
+    async markRead(notificationId?: string) {
       if (!session) return;
       const request = version.current, userId = session.id;
-      await markNotificationsRead(userId);
-      if (request === version.current && readSession()?.id === userId) setNotifications((items) => items.map((item) => ({ ...item, read: true })));
+      await markNotificationsRead(userId, notificationId);
+      if (request === version.current && readSession()?.id === userId) setNotifications((items) => items.map((item) => notificationId && item.id !== notificationId ? item : ({ ...item, read: true })));
     },
   };
 }

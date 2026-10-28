@@ -12,8 +12,7 @@ import type {
 import { statusLabel } from "../lib/geo";
 import { createMarkerIcon } from "../lib/markerIcon";
 import { CATEGORY_COLORS } from "../data/categories";
-import { PEKANBARU_WATERCOLOR } from "../data/pekanbaruWatercolor";
-import { buildMaskedPekanbaruWatercolor } from "../lib/watercolorClip";
+import { mountWatercolorMap } from "../lib/watercolorMap";
 import { useMediaQuery } from "../lib/useMediaQuery";
 
 const OSM_TILES = import.meta.env.VITE_OSM_TILE_URL || "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -26,6 +25,11 @@ const STATUS_COLORS = {
   explored: { fill: "#cfdac9", stroke: "#6d8a70" },
 } as const;
 
+const DISTRICT_WASHES = ["#e5bc9e", "#f1d38d", "#c4d5a4", "#e4bfae", "#b9d0ba"];
+function districtWash(code: string) {
+  const hash = [...code].reduce((value, character) => value + character.charCodeAt(0), 0);
+  return DISTRICT_WASHES[hash % DISTRICT_WASHES.length];
+}
 const SELECTED_STROKE = "#9C4935";
 
 /** Ukuran stiker mengikuti zoom: 0 = pakai pin kategori. */
@@ -123,7 +127,7 @@ export function MapView({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const geoLayerRef = useRef<L.GeoJSON | null>(null);
-  const watercolorLayerRef = useRef<L.ImageOverlay | null>(null);
+
   const regionLayersRef = useRef(new Map<string, L.Polygon>());
   const markerLayerRef = useRef<L.LayerGroup | null>(null);
   const userLayerRef = useRef<L.LayerGroup | null>(null);
@@ -131,10 +135,6 @@ export function MapView({
   const [tileError, setTileError] = useState(false);
   const [zoom, setZoom] = useState(5);
   const [showIllustration, setShowIllustration] = useState(true);
-  const showIllustrationRef = useRef(true);
-  useEffect(() => {
-    showIllustrationRef.current = showIllustration;
-  }, [showIllustration]);
   const compactViewport = useMediaQuery("(max-width: 860px)");
 
   const statsMap = useMemo(
@@ -143,6 +143,7 @@ export function MapView({
   );
   const isPekanbaru = cityName?.trim().toLocaleLowerCase("id-ID") === "pekanbaru";
 
+  const lastBoundsRef = useRef<RegionFeature[] | null>(null);
   const statsMapRef = useRef(statsMap);
   const selectRegionRef = useRef(onSelectRegion);
   const selectDestinationRef = useRef(onSelectDestination);
@@ -183,10 +184,6 @@ export function MapView({
       zoomSnap: 0.5,
     });
 
-    const watercolorPane = map.createPane("pekanbaruWatercolor");
-    watercolorPane.style.zIndex = "350";
-    watercolorPane.style.pointerEvents = "none";
-
     L.tileLayer(OSM_TILES, {
       attribution: OSM_ATTRIBUTION,
       maxZoom: 19,
@@ -222,7 +219,7 @@ export function MapView({
       map.remove();
       mapRef.current = null;
       geoLayerRef.current = null;
-      watercolorLayerRef.current = null;
+      lastBoundsRef.current = null;
       markerLayerRef.current = null;
       userLayerRef.current = null;
     };
@@ -236,14 +233,11 @@ export function MapView({
       geoLayerRef.current.remove();
       regionLayersRef.current.clear();
     }
-    watercolorLayerRef.current?.remove();
-    watercolorLayerRef.current = null;
     if (regions.length === 0) {
       if (cityBounds) map.fitBounds([[cityBounds.south, cityBounds.west], [cityBounds.north, cityBounds.east]], { padding: [24, 24] });
       return;
     }
 
-    let cancelled = false;
     const layer = L.geoJSON(regions as unknown as GeoJSON.FeatureCollection, {
       style: (feature) => {
         const code = String(feature?.properties?.code ?? "");
@@ -251,8 +245,8 @@ export function MapView({
         const palette = STATUS_COLORS[status];
         return {
           color: isPekanbaru ? "#82947a" : palette.stroke,
-          fillColor: palette.fill,
-          fillOpacity: isPekanbaru ? 0.035 : status === "unexplored" ? 0.3 : 0.44,
+          fillColor: isPekanbaru && showIllustration ? districtWash(code) : palette.fill,
+          fillOpacity: isPekanbaru ? (showIllustration ? 0.25 : 0.035) : status === "unexplored" ? 0.3 : 0.44,
           weight: isPekanbaru ? 1.1 : 1.6,
           dashArray: !isPekanbaru && status === "unexplored" ? "3 5" : undefined,
         };
@@ -291,9 +285,9 @@ export function MapView({
           const palette = STATUS_COLORS[status];
           layerPath.setStyle({
             weight: isPekanbaru ? 1.1 : 1.6,
-            fillOpacity: isPekanbaru ? 0.035 : status === "unexplored" ? 0.3 : 0.44,
+            fillOpacity: isPekanbaru ? (showIllustration ? 0.25 : 0.035) : status === "unexplored" ? 0.3 : 0.44,
             color: isPekanbaru ? "#82947a" : palette.stroke,
-            fillColor: palette.fill,
+            fillColor: isPekanbaru && showIllustration ? districtWash(code) : palette.fill,
           });
         });
       },
@@ -303,40 +297,29 @@ export function MapView({
 
     const bounds = layer.getBounds();
     if (bounds.isValid()) {
-      if (isPekanbaru) {
-        const { west, south, east, north } = PEKANBARU_WATERCOLOR.bounds;
-        const overlayBounds: L.LatLngBoundsExpression = [[south, west], [north, east]];
-        const mountOverlay = (src: string) => {
-          const activeMap = mapRef.current;
-          if (!activeMap || cancelled || !activeMap.getPane("pekanbaruWatercolor")) return;
-          watercolorLayerRef.current?.remove();
-          watercolorLayerRef.current = L.imageOverlay(src, overlayBounds, {
-            pane: "pekanbaruWatercolor",
-            interactive: false,
-            opacity: 0.96,
-            className: "pekanbaru-watercolor-overlay",
-          }).addTo(activeMap);
-          watercolorLayerRef.current.setOpacity(showIllustrationRef.current ? 0.96 : 0);
-        };
-
-        // Tampilkan ilustrasi asli lebih dulu, lalu ganti dengan versi yang sudah
-        // dipotong ke batas kecamatan agar tidak ada persegi kertas di kota lain.
-        mountOverlay(PEKANBARU_WATERCOLOR.src);
-        void buildMaskedPekanbaruWatercolor(regions).then((masked) => {
-          if (masked) mountOverlay(masked);
-        });
+      if (lastBoundsRef.current !== regions) {
+        map.fitBounds(bounds, { padding: [30, 30] });
+        lastBoundsRef.current = regions;
       }
-      map.fitBounds(bounds, { padding: [30, 30] });
     }
 
-    return () => {
-      cancelled = true;
-    };
-  }, [regions, isPekanbaru, cityBounds]);
+  }, [regions, isPekanbaru, cityBounds, showIllustration]);
 
+  const [watercolorError, setWatercolorError] = useState(false);
   useEffect(() => {
-    watercolorLayerRef.current?.setOpacity(showIllustration ? 0.96 : 0);
-  }, [showIllustration, regions]);
+    const map = mapRef.current;
+    if (!map || !isPekanbaru || !showIllustration) return;
+    let disposed = false;
+    let cleanup: (() => void) | undefined;
+    setWatercolorError(false);
+    void mountWatercolorMap(map, regions, () => {
+      if (!disposed) setWatercolorError(true);
+    }, () => !disposed).then((remove) => {
+      if (disposed) remove();
+      else cleanup = remove;
+    }).catch(() => { if (!disposed) setWatercolorError(true); });
+    return () => { disposed = true; cleanup?.(); };
+  }, [isPekanbaru, showIllustration, regions]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -348,8 +331,8 @@ export function MapView({
       const palette = STATUS_COLORS[status];
       const selected = code === selectedRegionId;
       layer.setStyle({
-        fillColor: palette.fill,
-        fillOpacity: selected ? (isPekanbaru ? 0.14 : 0.55) : isPekanbaru ? 0.035 : status === "unexplored" ? 0.3 : 0.44,
+        fillColor: isPekanbaru && showIllustration ? districtWash(code) : palette.fill,
+        fillOpacity: selected ? (isPekanbaru ? 0.14 : 0.55) : isPekanbaru ? (showIllustration ? 0.25 : 0.035) : status === "unexplored" ? 0.3 : 0.44,
         color: selected ? SELECTED_STROKE : isPekanbaru ? "#82947a" : palette.stroke,
         weight: selected ? 3 : isPekanbaru ? 1.1 : 1.6,
         dashArray: status === "unexplored" && !selected ? "3 5" : undefined,
@@ -367,7 +350,7 @@ export function MapView({
         tooltip?.setContent(label);
       }
     }
-  }, [regionStats, selectedRegionId, statsMap, isPekanbaru]);
+  }, [regionStats, selectedRegionId, statsMap, isPekanbaru, showIllustration]);
 
   const attachMarkerHandlers = (marker: L.Marker, name: string, id: string, tooltipOffset: number) => {
     marker.bindTooltip(tooltipText(name), {
@@ -568,6 +551,7 @@ export function MapView({
         <span>{regions.length} kecamatan</span>
       </div>
 
+      {watercolorError && showIllustration && <p className="map-notice" role="status">Gaya cat air gagal dimuat. Peta OSM digunakan sementara.</p>}
       {tileError && (
         <p className="map-notice">
           Basemap gagal dimuat. Katalog dan daftar destinasi tetap dapat digunakan.
@@ -626,9 +610,9 @@ export function MapView({
         </span>
         {regions.length === 0 && <span className="map-legend__note">Batas kecamatan belum tersedia.</span>}
         {isPekanbaru && <label style={{ display: "flex", alignItems: "center", minHeight: 44, gap: 8 }}>
-          <input type="checkbox" checked={showIllustration} onChange={(event) => setShowIllustration(event.target.checked)} /> Ilustrasi cat air
+          <input type="checkbox" checked={showIllustration} onChange={(event) => setShowIllustration(event.target.checked)} /> Gaya cat air
         </label>}
-        {isPekanbaru && <span className="map-legend__note">Ilustrasi perkiraan. Matikan untuk memeriksa jalan OSM.</span>}
+        {isPekanbaru && <span className="map-legend__note">Jalan dan sungai mengikuti data OSM. Detail menyesuaikan zoom. Batas wilayah bukan rujukan hukum.</span>}
       </details>}
     </div>
   );

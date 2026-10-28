@@ -16,6 +16,7 @@ export interface LocalNotification {
   body: string;
   createdAt: string;
   read: boolean;
+  submissionId?: string;
 }
 
 export const BACKEND_NOT_CONFIGURED = isBackendConfigured
@@ -42,14 +43,16 @@ export async function appSessionForUser(user: User): Promise<LocalSession> {
 
 export async function readNotifications(userId: string): Promise<LocalNotification[]> {
   if (!supabase) return [];
-  const { data, error } = await supabase.from("notifications").select("id,title,body,created_at,read_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(30);
+  const { data, error } = await supabase.from("notifications").select("id,title,body,created_at,read_at,submission_id").eq("user_id", userId).order("created_at", { ascending: false }).limit(30);
   if (error) throw error;
-  return (data ?? []).map((item) => ({ id: item.id, title: item.title, body: item.body, createdAt: item.created_at, read: Boolean(item.read_at) }));
+  return (data ?? []).map((item) => ({ id: item.id, title: item.title, body: item.body, createdAt: item.created_at, read: Boolean(item.read_at), submissionId: item.submission_id ?? undefined }));
 }
 
-export async function markNotificationsRead(userId: string) {
+export async function markNotificationsRead(userId: string, notificationId?: string) {
   if (!supabase) return;
-  const { error } = await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("user_id", userId).is("read_at", null);
+  let query = supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("user_id", userId).is("read_at", null);
+  if (notificationId) query = query.eq("id", notificationId);
+  const { error } = await query;
   if (error) throw error;
 }
 

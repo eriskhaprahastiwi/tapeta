@@ -42,7 +42,7 @@ export function DesainTopbar({ active, cityName, provinceName, onOpenCityPicker,
         </button>
       )}
       <nav className="t-topnav" aria-label="Navigasi utama">
-        {(["explore", "my", "komunitas"] as NavKey[]).map((key) =>
+        {window.location.hash.startsWith("#admin") ? <a className="t-topnav__item t-topnav__item--active" href="#admin">Verifikasi</a> : (["explore", "my", "komunitas"] as NavKey[]).map((key) =>
           key === active ? (
             <span key={key} className="t-topnav__item t-topnav__item--active" aria-current="page">
               {LABELS[key]}

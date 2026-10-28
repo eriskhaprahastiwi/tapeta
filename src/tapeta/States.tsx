@@ -100,10 +100,8 @@ export function States() {
 export type AdminSection = "ringkasan" | "antrean" | "import" | "kontributor" | "riwayat";
 
 const ADMIN_LINKS: Array<{ key: AdminSection; label: string; hash: string }> = [
-  { key: "ringkasan", label: "Ringkasan", hash: "#admin-dash" },
   { key: "antrean", label: "Tinjau usulan", hash: "#admin" },
-  { key: "import", label: "Import & stiker", hash: "#admin-import" },
-  { key: "kontributor", label: "Kontributor", hash: "#admin-contributors" },
+  { key: "import", label: "Verifikasi katalog", hash: "#admin-import" },
   { key: "riwayat", label: "Riwayat keputusan", hash: "#admin-history" },
 ];
 

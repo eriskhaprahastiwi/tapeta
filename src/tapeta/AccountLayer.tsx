@@ -90,6 +90,15 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
     if (notifOpen) notifHostRef.current?.querySelector<HTMLElement>(".t-notif__close")?.focus();
   }, [notifOpen]);
 
+  const routedSession = useRef("");
+  useEffect(() => {
+    if (!session) return;
+    const key = `${session.id}:${session.role}`;
+    if (routedSession.current === key) return;
+    routedSession.current = key;
+    if (["admin", "moderator"].includes(session.role) && !window.location.hash.startsWith("#admin")) window.location.hash = "#admin";
+  }, [session?.id, session?.role]);
+
   const unreadCount = notifications.filter((item) => !item.read).length;
   const updateSession = useCallback((next: LocalSession) => {
     setCurrentSession(next);
@@ -125,6 +134,7 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
       setNotifOpen((open) => !open);
     },
     onSignOut: () => {
+      routedSession.current = "";
       void signOut().then(() => onNavigate("explore")).catch((cause) => setNotice({ title: "Keluar belum selesai di server", body: cause.message }));
       setMenuOpen(false);
       setNotifOpen(false);
@@ -170,7 +180,7 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
             }}
             onOpenAdmin={() => {
               setMenuOpen(false);
-              window.location.hash = "#admin-dash";
+              window.location.hash = "#admin";
             }}
             onSignOut={state.onSignOut}
           />
@@ -184,6 +194,13 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
             open={notifOpen}
             items={notifications}
             onClose={() => setNotifOpen(false)}
+            onOpenItem={(item) => {
+              void markRead(item.id).catch((cause) => setNotice({ title: "Status baca belum tersimpan", body: cause.message }));
+              setNotifOpen(false);
+              if (session && ["admin", "moderator"].includes(session.role)) {
+                window.location.hash = item.submissionId ? `#admin?submission=${encodeURIComponent(item.submissionId)}` : "#admin";
+              } else { onNavigate("my"); }
+            }}
             onMarkRead={() => { void markRead().catch((cause) => setNotice({ title: "Notifikasi belum diperbarui", body: cause.message })); }}
           />
         </div>

@@ -178,16 +178,16 @@ export function AccountMenu({
         </span>
       </div>
       <p className="t-accountmenu__badge">Akun TAPETA · {session.role}</p>
-      <button type="button" role="menuitem" className="t-accountmenu__item" onClick={onOpenMyTapeta}>
+      {session.role === "contributor" && <button type="button" role="menuitem" className="t-accountmenu__item" onClick={onOpenMyTapeta}>
         My TAPETA
-      </button>
+      </button>}
       <button type="button" role="menuitem" className="t-accountmenu__item" onClick={onOpenProfileEditor}>
         Edit profil
       </button>
       <button type="button" role="menuitem" className="t-accountmenu__item" onClick={onOpenNotifications}>
         Notifikasi
       </button>
-      {(session.role === "admin" || session.role === "moderator") && <button type="button" role="menuitem" className="t-accountmenu__item" onClick={onOpenAdmin}>Dashboard admin</button>}
+      {(session.role === "admin" || session.role === "moderator") && <button type="button" role="menuitem" className="t-accountmenu__item" onClick={onOpenAdmin}>Verifikasi</button>}
       <button type="button" role="menuitem" className="t-accountmenu__item" onClick={onSignOut}>
         Keluar
       </button>
@@ -203,9 +203,10 @@ export interface NotificationPanelProps {
   onClose: () => void;
   items: LocalNotification[];
   onMarkRead: () => void;
+  onOpenItem?: (item: LocalNotification) => void;
 }
 
-export function NotificationPanel({ open, onClose, items, onMarkRead }: NotificationPanelProps) {
+export function NotificationPanel({ open, onClose, items, onMarkRead, onOpenItem }: NotificationPanelProps) {
   if (!open) return null;
   return (
     <div className="t-notif" role="dialog" aria-label="Notifikasi">
@@ -221,8 +222,10 @@ export function NotificationPanel({ open, onClose, items, onMarkRead }: Notifica
         <ul className="t-notif__list">
           {items.map((item) => (
             <li key={item.id} className={`t-notif__item${item.read ? "" : " is-unread"}`}>
+              <button type="button" className="t-notif__open" onClick={() => onOpenItem?.(item)}>
               <span className="t-notif__itemtitle">{item.title}</span>
               <span className="t-notif__itemBody">{item.body}</span>
+              </button>
             </li>
           ))}
         </ul>

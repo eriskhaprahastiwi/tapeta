@@ -4,6 +4,10 @@ Temukan tempat, bagikan cerita. React, TypeScript, Vite, Leaflet/OSM, dan Supaba
 
 Acuan implementasi: `TAPETA_PRD_OPENCODE.md`, canvas `TAPETA.pen`, serta instruksi terbaru pemilik produk. Landing desktop/mobile tidak memakai stiker landmark.
 
+## Revisi Dani Sensei
+
+Perubahan peta, time picker, komunitas, polling, moderasi dan notifikasi dijelaskan di [docs/DANI_SENSEI_REVISIONS.md](docs/DANI_SENSEI_REVISIONS.md). Terapkan migrasi `202610280001_community_and_screening.sql` sebelum frontend baru; workflow Pages tidak menjalankan migrasi database.
+
 ## Menjalankan frontend
 
 ```sh
@@ -84,7 +88,7 @@ Script ini **belum dijalankan di database** pada sesi implementasi karena tidak 
 ## Peta dan aset
 
 - Leaflet memegang koordinat marker/stiker dan pan/zoom. Di zoom rendah marker dibuat ringkas; ilustrasi stiker terbit tampil mulai zoom 14.
-- Overlay Pekanbaru diikat ke bounds dan dipotong mengikuti GeoJSON administrasi. **Kalibrasi visual belum sama dengan akurasi jalan/sungai.** Toggle ilustrasi tersedia untuk membandingkan dengan OSM. Titik kontrol dan residual georeferensi masih perlu diverifikasi sebelum mengklaim akurasi.
+- Peta Pekanbaru memakai geometri vektor OSM/OpenFreeMap dengan palet cat air dan klip batas kecamatan GeoJSON. Overlay raster jalan rekaan tidak lagi dirender. Toggle gaya mempertahankan viewport; OSM menjadi cadangan bila WebGL atau peta vektor gagal. Akurasi mengikuti data sumber, bukan klaim survei resmi.
 - Data batas: `public/data/pekanbaru-kecamatan.geojson`, OSM/ODbL. Refresh melalui `node scripts/fetch-boundaries.mjs`; hindari permintaan berulang ke provider publik.
 - Kota lain dapat dicari lewat Nominatim. Bila hasil Overpass sah tetapi tanpa batas kecamatan, viewport memakai bounds kota dan memberi status batas belum tersedia. Kegagalan jaringan tetap ditampilkan sebagai error.
 - Cache batas wilayah menggunakan IndexedDB selama 90 hari. Lokasi perangkat hanya diminta setelah tindakan pengguna.
@@ -95,7 +99,7 @@ Script ini **belum dijalankan di database** pada sesi implementasi karena tidak 
 ## Batas kesiapan saat ini
 
 - Backend, email, RLS, dan alur end-to-end belum dibuktikan di project Supabase nyata.
-- Upload foto, kebijakan storage, takedown, retensi, dan penghapusan akun belum tersedia. UI menampilkan status tersebut.
+- Foto tambah lokasi disembunyikan. Dokumentasi komunitas memakai bucket privat dan pemeriksaan gambar sebelum publikasi setelah migrasi baru diaktifkan. Storage/RLS dan alur backend baru masih perlu diuji di Supabase pengembangan. Prosedur takedown, retensi, dan penghapusan akun tetap memerlukan keputusan pengelola.
 - Formula poin/lencana belum disetujui, sehingga penghargaan dinonaktifkan, bukan dihitung dari angka lokal.
 - Revisi saat ini mencakup nama, alamat, deskripsi, dan sumber. Perubahan koordinat/kategori pada revisi belum tersedia.
 - Filter moderasi status tersedia; filter tanggal/kota/kategori, pengelolaan katalog, dan paginasi server masih perlu dilengkapi.

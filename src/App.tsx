@@ -78,7 +78,7 @@ export default function App() {
     | "states"
     | "contributeDone"
   >(() => {
-    const hash = window.location.hash;
+    const hash = window.location.hash.split("?")[0];
     if (hash === "#explore") return "app";
     if (hash === "#atlas") return "atlas";
     if (hash === "#design") return "design";
@@ -88,7 +88,7 @@ export default function App() {
     if (hash === "#my") return "my";
     if (hash === "#admin") return "admin";
     if (hash === "#kotabaru") return "kotabaru";
-    if (hash === "#admin-dash") return "adminDash";
+    if (hash === "#admin-dash") return "admin";
     if (hash === "#admin-contributors") return "adminContributors";
     if (hash === "#admin-history") return "adminHistory";
     if (hash === "#admin-import") return "adminImport";
@@ -102,12 +102,12 @@ export default function App() {
       adminDash: "#admin-dash", adminContributors: "#admin-contributors", adminHistory: "#admin-history", adminImport: "#admin-import",
       states: "#states", contributeDone: "#contribute-done",
     };
-    if (window.location.hash !== hashes[next]) window.history.pushState(null, "", window.location.pathname + window.location.search + hashes[next]);
+    if (window.location.hash !== hashes[next] && !(next === "admin" && window.location.hash.startsWith("#admin?"))) window.history.pushState(null, "", window.location.pathname + window.location.search + hashes[next]);
     setCurrentView(next);
   }, []);
   useEffect(() => {
     function syncFromHash() {
-      const hash = window.location.hash;
+      const hash = window.location.hash.split("?")[0];
       const map: Record<string, typeof view> = {
         "": "intro",
         "#explore": "app",
@@ -119,7 +119,7 @@ export default function App() {
         "#my": "my",
         "#admin": "admin",
         "#kotabaru": "kotabaru",
-        "#admin-dash": "adminDash",
+        "#admin-dash": "admin",
         "#admin-contributors": "adminContributors",
         "#admin-history": "adminHistory",
         "#admin-import": "adminImport",
@@ -569,7 +569,7 @@ export default function App() {
         <main className="t-app t-app--doc" style={{ minHeight: "100dvh", display: "grid", placeItems: "center", padding: 24 }}>
           <section style={{ maxWidth: 480, padding: 32, borderRadius: 20, background: "#FFFCF6", border: "1px solid #D8C8B2", textAlign: "center" }}>
             <span className="t-eyebrow">AREA TERBATAS</span>
-            <h1 style={{ color: "#1B2C35" }}>Dashboard admin</h1>
+            <h1 style={{ color: "#1B2C35" }}>Verifikasi admin</h1>
             <p style={{ color: "#786E5F" }}>Masuk dengan akun yang telah diberi peran moderator atau admin. Akses data juga dilindungi kebijakan server.</p>
             {chromeState.signedIn ? <button className="t-btn t-btn--brick" onClick={goHome}>Kembali ke TAPETA</button> : <button className="t-btn t-btn--brick" onClick={chromeState.onOpenAuth}>Masuk ke TAPETA</button>}
           </section>
