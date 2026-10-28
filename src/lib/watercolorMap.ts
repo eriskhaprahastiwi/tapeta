@@ -21,14 +21,17 @@ export async function mountWatercolorMap(
     [PEKANBARU_WATERCOLOR_BOUNDS.south, PEKANBARU_WATERCOLOR_BOUNDS.west],
     [PEKANBARU_WATERCOLOR_BOUNDS.north, PEKANBARU_WATERCOLOR_BOUNDS.east],
   ];
-  const layer = L.imageOverlay(image, bounds, { opacity: 0.96, interactive: false, pane: "tapetaWatercolor" }).addTo(map);
+  // Keep the OSM road network readable beneath the painted surface. The asset
+  // supplies the watercolor texture while the live OSM layer remains the
+  // authoritative geometry for roads and waterways.
+  const layer = L.imageOverlay(image, bounds, { opacity: 0.74, interactive: false, pane: "tapetaWatercolor" }).addTo(map);
   const cleanup = () => {
     if (removed) return;
     removed = true;
     map.off("move zoom resize viewreset", sync);
     if (map.hasLayer(layer)) map.removeLayer(layer);
   };
-  function sync() { if (!removed) layer.setOpacity(0.96); }
+  function sync() { if (!removed) layer.setOpacity(0.74); }
   map.on("move zoom resize viewreset", sync);
   map.attributionControl.addAttribution('<span>Ilustrasi cat air TAPETA · batas geografis OSM</span>');
   return () => {
