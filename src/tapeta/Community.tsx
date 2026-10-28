@@ -228,8 +228,9 @@ export function Community(props: CommunityProps) {
             </>}
           </section>
           <aside>
-            <section className="t-forum__rules">
-              <h2>Aturan komunitas</h2>
+            <details className="t-forum__rules">
+              <summary>Aturan komunitas</summary>
+              <div className="t-forum__rules-body">
               <ul>
                 {COMMUNITY_RULES.map((rule) => (
                   <li key={rule}>{rule}</li>
@@ -240,7 +241,8 @@ export function Community(props: CommunityProps) {
                 masuk antrean verifikasi. Kamu akan mendapat alasan jika
                 pengiriman ditolak.
               </p>
-            </section>
+              </div>
+            </details>
             <details className="t-forum__rules">
               <summary>Validasi usulan lokasi</summary>
               <p>
