@@ -628,6 +628,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .has-watercolor .osm-tiles {
   opacity: 0.14;
 }
+.t-forum__leaderboard-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin:18px 0; }
+.t-forum__scope { display:flex; gap:8px; flex-wrap:wrap; margin:14px 0; }
+.t-forum__scope button { border:1px solid var(--t-line); border-radius:999px; padding:8px 12px; background:#fffaf1; color:var(--t-ink); }
+.t-forum__scope button[aria-pressed="true"] { background:#172432; color:#fffaf1; }
+.t-forum__leaders { list-style:none; margin:0; padding:0; border-top:1px solid var(--t-line); }
+.t-forum__leaders li { display:grid; grid-template-columns:36px 1fr auto; gap:12px; align-items:center; padding:14px 4px; border-bottom:1px solid var(--t-line); }
+.t-forum__leaders li span { font-weight:700; color:#b64032; }
+.t-forum__leaders li em { font-style:normal; color:var(--t-muted); }
 
 .t-topbar__brand {
   display: flex;

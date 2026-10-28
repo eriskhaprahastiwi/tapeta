@@ -16,6 +16,7 @@ import {
 } from "../lib/forum";
 import { DesainTopbar } from "./Topbar";
 import { useChrome } from "./ChromeContext";
+import { loadCommunityVisitLeaderboard, type CommunityVisitLeaderboardEntry } from "../lib/community";
 export interface CommunityProps {
   cityId: string;
   cityName: string;
@@ -52,6 +53,7 @@ const message = (e: unknown) =>
 export function Community(props: CommunityProps) {
   const { account } = useChrome();
   const [kind, setKind] = useState<PostKind>("story");
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [posts, setPosts] = useState<ForumPost[]>([]),
     [loading, setLoading] = useState(true),
     [error, setError] = useState(""),
@@ -155,7 +157,21 @@ export function Community(props: CommunityProps) {
                   {tab.label}
                 </button>
               ))}
+              <button
+                aria-pressed={showLeaderboard}
+                onClick={() => setShowLeaderboard(true)}
+              >
+                Leaderboard kontribusi
+              </button>
             </div>
+            {showLeaderboard && (
+              <LeaderboardPanel
+                cityId={props.cityId}
+                cityName={props.cityName}
+                onClose={() => setShowLeaderboard(false)}
+              />
+            )}
+            {!showLeaderboard && <>
             <p>{TABS.find((t) => t.kind === kind)?.description}</p>
             {compose && (
               <PostForm
@@ -209,6 +225,7 @@ export function Community(props: CommunityProps) {
                 {more ? "Memuat…" : "Muat posting berikutnya"}
               </button>
             )}
+            </>}
           </section>
           <aside>
             <section className="t-forum__rules">
@@ -248,6 +265,27 @@ export function Community(props: CommunityProps) {
       </main>
     </div>
   );
+}
+function LeaderboardPanel({ cityId, cityName, onClose }: { cityId: string; cityName: string; onClose: () => void }) {
+  const [scope, setScope] = useState<"local" | "national">("local");
+  const [rows, setRows] = useState<CommunityVisitLeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let active = true;
+    setLoading(true); setError("");
+    if (!supabase) { setLoading(false); setError("Leaderboard belum terhubung ke server."); return; }
+    void loadCommunityVisitLeaderboard(supabase, scope === "local" ? cityId : null)
+      .then((data) => { if (active) setRows(data); })
+      .catch((cause) => { if (active) setError(message(cause)); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [cityId, scope]);
+  return <section className="t-forum__leaderboard" aria-labelledby="community-leaderboard-title">
+    <div className="t-forum__leaderboard-head"><div><h2 id="community-leaderboard-title">Leaderboard kontribusi</h2><p>Kontributor dengan kunjungan terverifikasi terbanyak.</p></div><button className="t-btn t-btn--ghost" onClick={onClose}>Kembali ke komunitas</button></div>
+    <div className="t-forum__scope"><button aria-pressed={scope === "local"} onClick={() => setScope("local")}>Lokal: {cityName}</button><button aria-pressed={scope === "national"} onClick={() => setScope("national")}>Nasional: seluruh Indonesia</button></div>
+    {loading ? <p role="status">Memuat leaderboard…</p> : error ? <p role="alert" className="t-forum__error">{error}</p> : rows.length === 0 ? <p>Belum ada kontribusi terverifikasi.</p> : <ol className="t-forum__leaders">{rows.map((row, index) => <li key={row.profileKey ?? `${row.displayLabel}-${index}`}><span>{index + 1}</span><strong>{row.displayLabel}</strong><em>{row.visitedCount} kunjungan</em></li>)}</ol>}
+  </section>;
 }
 function PostForm({
   city,
