@@ -622,6 +622,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   opacity: 0.96;
 }
 
+/* The painted asset is the visual surface; keep the live OSM reference
+   visible only as a quiet alignment guide so two different road renderings
+   do not compete at city edges. */
+.has-watercolor .osm-tiles {
+  opacity: 0.14;
+}
+
 .t-topbar__brand {
   display: flex;
   align-items: center;

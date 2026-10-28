@@ -143,6 +143,10 @@ export function MapView({
   );
   const isPekanbaru = cityName?.trim().toLocaleLowerCase("id-ID") === "pekanbaru";
 
+  useEffect(() => {
+    containerRef.current?.classList.toggle("has-watercolor", isPekanbaru && showIllustration);
+  }, [isPekanbaru, showIllustration]);
+
   const lastBoundsRef = useRef<RegionFeature[] | null>(null);
   const statsMapRef = useRef(statsMap);
   const selectRegionRef = useRef(onSelectRegion);
