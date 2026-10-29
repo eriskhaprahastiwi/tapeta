@@ -26,6 +26,10 @@ jobs:
       - uses: actions/configure-pages@v5
       - run: npm ci
       - run: npm run build
+        env:
+          VITE_SUPABASE_URL: https://kdzmnmmidcrpdjiodxpw.supabase.co
+          # Public browser key; database access remains governed by Supabase RLS.
+          VITE_SUPABASE_ANON_KEY: sb_publishable_4Drh-UwBa7NCPzp1cNom4A_3vGvaD1u
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
