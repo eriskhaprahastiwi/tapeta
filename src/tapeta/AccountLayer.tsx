@@ -144,7 +144,7 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
   return (
     <>
       {children(state)}
-      {error && !notifOpen && <div className="t-toast" role="alert">Data akun gagal dimuat: {error}</div>}
+      {error && !notifOpen && <div className="t-toast" role="alert">{error}</div>}
 
       <AuthDialog
         open={authOpen || recovery}

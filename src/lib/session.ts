@@ -32,7 +32,7 @@ export async function appSessionForUser(user: User): Promise<LocalSession> {
   let role: UserRole = "contributor";
   if (supabase) {
     const { data, error } = await supabase.from("profiles").select("display_name, role").eq("id", user.id).single();
-    if (error) throw error;
+    if (error) throw new Error(`Profil akun gagal dimuat: ${error.message}`);
     if (data) {
       name = data.display_name || name;
       if (data.role === "admin" || data.role === "moderator") role = data.role;
@@ -44,7 +44,7 @@ export async function appSessionForUser(user: User): Promise<LocalSession> {
 export async function readNotifications(userId: string): Promise<LocalNotification[]> {
   if (!supabase) return [];
   const { data, error } = await supabase.from("notifications").select("id,title,body,created_at,read_at,submission_id").eq("user_id", userId).order("created_at", { ascending: false }).limit(30);
-  if (error) throw error;
+  if (error) throw new Error(`Notifikasi gagal dimuat: ${error.message}`);
   return (data ?? []).map((item) => ({ id: item.id, title: item.title, body: item.body, createdAt: item.created_at, read: Boolean(item.read_at), submissionId: item.submission_id ?? undefined }));
 }
 

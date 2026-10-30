@@ -5,6 +5,7 @@ import "@fontsource-variable/nunito-sans/wght-italic.css";
 import "./index.css";
 import "./tapeta/tapeta.css";
 import "./tapeta/workflow.css";
+import "./tapeta/admin.css";
 import App from "./App";
 
 createRoot(document.getElementById("root")!).render(

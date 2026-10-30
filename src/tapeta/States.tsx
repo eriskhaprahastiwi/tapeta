@@ -131,7 +131,7 @@ export function AdminBar({ active }: { active: AdminSection }) {
           ),
         )}
       </nav>
-      <span className="t-admintop__city">Pekanbaru · Riau</span>
+
     </header>
   );
 }
@@ -169,7 +169,7 @@ export function AdminDash({ destinations, cityName, provinceName, onOpenCityPick
     { kicker: "KONTRIBUTOR AKTIF", value: String(summary?.active_contributors_30d ?? "Belum tersedia"), sub: "30 hari terakhir", tone: "light" },
   ];
   return (
-    <div className="t-app t-app--account">
+    <div className="t-app t-app--account t-app--admin">
       <DesainTopbar active="my" cityName={cityName} provinceName={provinceName} onOpenCityPicker={onOpenCityPicker} />
       <AdminBar active="ringkasan" />
       <div className="t-dash">
@@ -275,7 +275,7 @@ export function AdminReports({ mode, cityName, provinceName, onOpenCityPicker }:
   }, [mode]);
   const title = mode === "contributors" ? "Rekap kontributor" : "Riwayat keputusan";
   return (
-    <div className="t-app t-app--account">
+    <div className="t-app t-app--account t-app--admin">
       <DesainTopbar active="my" cityName={cityName} provinceName={provinceName} onOpenCityPicker={onOpenCityPicker} />
       <AdminBar active={mode === "contributors" ? "kontributor" : "riwayat"} />
       <main className="t-dash">
@@ -398,7 +398,7 @@ export function AdminImport({ cityName, provinceName, onOpenCityPicker }: Pick<A
   }
 
   return (
-    <div className="t-app t-app--account">
+    <div className="t-app t-app--account t-app--admin">
       <DesainTopbar active="my" cityName={cityName} provinceName={provinceName} onOpenCityPicker={onOpenCityPicker} />
       <AdminBar active="import" />
       <div className="t-dash">

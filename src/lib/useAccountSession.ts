@@ -23,7 +23,7 @@ export function useAccountSession() {
         if (!active || request !== version.current) return;
         setCurrentSession(next); setSession(next);
         const items = next ? await readNotifications(next.id) : [];
-        if (active && request === version.current) setNotifications(items);
+        if (active && request === version.current) { setNotifications(items); setError(null); }
       } catch (cause) {
         if (active && request === version.current) setError(cause instanceof Error ? cause.message : "Data akun gagal dimuat. Coba lagi.");
       } finally { if (active && request === version.current) setReady(true); }
@@ -55,7 +55,7 @@ export function useAccountSession() {
       const request = version.current;
       try {
         const items = await readNotifications(session.id);
-        if (active && request === version.current) setNotifications(items);
+        if (active && request === version.current) { setNotifications(items); setError(null); }
       } catch { /* Opening the panel exposes errors and offers retry. */ }
     };
     const timer = window.setInterval(() => { if (document.visibilityState === "visible") void refresh(); }, 30000);

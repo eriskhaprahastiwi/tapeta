@@ -1,0 +1,49 @@
+/* Shared admin typography and controls; retain TAPETA's existing palette. */
+.t-app--admin { font-family: var(--t-font-body); font-size: 16px; line-height: 1.5; }
+.t-app--admin :is(.t-admin, .t-dash) { width: 100%; max-width: 1200px; padding: 32px 24px 56px; }
+.t-app--admin :is(.t-admin, .t-dash) :is(p, li, td) { font-size: 16px; line-height: 1.6; overflow-wrap: anywhere; }
+.t-app--admin :is(.t-admin__title, .t-dash__title) { margin: 8px 0 12px; font-size: 28px; font-weight: 750; line-height: 1.25; letter-spacing: -.4px; }
+.t-app--admin :is(.t-admin, .t-dash) h2 { font-size: 20px; line-height: 1.35; font-weight: 700; }
+.t-app--admin :is(.t-admin, .t-dash) h3 { font-size: 18px; line-height: 1.4; }
+.t-app--admin :is(.t-admin__eyebrow, .t-dash__eyebrow, .t-admintop__kicker) { font-size: 12px; font-weight: 700; letter-spacing: .1em; }
+.t-app--admin :is(.t-admin__lead, .t-dash__lead) { max-width: 78ch; margin-bottom: 24px; }
+.t-app--admin :is(button, input, select, textarea) { font-family: inherit; font-size: 14px; line-height: 1.5; }
+.t-app--admin :is(.t-admin, .t-dash) button { min-height: 44px; font-size: 14px; font-weight: 650; cursor: pointer; }
+.t-app--admin :is(.t-admin, .t-dash) button:disabled { opacity: .6; cursor: wait; }
+.t-app--admin :is(.t-admin, .t-dash) button:not([class]) { padding: 8px 14px; border: 1px solid #d8c8b2; border-radius: 8px; background: #fffcf6; color: #1b2c35; }
+.t-app--admin :is(.t-admin, .t-dash) label { display: grid; gap: 8px; font-size: 14px; font-weight: 650; }
+.t-app--admin :is(.t-admin, .t-dash) :is(input:not([type=checkbox]), select, textarea) { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid #d8c8b2; border-radius: 8px; background: #fffcf6; color: #1b2c35; }
+.t-app--admin :is(.t-admin, .t-dash) :is(select, textarea) { font-size: 16px; }
+.t-app--admin :is(.t-admin__triage, .t-visit-stories > label) { max-width: 360px; }
+.t-app--admin :is(.t-queuefilter, .t-importbar__filter) { border-radius: 10px; padding: 10px 14px; }
+.t-app--admin :is(.t-queuefilter__count, .t-importbar__count) { font-size: 14px; font-variant-numeric: tabular-nums; }
+.t-app--admin :is(.t-queue__name, .t-importrow__name, .t-admin__crosslinktitle) { font-size: 16px; font-weight: 700; }
+.t-app--admin :is(.t-queue__who, .t-queue__date, .t-queue__kind, .t-importrow__meta, .t-importrow__badge, .t-adminreport__row span, .t-adminreport__row time) { font-size: 14px; line-height: 1.5; }
+.t-app--admin :is(.t-queue__status, .t-review__meta, .t-review__k, .t-review__kicker, .t-review__code, .t-review__crittitle) { font-size: 14px; line-height: 1.5; }
+.t-app--admin .t-review__v { font-size: 16px; line-height: 1.5; }
+.t-app--admin .t-review__name { font-size: 20px; line-height: 1.35; }
+.t-app--admin .t-queue__thead { font-size: 12px; }
+.t-app--admin .t-admintop { min-height: 64px; height: auto; flex-wrap: wrap; gap: 12px; padding-block: 12px; }
+.t-app--admin .t-admintop__nav { flex-wrap: wrap; gap: 8px; }
+.t-app--admin .t-admintop__link { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 12px; font-size: 14px; }
+.t-app--admin :is(.t-admin, .t-dash) > [role=alert] { padding: 16px; border: 1px solid #c88876; border-radius: 12px; background: #f5e5e2; font-size: 16px; }
+.t-admin__secondary { margin-top: 32px; padding-top: 24px; border-top: 1px solid #d8c8b2; }
+.t-admin__secondary > h2 { margin: 0 0 16px; }
+.t-admin__secondary > details { margin: 12px 0; padding: 0; border: 1px solid #d8c8b2; border-radius: 12px; background: #fffcf6; overflow: hidden; }
+.t-admin__secondary > details > summary { padding: 16px 20px; font-size: 16px; font-weight: 700; cursor: pointer; }
+.t-admin__secondary > details[open] > summary { border-bottom: 1px solid #d8c8b2; }
+.t-admin__secondary > details > :not(summary) { margin: 16px 20px; }
+.t-admin__secondary .t-visit-stories { padding: 0; }
+.t-app--admin .t-admin__crosslink { margin-top: 24px; }
+.t-app--admin .t-review { min-width: 0; }
+.t-app--admin .t-review__actions { flex-wrap: wrap; }
+@media (max-width: 860px) {
+  .t-app--admin :is(.t-admin, .t-dash) { padding: 24px 16px 40px; }
+  .t-app--admin .t-admin__grid { display: flex; flex-direction: column; }
+  .t-app--admin :is(.t-queue, .t-review) { width: 100%; }
+  .t-app--admin .t-admin__crosslink { align-items: stretch; flex-direction: column; }
+  .t-app--admin .t-admin__queuecontrols { align-items: stretch; }
+  .t-app--admin .t-admin__queuecontrols > button { width: 100%; }
+  .t-app--admin :is(input, select, textarea) { font-size: 16px; }
+  .t-app--admin .t-admintop__sep { display: none; }
+}

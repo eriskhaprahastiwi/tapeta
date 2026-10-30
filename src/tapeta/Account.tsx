@@ -547,12 +547,7 @@ export function AdminQueue({
     const ready = item.pollTotal >= 3 && item.pollValid * 3 >= item.pollTotal * 2 && item.screeningReasons.length === 0;
     return triage === "all" || (triage === "ready" && ready) || (triage === "flagged" && item.screeningReasons.length > 0) || (triage === "waiting" && !ready && item.screeningReasons.length === 0);
   });
-  const counts = {
-    menunggu: items.filter((item) => item.status === "menunggu").length,
-    perbaikan: items.filter((item) => item.status === "perbaikan").length,
-    terbit: items.filter((item) => item.status === "terbit").length,
-    ditolak: items.filter((item) => item.status === "ditolak").length,
-  };
+
 
   const decide = async (status: SubmissionStatus) => {
     if (!active || deciding || active.status !== "menunggu") return;
@@ -568,7 +563,7 @@ export function AdminQueue({
   };
 
   return (
-    <div className="t-app t-app--account">
+    <div className="t-app t-app--account t-app--admin">
       <DesainTopbar
         active="my"
         cityName={cityName}
@@ -577,9 +572,6 @@ export function AdminQueue({
       />
       <AdminBar active="antrean" />
       <div className="t-admin">
-        <CommunityReview />
-        <ContentRules />
-        <VisitStories scope="admin" />
         <div className="t-admin__head">
           <span className="t-admin__eyebrow">ANTREAN · KOTA {cityName.toUpperCase()}</span>
           <h1 className="t-admin__title">Antrean tinjauan</h1>
@@ -608,19 +600,6 @@ export function AdminQueue({
             <button type="button" className="t-queue-refresh" onClick={refreshQueue} disabled={loading || deciding}>
               {loading ? "Memuat antrean…" : "Muat ulang antrean"}
             </button>
-          </div>
-          <div className="t-admin__stats">
-            {[
-              { label: "Perlu ditinjau", value: String(counts.menunggu), tone: "warn" },
-              { label: "Perlu perbaikan", value: String(counts.perbaikan), tone: "warn" },
-              { label: "Terbit", value: String(counts.terbit), tone: "ok" },
-              { label: "Ditolak", value: String(counts.ditolak), tone: "muted" },
-            ].map((stat) => (
-              <span key={stat.label} className={`t-admin__stat t-admin__stat--${stat.tone}`}>
-                <span className="t-admin__statlabel">{stat.label}</span>
-                <span className="t-admin__statvalue">{stat.value}</span>
-              </span>
-            ))}
           </div>
         </div>
 
@@ -764,6 +743,13 @@ export function AdminQueue({
             )}
           </div>
         )}
+
+        <section className="t-admin__secondary" aria-label="Moderasi tambahan">
+          <h2>Moderasi lainnya</h2>
+          <details className="t-admin__stories"><summary>Cerita kunjungan</summary><VisitStories scope="admin" /></details>
+          <CommunityReview />
+          <ContentRules />
+        </section>
 
         <section className="t-admin__crosslink" aria-label="Tautan pengelolaan lain">
           <div>
