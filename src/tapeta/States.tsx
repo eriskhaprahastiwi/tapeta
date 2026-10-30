@@ -262,6 +262,27 @@ export function AdminDash({ destinations, cityName, provinceName, onOpenCityPick
   );
 }
 
+function adminDate(value: unknown) {
+  if (!value) return "—";
+  const date = new Date(String(value));
+  return Number.isNaN(date.getTime()) ? "—" : new Intl.DateTimeFormat("id-ID", {
+    day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta",
+  }).format(date) + " WIB";
+}
+
+function adminDecision(row: Record<string, unknown>) {
+  const actions: Record<string, string> = { published: "Diterbitkan", rejected: "Ditolak", needs_revision: "Perlu perbaikan", role_changed: "Peran diubah" };
+  let note = String(row.note ?? "");
+  if (row.action === "role_changed") {
+    try {
+      const roles: Record<string, string> = { admin: "Admin", moderator: "Moderator", contributor: "Kontributor" };
+      const detail = JSON.parse(note);
+      if (detail.previous_role && detail.new_role) note = `${roles[detail.previous_role] ?? detail.previous_role} → ${roles[detail.new_role] ?? detail.new_role}`;
+    } catch { /* Older audit notes may be plain text. */ }
+  }
+  return `${actions[String(row.action)] ?? String(row.action ?? "Perubahan")} · ${String(row.actor_name ?? "Admin")}${note ? ` · ${note}` : ""}`;
+}
+
 export function AdminReports({ mode, cityName, provinceName, onOpenCityPicker }: AdminDashProps & { mode: "contributors" | "history" }) {
   const [rows, setRows] = useState<Array<Record<string, unknown>>>([]);
   const [error, setError] = useState<string | null>(() => isBackendConfigured ? null : "Backend Supabase belum dikonfigurasi.");
@@ -285,8 +306,8 @@ export function AdminReports({ mode, cityName, provinceName, onOpenCityPicker }:
           <div className="t-adminreport__list">
             {rows.map((row) => <article key={String(row.id)} className="t-adminreport__row">
               <strong>{String(row.display_name ?? row.place_name ?? "Perubahan moderasi")}</strong>
-              <span>{mode === "contributors" ? `${String(row.total_submissions ?? 0)} usulan · ${String(row.published_submissions ?? 0)} diterbitkan${row.public_profile ? " · profil publik" : " · profil privat"}` : `${String(row.action ?? "")} · ${String(row.actor_name ?? "Admin")}${row.note ? ` · ${String(row.note)}` : ""}`}</span>
-              <time>{String(row.last_contributed_at ?? row.created_at ?? "")}</time>
+              <span>{mode === "contributors" ? `${String(row.total_submissions ?? 0)} usulan · ${String(row.published_submissions ?? 0)} diterbitkan${row.public_profile ? " · profil publik" : " · profil privat"}` : adminDecision(row)}</span>
+              <time>{adminDate(row.last_contributed_at ?? row.created_at)}</time>
             </article>)}
           </div>
         )}

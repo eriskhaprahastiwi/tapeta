@@ -47,3 +47,9 @@
   .t-app--admin :is(input, select, textarea) { font-size: 16px; }
   .t-app--admin .t-admintop__sep { display: none; }
 }
+
+.t-app--admin .t-adminreport__row { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(140px, auto); }
+.t-app--admin .t-adminreport__row > * { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 1000px) {
+  .t-app--admin .t-adminreport__row { grid-template-columns: 1fr; gap: 8px; }
+}
