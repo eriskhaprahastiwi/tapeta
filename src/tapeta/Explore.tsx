@@ -755,14 +755,6 @@ function DestinationDetail({
         </button>
       </div>
       <div className="t-dpanel__scroll">
-        <div className="t-dpanel__foto">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8a7f6d" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <rect x="3" y="5" width="18" height="14" rx="2.5" />
-            <circle cx="8.6" cy="10" r="1.6" />
-            <path d="m5 17 4.5-4.5L13 16l3-3 3 3.5" />
-          </svg>
-          <span className="t-dpanel__fotocap">Foto belum tersedia · hanya media berlisensi yang terbit</span>
-        </div>
         <div className="t-dpanel__labelrow">
           <span className="t-dpanel__catpill" style={{ background: `${categoryColor}26` }}>
             <i style={{ background: categoryColor }} />
