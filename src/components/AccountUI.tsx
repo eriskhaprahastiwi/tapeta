@@ -27,6 +27,7 @@ export function AuthDialog({ open, onClose, onSignedIn, recovery = false }: Auth
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [registration, setRegistration] = useState<"created" | "existing" | null>(null);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -36,6 +37,11 @@ export function AuthDialog({ open, onClose, onSignedIn, recovery = false }: Auth
   }, [open]);
 
   if (!open) return null;
+
+  const close = () => {
+    setRegistration(null); setMode("login"); setPassword(""); setSuccess(null); setError(null);
+    onClose();
+  };
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -76,14 +82,16 @@ export function AuthDialog({ open, onClose, onSignedIn, recovery = false }: Auth
         : await supabase.auth.signInWithPassword({ email: trimmedEmail, password });
       if (result.error) throw result.error;
       if (!result.data.user) throw new Error("Akun berhasil diproses, tetapi sesi belum tersedia.");
-      if (!result.data.session && mode === "register") {
+      if (mode === "register") {
         setPassword("");
-        setSuccess("Jika email ini belum terdaftar, periksa Kotak Masuk dan Spam untuk verifikasi. Jika sudah punya akun, pilih Masuk atau Lupa kata sandi. Mendaftar ulang tidak mengirim email verifikasi baru.");
+        setRegistration(!result.data.session && result.data.user.identities?.length === 0 ? "existing" : "created");
         return;
       }
       onSignedIn(await appSessionForUser(result.data.user));
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Tidak dapat menghubungkan akun.");
+      setError((cause && typeof cause === "object" && "code" in cause && cause.code === "email_not_confirmed") || (cause instanceof Error && cause.message === "Email not confirmed")
+        ? "Email belum diverifikasi. Buka tautan verifikasi di Kotak Masuk atau Spam, lalu masuk kembali."
+        : cause instanceof Error ? cause.message : "Tidak dapat menghubungkan akun.");
     } finally {
       setBusy(false);
     }
@@ -95,14 +103,26 @@ export function AuthDialog({ open, onClose, onSignedIn, recovery = false }: Auth
       className="t-auth"
       onCancel={(event) => {
         event.preventDefault();
-        onClose();
+        close();
       }}
       onClick={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (event.target === event.currentTarget) close();
       }}
       aria-labelledby="t-auth-title"
     >
       <form className="t-auth__panel" onSubmit={submit}>
+        {registration ? <>
+          <span className="t-auth__kicker">AKUN TAPETA</span>
+          <div className="t-auth__successmark" aria-hidden="true">✓</div>
+          <h2 id="t-auth-title" className="t-auth__title">{registration === "created" ? "Akun Anda berhasil terdaftar" : "Lanjutkan ke akun TAPETA"}</h2>
+          <p className="t-auth__result" role="status">{registration === "created"
+            ? "Periksa Kotak Masuk atau Spam untuk memverifikasi email Anda. Jika email sudah diverifikasi, Anda bisa langsung masuk."
+            : "Jika sudah memiliki akun, silakan masuk. Jika masih menunggu verifikasi, periksa Kotak Masuk atau Spam. Mendaftar ulang tidak mengirim tautan baru."}</p>
+          <p className="t-auth__resultemail">{email.trim()}</p>
+          <button type="button" className="t-auth__submit" autoFocus onClick={() => { setRegistration(null); setMode("login"); setError(null); setSuccess(null); }}>Masuk</button>
+          <div className="t-auth__foot"><button type="button" className="t-auth__link" onClick={close}>Tutup</button></div>
+        </> : <>
+
         <span className="t-auth__kicker">AKUN TAPETA</span>
         <h2 id="t-auth-title" className="t-auth__title">
           {recovery ? "Kata sandi baru" : mode === "reset" ? "Pulihkan kata sandi" : mode === "login" ? "Masuk ke TAPETA" : "Buat akun TAPETA"}
@@ -138,10 +158,11 @@ export function AuthDialog({ open, onClose, onSignedIn, recovery = false }: Auth
           {!recovery && mode !== "reset" && <button type="button" className="t-auth__link" onClick={() => { setMode(mode === "login" ? "register" : "login"); setPassword(""); setError(null); setSuccess(null); }}>
             {mode === "login" ? "Belum punya akun? Daftar" : "Sudah punya akun? Masuk"}
           </button>}
-          <button type="button" className="t-auth__link" onClick={onClose}>
+          <button type="button" className="t-auth__link" onClick={close}>
             Batal
           </button>
         </div>
+        </>}
       </form>
     </dialog>
   );
