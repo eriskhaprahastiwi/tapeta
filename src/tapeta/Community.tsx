@@ -151,8 +151,8 @@ export function Community(props: CommunityProps) {
               {TABS.map((tab) => (
                 <button
                   key={tab.kind}
-                  aria-pressed={kind === tab.kind}
-                  onClick={() => setKind(tab.kind)}
+                  aria-pressed={!showLeaderboard && kind === tab.kind}
+                  onClick={() => { setShowLeaderboard(false); setKind(tab.kind); }}
                 >
                   {tab.label}
                 </button>
