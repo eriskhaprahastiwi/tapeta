@@ -10,6 +10,7 @@ import type { NavKey } from "./Topbar";
 export interface AccountLayerProps {
   onNavigate: (key: NavKey) => void;
   onOpenMyTapeta: () => void;
+  onSignedIn: () => void;
   children: (state: AccountLayerState) => React.ReactNode;
 }
 
@@ -31,7 +32,7 @@ export interface AccountLayerState {
 /**
  * Satu tempat untuk sesi Supabase, menu akun, dan notifikasi.
  */
-export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLayerProps) {
+export function AccountLayer({ onNavigate, onOpenMyTapeta, onSignedIn, children }: AccountLayerProps) {
   const { session, notifications, setSession, signOut, markRead, error, recovery, setRecovery, refreshNotifications } = useAccountSession();
   const [authOpen, setAuthOpen] = useState(false);
   const [profileEditorOpen, setProfileEditorOpen] = useState(false);
@@ -115,7 +116,7 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
     onOpenAuth: () => {
       setMenuOpen(false);
       setNotifOpen(false);
-      setAuthOpen(true);
+      if (!session) setAuthOpen(true);
     },
     onSessionUpdated: updateSession,
     onOpenAccount: () => {
@@ -154,10 +155,8 @@ export function AccountLayer({ onNavigate, onOpenMyTapeta, children }: AccountLa
           setCurrentSession(next);
           setSession(next);
           setAuthOpen(false);
-          setNotice({
-            title: "Berhasil masuk",
-            body: `Halo ${next.name}, akun TAPETA kamu sudah aktif.`,
-          });
+          setNotice(null);
+          onSignedIn();
         }}
       />
 

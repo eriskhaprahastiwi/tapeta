@@ -59,6 +59,14 @@ function getCurrentPosition(): Promise<GeolocationPosition> {
   });
 }
 
+async function readLocationPermission(): Promise<PermissionState | null> {
+  try {
+    return (await navigator.permissions.query({ name: "geolocation" })).state;
+  } catch {
+    return null;
+  }
+}
+
 export default function App() {
   const [view, setCurrentView] = useState<
     | "intro"
@@ -162,6 +170,24 @@ export default function App() {
   const [detectingCity, setDetectingCity] = useState(false);
   const [locating, setLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    let permission: PermissionStatus | undefined;
+    const sync = () => {
+      if (active && permission?.state !== "denied") setLocationError(null);
+    };
+    void navigator.permissions?.query({ name: "geolocation" }).then((status) => {
+      if (!active) return;
+      permission = status;
+      status.addEventListener("change", sync);
+      sync();
+    }).catch(() => { /* Geolocation remains available without Permissions API. */ });
+    return () => {
+      active = false;
+      permission?.removeEventListener("change", sync);
+    };
+  }, []);
 
   const isMobile = useMediaQuery("(max-width: 860px)");
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -299,6 +325,9 @@ export default function App() {
           accuracy: position.coords.accuracy,
         };
 
+        setLocationError(null);
+        setUserLocation(location);
+        setUnscopedMap(false);
         const meta = await reverseCity(location.lat, location.lon, signal);
         if (signal?.aborted) return;
 
@@ -316,8 +345,10 @@ export default function App() {
         if (error instanceof DOMException && error.name === "AbortError") return;
         const code = (error as { code?: unknown } | null)?.code;
         if (typeof code === "number") {
+          const permission = await readLocationPermission();
+          if (signal?.aborted) return;
           setLocationError(
-            code === 1
+            code === 1 && (permission === "denied" || permission === null)
               ? "Izin lokasi ditolak. Aktifkan izin lokasi untuk memakai fitur ini."
               : "Lokasi tidak dapat diambil. Coba lagi sebentar lagi.",
           );
@@ -490,9 +521,23 @@ export default function App() {
     ? `Memuat batas kecamatan ${pendingCityName}`
     : "Memuat batas wilayah";
 
-  const openMap = useCallback(() => {
-    setEntryLocationOpen(true);
-  }, []);
+  const openMap = useCallback(async () => {
+    if (userLocation) {
+      setLocationError(null);
+      setEntryLocationOpen(false);
+      setUnscopedMap(false);
+      setView("app");
+      return;
+    }
+    const permission = await readLocationPermission();
+    if (permission === "granted") {
+      setEntryLocationOpen(false);
+      setView("app");
+      await detectCity();
+    } else {
+      setEntryLocationOpen(true);
+    }
+  }, [userLocation, setView, detectCity]);
 
   const goHome = useCallback(() => {
     setView("intro");
@@ -830,7 +875,7 @@ export default function App() {
   };
 
   return (
-    <AccountLayer onNavigate={navigate} onOpenMyTapeta={() => setView("my")}>
+    <AccountLayer onSignedIn={() => { void openMap(); }} onNavigate={navigate} onOpenMyTapeta={() => setView("my")}>
       {(state) => (
         <>
           {chromeView(state)}
