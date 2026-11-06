@@ -55,10 +55,11 @@ function Landing({ onEnter }: { onEnter: () => void }) {
         <div className="t-landing__mapstage">
           <img
             className="t-landing__map"
-            src="/assets/map/nusantara-watercolor-v2.png"
+            src="/assets/map/peta-wave/peta.webp"
             alt=""
             fetchPriority="high"
           />
+          <iframe className="t-landing__wave-map" src="/assets/map/peta-wave/index.html" title="Animasi ombak peta Indonesia" tabIndex={-1} aria-hidden="true" />
           <svg className="t-landing__boats" viewBox="0 0 1672 941" preserveAspectRatio="none" aria-hidden="true">
             <defs>
               <path id="t-landing-route-north" className="t-landing__boat-route" d="M300 390C240 330 260 285 350 270 460 252 610 270 720 315S920 375 1010 335 1200 295 1320 350 1500 425 1510 520 1430 660 1300 730 1050 805 870 800 560 825 420 760 220 650 250 520 280 435 300 390Z" />
@@ -200,7 +201,10 @@ function MobileLanding({ onEnter }: { onEnter: () => void }) {
 
       <section className="tm-intro__mapstage" aria-label="Peta ilustrasi Indonesia">
         <button type="button" className="tm-intro__mapbutton" onClick={onEnter} aria-label="Ketuk peta untuk menjelajahi Indonesia">
-          <img className="t-landing__map" src="/assets/map/nusantara-watercolor-v2.png" alt="" fetchPriority="high" />
+          <img className="t-landing__map" src="/assets/map/peta-wave/peta.webp" alt="" fetchPriority="high" />
+          <iframe className="t-landing__wave-map" src="/assets/map/peta-wave/index.html" title="Animasi ombak peta Indonesia" tabIndex={-1} aria-hidden="true" />
+          <svg className="tm-intro__boat" viewBox="0 0 120 90" aria-hidden="true"><Sailboat /></svg>
+          <svg className="tm-intro__boat tm-intro__boat--second" viewBox="0 0 120 90" aria-hidden="true"><Sailboat /></svg>
         </button>
         <div className="tm-intro__attribution" aria-hidden="true">
           <span>
