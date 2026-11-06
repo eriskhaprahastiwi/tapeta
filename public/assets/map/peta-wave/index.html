@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peta Laut</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #f6efdf; }
+  canvas { display: block; position: fixed; inset: 0; width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<!-- the map as a data URL, so WebGL can read it even when opened straight from disk -->
+
+<script>
+(() => {
+// ---------- tuning ----------
+const CONFIG = {
+  // mask from colour (0..255 channel units)
+  landWarmth: 40,      // r - b above this is land
+  seaFrom: 4,          // (g+b)/2 - r: where water starts to count
+  seaTo: 32,           // ...and where it is fully water
+  // motion: raise these if the sea feels too still, lower them if it feels busy
+  speed: 1.0,          // master speed for every moving layer
+  islandRock: 3.0,     // px the islands sway on the swell (0 = islands stay still)
+  displacement: 9.0,   // px the paint wobbles on open water
+  wash: 0.10,          // brightness shift of the drifting colour wash
+  swellAlpha: 0.22,    // broad light bands rolling across the sea
+  swellSpeed: 18,      // px per second
+  rippleSpacing: 16,   // px between coastline ripples
+  rippleSpeed: 0.5,    // ripples per second moving outward
+  rippleWidth: 2.6,    // px
+  rippleAlpha: 0.85,
+  rippleReach: 40,     // px over which ripples fade away from the coast
+  streakAlpha: 0.75,
+  maxDpr: 1.5
+};
+
+const canvas = document.getElementById('c');
+const gl = canvas.getContext('webgl2', { antialias: false, premultipliedAlpha: false });
+if (!gl) { document.body.style.background = '#f6efdf'; return; }
+
+// ---------- shaders ----------
+const VERT = `#version 300 es
+in vec2 aPos;
+out vec2 vUv;
+void main() { vUv = aPos * 0.5 + 0.5; gl_Position = vec4(aPos, 0.0, 1.0); }`;
+
+const FRAG = `#version 300 es
+precision highp float;
+uniform sampler2D uImg;
+uniform sampler2D uField;   // r: px to nearest land, g: water amount, b: land
+uniform vec2 uImgSize;
+uniform vec2 uScale;
+uniform vec2 uCenter;
+uniform float uTime;
+uniform float uDisp, uSpacing, uSpeed, uRippleA, uReach, uStreakA;
+uniform float uWash, uSwellA, uSwellSpeed, uRippleW, uRock;
+uniform int uDebug;
+in vec2 vUv;
+out vec4 outColor;
+
+vec3 permute(vec3 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
+float snoise(vec2 v) {
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+  vec2 i = floor(v + dot(v, C.yy));
+  vec2 x0 = v - i + dot(i, C.xx);
+  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+  vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
+  m = m * m; m = m * m;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+  vec3 g;
+  g.x = a0.x * x0.x + h.x * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+float fbm(vec2 p) {
+  float s = 0.0, a = 0.5;
+  for (int i = 0; i < 4; i++) { s += a * snoise(p); p = p * 2.03 + 17.1; a *= 0.5; }
+  return s;
+}
+
+const vec3 FOAM = vec3(1.0, 0.992, 0.968);
+
+void main() {
+  vec2 s = vec2(vUv.x, 1.0 - vUv.y);
+  vec2 uv0 = (s - 0.5) * uScale + uCenter;
+  float t = uTime;
+
+  // islands rock on the swell: a broad, slow field moves each island almost
+  // as one piece, and the water and ripples around it move along with it
+  vec2 px0 = uv0 * uImgSize;
+  vec2 rq = px0 * 0.0016;
+  vec2 rock = vec2(snoise(rq + vec2(t * 0.11, 0.0)), snoise(rq + vec2(3.7, t * 0.13)));
+  rock.y += 0.7 * sin(t * 0.9 - dot(px0, vec2(0.82, -0.57)) * 0.004);
+  vec2 uv = uv0 + rock * uRock / uImgSize;
+
+  vec2 px = uv * uImgSize;
+  vec4 f = texture(uField, uv);
+  float dist = f.r, sea = f.g;
+
+  if (uDebug == 1) { outColor = vec4(clamp(dist / 60.0, 0.0, 1.0), sea, f.b, 1.0); return; }
+
+  // 1. the paint wobbles on open water, never at the coast
+  float calm = smoothstep(4.0, 22.0, dist) * sea;
+  vec2 q = px * 0.006;
+  vec2 flow = vec2(fbm(q + vec2(t * 0.22, t * 0.10)),
+                   fbm(q + vec2(7.3 - t * 0.15, 2.1 + t * 0.19)));
+  vec3 col = texture(uImg, uv + flow * uDisp * calm / uImgSize).rgb;
+
+  // 2. a colour wash drifting across the water
+  col *= 1.0 + uWash * fbm(px * 0.003 + vec2(-t * 0.12, t * 0.08)) * sea;
+
+  // 3. broad swells rolling diagonally, bent by the flow so they stay organic
+  vec2 dir = normalize(vec2(0.82, -0.57));
+  float sw = dot(px, dir) / 140.0 * 6.2831 - t * uSwellSpeed / 140.0 * 6.2831 + flow.x * 2.5;
+  float swell = smoothstep(0.55, 1.0, sin(sw)) * smoothstep(-0.3, 0.5, fbm(px * 0.002 + t * 0.03));
+  col = mix(col, FOAM, swell * uSwellA * calm);
+
+  // brush grain, so lines read as paint rather than vectors
+  float grain = 0.7 + 0.3 * snoise(px * 0.33);
+
+  // 4. ripples leaving each coastline
+  float dw = dist + 3.0 * snoise(px * 0.025 + vec2(t * 0.25, -t * 0.2));
+  float ph = dw / uSpacing - t * uSpeed;
+  float aa = fwidth(ph);
+  float halfW = 0.5 * uRippleW / uSpacing;
+  float ring = 1.0 - smoothstep(halfW - aa, halfW + aa, abs(fract(ph) - 0.5));
+  float id = floor(ph);
+  float gaps = smoothstep(-0.35, 0.3, snoise(px * 0.016 + vec2(id * 3.1 + t * 0.1, id * 1.7)));
+  float near = smoothstep(3.5, 7.0, dist) * exp(-(dist - 4.0) / uReach);
+  float ripple = ring * gaps * near * sqrt(sea);
+
+  // 5. long thin streaks drifting on deep water
+  float deep = smoothstep(24.0, 80.0, dist) * sea;
+  vec2 sp = vec2(px.x * 0.0028, px.y * 0.02) + flow * 0.8;
+  float n = snoise(sp + vec2(t * 0.14, t * 0.09));
+  float streak = 1.0 - smoothstep(0.0, fwidth(n) * 2.4, abs(n));
+  streak *= smoothstep(0.15, 0.6, snoise(px * 0.0035 + vec2(-t * 0.09, t * 0.06))) * deep;
+
+  float a = (ripple * uRippleA + streak * uStreakA) * grain;
+  outColor = vec4(mix(col, FOAM, clamp(a, 0.0, 1.0)), 1.0);
+}`;
+
+function compile(type, src) {
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+  return s;
+}
+const prog = gl.createProgram();
+gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT));
+gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG));
+gl.linkProgram(prog);
+if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+gl.useProgram(prog);
+
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+const aPos = gl.getAttribLocation(prog, 'aPos');
+gl.enableVertexAttribArray(aPos);
+gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+const U = {};
+for (const n of ['uImg', 'uField', 'uImgSize', 'uScale', 'uCenter', 'uTime', 'uDisp', 'uSpacing',
+  'uSpeed', 'uRippleA', 'uReach', 'uStreakA', 'uWash', 'uSwellA', 'uSwellSpeed', 'uRippleW', 'uRock', 'uDebug'])
+  U[n] = gl.getUniformLocation(prog, n);
+
+// ---------- water / land fields, computed from the painting's colours ----------
+function boxBlur(src, w, h, r) {
+  const tmp = new Float32Array(w * h), out = new Float32Array(w * h), d = 2 * r + 1;
+  for (let y = 0; y < h; y++) {
+    let acc = 0;
+    for (let x = -r; x <= r; x++) acc += src[y * w + Math.min(w - 1, Math.max(0, x))];
+    for (let x = 0; x < w; x++) {
+      tmp[y * w + x] = acc / d;
+      acc += src[y * w + Math.min(w - 1, x + r + 1)] - src[y * w + Math.max(0, x - r)];
+    }
+  }
+  for (let x = 0; x < w; x++) {
+    let acc = 0;
+    for (let y = -r; y <= r; y++) acc += tmp[Math.min(h - 1, Math.max(0, y)) * w + x];
+    for (let y = 0; y < h; y++) {
+      out[y * w + x] = acc / d;
+      acc += tmp[Math.min(h - 1, y + r + 1) * w + x] - tmp[Math.max(0, y - r) * w + x];
+    }
+  }
+  return out;
+}
+
+// exact Euclidean distance transform (Felzenszwalb & Huttenlocher)
+function edt(grid, w, h) {
+  const INF = 1e20, n = Math.max(w, h);
+  const f = new Float64Array(n), d = new Float64Array(n), v = new Int32Array(n), z = new Float64Array(n + 1);
+  const pass = (len) => {
+    let k = 0; v[0] = 0; z[0] = -INF; z[1] = INF;
+    for (let q = 1; q < len; q++) {
+      let s;
+      while (true) {
+        s = ((f[q] + q * q) - (f[v[k]] + v[k] * v[k])) / (2 * q - 2 * v[k]);
+        if (s <= z[k] && k > 0) k--; else break;
+      }
+      if (s <= z[k]) { v[0] = q; z[0] = -INF; z[1] = INF; k = 0; continue; }
+      k++; v[k] = q; z[k] = s; z[k + 1] = INF;
+    }
+    k = 0;
+    for (let q = 0; q < len; q++) {
+      while (z[k + 1] < q) k++;
+      d[q] = (q - v[k]) * (q - v[k]) + f[v[k]];
+    }
+  };
+  for (let x = 0; x < w; x++) {
+    for (let y = 0; y < h; y++) f[y] = grid[y * w + x];
+    pass(h);
+    for (let y = 0; y < h; y++) grid[y * w + x] = d[y];
+  }
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) f[x] = grid[y * w + x];
+    pass(w);
+    for (let x = 0; x < w; x++) grid[y * w + x] = Math.sqrt(d[x]);
+  }
+  return grid;
+}
+
+function buildFields(img) {
+  const w = img.naturalWidth, h = img.naturalHeight;
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(img, 0, 0);
+  const px = g.getImageData(0, 0, w, h).data;
+
+  const warm = new Float32Array(w * h), wet = new Float32Array(w * h);
+  for (let i = 0, j = 0; i < w * h; i++, j += 4) {
+    const r = px[j], gg = px[j + 1], b = px[j + 2];
+    warm[i] = r - b;
+    wet[i] = (gg + b) / 2 - r;
+  }
+  const warmS = boxBlur(warm, w, h, 2);
+  const wetS = boxBlur(wet, w, h, 3);
+
+  const land = new Float32Array(w * h);
+  const grid = new Float64Array(w * h);
+  for (let i = 0; i < w * h; i++) {
+    const isLand = warmS[i] > CONFIG.landWarmth;
+    land[i] = isLand ? 1 : 0;
+    grid[i] = isLand ? 0 : 1e20;
+  }
+  const dist = edt(grid, w, h);
+  const landSoft = boxBlur(land, w, h, 1);
+
+  const field = new Float32Array(w * h * 4);
+  for (let i = 0; i < w * h; i++) {
+    const s = Math.min(1, Math.max(0, (wetS[i] - CONFIG.seaFrom) / (CONFIG.seaTo - CONFIG.seaFrom)));
+    field[i * 4] = dist[i];
+    field[i * 4 + 1] = s * s * (3 - 2 * s) * (1 - landSoft[i]);
+    field[i * 4 + 2] = landSoft[i];
+    field[i * 4 + 3] = 1;
+  }
+  return { w, h, field };
+}
+
+function texture(unit, setup) {
+  const t = gl.createTexture();
+  gl.activeTexture(gl.TEXTURE0 + unit);
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  setup();
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  return t;
+}
+
+// ---------- run ----------
+let imgW = 1, imgH = 1, ready = false;
+const debug = new URLSearchParams(location.search).has('debug') ? 1 : 0;
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, CONFIG.maxDpr);
+  const W = innerWidth, H = innerHeight;
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  // cover: fill the screen, crop the overflow evenly
+  const sa = W / H, ia = imgW / imgH;
+  const scale = sa > ia ? [1, ia / sa] : [sa / ia, 1];
+  gl.uniform2f(U.uScale, scale[0], scale[1]);
+  gl.uniform2f(U.uCenter, 0.5, 0.5);
+}
+
+function render(ms) {
+  if (!ready) return;
+  gl.uniform1f(U.uTime, (ms / 1000) * CONFIG.speed);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+const img = new Image();
+img.onload = () => {
+  imgW = img.naturalWidth; imgH = img.naturalHeight;
+  const { field } = buildFields(img);
+
+  texture(0, () => {
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  });
+  texture(1, () => {
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, imgW, imgH, 0, gl.RGBA, gl.FLOAT, field);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  });
+
+  gl.uniform1i(U.uImg, 0);
+  gl.uniform1i(U.uField, 1);
+  gl.uniform2f(U.uImgSize, imgW, imgH);
+  gl.uniform1f(U.uDisp, CONFIG.displacement);
+  gl.uniform1f(U.uSpacing, CONFIG.rippleSpacing);
+  gl.uniform1f(U.uSpeed, CONFIG.rippleSpeed);
+  gl.uniform1f(U.uRippleA, CONFIG.rippleAlpha);
+  gl.uniform1f(U.uReach, CONFIG.rippleReach);
+  gl.uniform1f(U.uStreakA, CONFIG.streakAlpha);
+  gl.uniform1f(U.uWash, CONFIG.wash);
+  gl.uniform1f(U.uSwellA, CONFIG.swellAlpha);
+  gl.uniform1f(U.uSwellSpeed, CONFIG.swellSpeed);
+  gl.uniform1f(U.uRippleW, CONFIG.rippleWidth);
+  gl.uniform1f(U.uRock, CONFIG.islandRock);
+  gl.uniform1i(U.uDebug, debug);
+  resize();
+  ready = true;
+};
+img.src = 'peta.webp';
+
+function loop(ms) { render(ms); requestAnimationFrame(loop); }
+addEventListener('resize', resize);
+requestAnimationFrame(loop);
+window.__render = render;
+window.__debug = (v) => { gl.useProgram(prog); gl.uniform1i(U.uDebug, v); resize(); };
+})();
+</script>
+</body>
+</html>

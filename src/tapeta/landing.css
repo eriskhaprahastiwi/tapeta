@@ -549,3 +549,60 @@
   .tm-intro__attribution { right: 12px; left: 12px; }
   .tm-intro__attribution span { padding-inline: 8px; font-size: 8.5px; }
 }
+
+/* The supplied WebGL map animates water using a coastline mask. */
+.t-landing__wave-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 105% 100% at 50% 50%, #000 0%, #000 72%, rgb(0 0 0 / .88) 87%, rgb(0 0 0 / .45) 96%, transparent 100%);
+  mask-image: radial-gradient(ellipse 105% 100% at 50% 50%, #000 0%, #000 72%, rgb(0 0 0 / .88) 87%, rgb(0 0 0 / .45) 96%, transparent 100%);
+}
+.t-landing__mapstage > .t-landing__wave-map { z-index: 1; }
+.tm-intro__mapbutton .t-landing__wave-map {
+  inset: auto -4% -1px;
+  width: 108%;
+  height: auto;
+  aspect-ratio: 1672 / 941;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 24%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 24%, #000 100%);
+}
+.tm-intro__boat {
+  position: absolute;
+  z-index: 2;
+  left: 16%;
+  bottom: 10%;
+  width: clamp(42px, 12vw, 68px);
+  height: auto;
+  pointer-events: none;
+  opacity: .8;
+  filter: sepia(.14) saturate(.72) drop-shadow(0 1px 1px rgba(112, 126, 112, .2));
+  animation: t-landing-boat-voyage 21s ease-in-out infinite alternate;
+}
+ .tm-intro__boat--second {
+  left: 68%;
+  bottom: 57%;
+  opacity: .8;
+  animation: t-landing-boat-voyage-second 18s ease-in-out infinite alternate;
+}
+@keyframes t-landing-boat-voyage-second {
+  0% { transform: translate(0, 0) rotate(-2deg); }
+  25% { transform: translate(4vw, -3px) rotate(2deg); }
+  50% { transform: translate(8vw, 1px) rotate(-2deg); }
+  75% { transform: translate(12vw, -3px) rotate(2deg); }
+  100% { transform: translate(16vw, 0) rotate(-2deg); }
+}
+@keyframes t-landing-boat-voyage {
+  0% { transform: translate(0, 2px) rotate(-3deg); }
+  25% { transform: translate(13vw, -6px) rotate(2deg); }
+  50% { transform: translate(28vw, 1px) rotate(-2deg); }
+  75% { transform: translate(43vw, -8px) rotate(2deg); }
+  100% { transform: translate(58vw, 0) rotate(-3deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-landing__wave-map { display: none; }
+  .tm-intro__boat { animation: none; }
+}
